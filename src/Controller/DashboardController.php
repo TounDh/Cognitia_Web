@@ -61,7 +61,60 @@ final class DashboardController extends AbstractController
         ]);
     }
 
+    #[Route('/dashboard/quiz', name: 'app_quiz')]
+    public function quiz(): Response
+    {
+        return $this->render('dashboard/quiz.html.twig', [
+        ]);
+    }
 
+    #[Route('/dashboard/contact', name: 'app_cont')]
+    public function contact(): Response
+    {
+        return $this->render('dashboard/contact.html.twig', [
+        ]);
+    }
 
+    #[Route('/dashboard/ajoutApprenant', name: 'app_ajoutApprenant')]
+    public function ajoutApprenant(): Response
+    {
+        return $this->render('dashboard/ajoutApprenant.html.twig', [
+        ]);
+    }
+
+    #[Route('/dashboard/ajoutInstructeur', name: 'app_ajoutInstructeur')]
+    public function ajoutInstructeur(): Response
+    {
+        return $this->render('dashboard/ajoutInstructeur.html.twig', [
+        ]);
+    }
+
+    #[Route('/dashboard/ajoutQuiz', name: 'app_ajoutQuiz')]
+    public function ajoutQuiz(): Response
+    {
+        return $this->render('dashboard/ajoutQuiz.html.twig', [
+        ]);
+    }
+
+    #[Route('/dashboard/modifApprenant', name: 'app_modifApprenant')]
+    public function modifApprenant(): Response
+    {
+        return $this->render('dashboard/modifApprenant.html.twig', [
+        ]);
+    }
+
+    #[Route('/dashboard/modifInstructeur', name: 'app_modifInstructeur')]
+    public function modifInstructeur(): Response
+    {
+        return $this->render('dashboard/modifInstructeur.html.twig', [
+        ]);
+    }
+
+    #[Route('/dashboard/modifQuiz', name: 'app_modifQuiz')]
+    public function modifQuiz(): Response
+    {
+        return $this->render('dashboard/modifQuiz.html.twig', [
+        ]);
+    }
 
 }
