@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -42,9 +44,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     // NOTE: We will treat authCode as a transient value (not persisted in the DB)
     private ?string $authCode = null; // Do not store this in the database
 
+    #[ORM\OneToMany(mappedBy: 'instructeur', targetEntity: Quiz::class)]
+    private Collection $quizzes;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->quizzes = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -160,5 +167,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     }
 
     public function isAdmin(): bool { return in_array('ROLE_ADMIN', $this->roles); }
+
+    public function getQuizzes(): Collection { return $this->quizzes; }
+
 
 }

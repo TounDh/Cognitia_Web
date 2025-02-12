@@ -1,0 +1,31 @@
+{% extends 'Quizbase.html.twig' %}
+
+{% block title %}Créer un Quiz{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center">Créer un Quiz</h1>
+    <div class="card p-4 shadow">
+        {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_label(form.titre, 'Titre') }}
+            {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.tempsMax, 'Temps Max (secondes)') }}
+            {{ form_widget(form.tempsMax, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.cours, 'Cours associé') }}
+            {{ form_widget(form.cours, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.instructeur, 'Instructeur associé') }}
+            {{ form_widget(form.instructeur, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+        {{ form_end(form) }}
+    </div>
+    <a href="{{ path('app_quiz_index') }}" class="btn btn-primary mt-3">Retour à la liste</a>
+</div>
+{% endblock %}

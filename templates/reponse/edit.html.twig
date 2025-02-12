@@ -1,0 +1,18 @@
+{% extends 'Quizbase.html.twig' %}
+
+{% block title %}Modifier une Reponse{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Modifier une Reponse</h1>
+    <div class="card p-4 shadow">
+        <div class="mb-3">
+            {{ include('reponse/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{{ path('app_reponse_index', {'question_id': question.id}) }}" class="btn btn-primary btn_sm">Retour à la liste</a>
+    </div>
+</div>
+{% endblock %}

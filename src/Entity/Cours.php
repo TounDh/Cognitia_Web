@@ -34,6 +34,9 @@ class Cours
     #[ORM\JoinColumn(nullable: false)]
     private ?Instructeur $instructeur = null;
 
+    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Quiz::class, cascade: ['persist', 'remove'])]
+    private Collection $quizzes;
+
     #[ORM\OneToMany(mappedBy: "cours", targetEntity: Evaluation::class)]
     private Collection $evaluations;
 
@@ -41,6 +44,8 @@ class Cours
     {
         $this->evaluations = new ArrayCollection();
         $this->datePublication = new \DateTime(); // Défaut à la date actuelle
+        $this->quizzes = new ArrayCollection();
+
     }
 
     // Getters & Setters
@@ -114,6 +119,9 @@ class Cours
         $this->instructeur = $instructeur;
         return $this;
     }
+
+    public function getQuizzes(): Collection { return $this->quizzes; }
+
 
     /**
      * @return Collection<int, Evaluation>

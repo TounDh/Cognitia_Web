@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\QuestionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 class Question
@@ -13,8 +16,57 @@ class Question
     #[ORM\Column]
     private ?int $id = null;
 
-    public function getId(): ?int
+    #[ORM\Column(type: "text")]
+    #[Assert\NotBlank(message: "Le contenu de la question ne peut pas être vide.")]
+    private ?string $contenu = null;
+
+    #[ORM\ManyToOne(targetEntity: Quiz::class, inversedBy: 'questions')]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    private ?Quiz $quiz = null;
+
+    #[ORM\OneToMany(mappedBy: 'question', targetEntity: Reponse::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $reponses;
+
+    public function __construct()
     {
-        return $this->id;
+        $this->reponses = new ArrayCollection();
+    }
+
+    public function getId(): ?int { return $this->id; }
+    
+    public function getContenu(): ?string { return $this->contenu; }
+    public function setContenu(string $contenu): self { $this->contenu = $contenu; return $this; }
+
+    public function getQuiz(): ?Quiz { return $this->quiz; }
+    public function setQuiz(?Quiz $quiz): self { $this->quiz = $quiz; return $this; }
+
+    /**
+     * @return Collection<int, Reponse>
+     */
+    public function getReponses(): Collection { return $this->reponses; }
+
+    public function addReponse(Reponse $reponse): self
+    {
+        if (!$this->reponses->contains($reponse)) {
+            $this->reponses->add($reponse);
+            $reponse->setQuestion($this);
+        }
+        return $this;
+    }
+
+    public function removeReponse(Reponse $reponse): self
+    {
+        if ($this->reponses->removeElement($reponse)) {
+            // Définir la relation à null si nécessaire
+            if ($reponse->getQuestion() === $this) {
+                $reponse->setQuestion(null);
+            }
+        }
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->contenu;
     }
 }

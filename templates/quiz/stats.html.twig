@@ -1,0 +1,17 @@
+{% extends 'Quizbase.html.twig' %}
+
+{% block title %}Statistiques - {{ quiz.titre }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="text-center">Statistiques pour "{{ quiz.titre }}"</h2>
+    
+    <div class="card p-4 shadow">
+        <p><strong>Moyenne des scores :</strong> {{ moyenne }}%</p>
+        <p><strong>Meilleur score :</strong> {{ meilleur }}%</p>
+        <p><strong>Nombre de tentatives :</strong> {{ tentatives }}</p>
+    </div>
+
+    <a href="{{ path('app_quiz_index') }}" class="btn btn-primary mt-3">Retour à la liste des quiz</a>
+</div>
+{% endblock %}
