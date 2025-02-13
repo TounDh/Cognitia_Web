@@ -33,6 +33,9 @@ class Apprenant extends User
     #[ORM\Column(type: "json", nullable: true)]
     private ?array $interests = []; 
 
+    #[ORM\OneToMany(mappedBy: 'apprenant', targetEntity: Panier::class)]
+    private iterable $paniers;
+
     #[ORM\ManyToMany(targetEntity: Cours::class, inversedBy: "apprenant")]
     #[ORM\JoinTable(name: "student_cours")]
     private Collection $cours;
@@ -75,6 +78,18 @@ class Apprenant extends User
     public function setInterests(?array $interests): self
     {
         $this->interests = $interests;
+        return $this;
+    }
+
+    public function getPaniers(): iterable
+    {
+        return $this->paniers;
+    }
+
+    public function setPaniers(iterable $paniers): self
+    {
+        $this->paniers = $paniers;
+
         return $this;
     }
 

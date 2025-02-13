@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\PanierRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
 
 #[ORM\Entity(repositoryClass: PanierRepository::class)]
 class Panier
@@ -24,7 +27,7 @@ class Panier
     private ?Apprenant $apprenant = null;
 
     #[ORM\OneToMany(mappedBy: 'panier', targetEntity: Cours::class)]
-    private iterable $cours;
+    private Collection $cours;
 
     #[ORM\OneToOne(mappedBy: 'panier', targetEntity: Commande::class)]
     private ?Commande $commande = null;
@@ -33,6 +36,7 @@ class Panier
     {
         $this->dateCreation = new \DateTime();  // Par défaut, la date de création est la date actuelle
         $this->statut = 'en attente';  // Par défaut, le statut peut être 'en attente'
+        $this->cours = new ArrayCollection();
     }
 
     public function getId(): ?int

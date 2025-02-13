@@ -37,10 +37,16 @@ class Cours
     #[ORM\OneToMany(mappedBy: "cours", targetEntity: Evaluation::class)]
     private Collection $evaluations;
 
+    #[ORM\ManyToOne(targetEntity: Panier::class, inversedBy: 'cours')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Panier $panier = null;
+
+
     public function __construct()
     {
         $this->evaluations = new ArrayCollection();
         $this->datePublication = new \DateTime(); // Défaut à la date actuelle
+        
     }
 
     // Getters & Setters
@@ -143,4 +149,18 @@ class Cours
 
         return $this;
     }
+
+
+    public function getPanier(): ?Panier
+{
+    return $this->panier;
+}
+
+public function setPanier(?Panier $panier): self
+{
+    $this->panier = $panier;
+
+    return $this;
+}
+
 }
