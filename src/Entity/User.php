@@ -4,49 +4,88 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[ORM\InheritanceType('SINGLE_TABLE')]
-#[ORM\DiscriminatorColumn(name: 'discriminator', type: 'string')]
-#[ORM\DiscriminatorMap(['user' => User::class, 'apprenant' => Apprenant::class, 'instructeur' => Instructeur::class])]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    private $email;
+    #[Assert\NotBlank(message: 'Veuillez entrer un email.', groups: ['RegistrationUser', 'RegistrationApprenant', 'RegistrationInstructeur'])]
+    #[Assert\Email(message: 'L\'email doit être valide.', groups: ['RegistrationUser', 'RegistrationApprenant', 'RegistrationInstructeur'])]
+    private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
-    private $roles = [];
+    private array $roles = [];
 
     #[ORM\Column(type: 'string')]
-    private $password;
+    private ?string $password = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isVerified = false;
+    private bool $isVerified = false;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private $lastConnexion;
+    private ?\DateTime $lastConnexion = null;
 
-    // NOTE: We will treat authCode as a transient value (not persisted in the DB)
-    private ?string $authCode = null; // Do not store this in the database
+    // Champs communs
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre prénom.', groups: ['RegistrationUser', 'RegistrationApprenant', 'RegistrationInstructeur'])]
+    private ?string $firstName = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre nom.', groups: ['RegistrationUser', 'RegistrationApprenant', 'RegistrationInstructeur'])]
+    private ?string $lastName = null;
+
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre numéro de téléphone.', groups: ['RegistrationUser', 'RegistrationApprenant', 'RegistrationInstructeur'])]
+    private ?string $phoneNumber = null;
+
+    // Champs spécifiques à Apprenant
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre niveau.', groups: ['RegistrationApprenant'])]
+    private ?string $level = null;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $interests = [];
+
+    
+
+    #[ORM\OneToMany(mappedBy: 'apprenant', targetEntity: Evaluation::class)]
+    private Collection $evaluations;
+
+    // Champs spécifiques à Instructeur
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre biographie.', groups: ['RegistrationInstructeur'])]
+    private ?string $biographie = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre photo.', groups: ['RegistrationInstructeur'])]
+    private ?string $photo = null;
+
+    
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->roles = ['ROLE_USER']; // Rôle par défaut
+       
     }
 
+    // Getters et Setters pour les champs communs
     public function getId(): ?int
     {
         return $this->id;
@@ -63,16 +102,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this;
     }
 
-    public function getUserIdentifier(): string
-    {
-        return (string) $this->email;
-    }
-
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        $roles[] = 'ROLE_USER'; // Ensure every user has at least ROLE_USER
-        return array_unique($roles);
+        return array_unique($this->roles);
     }
 
     public function setRoles(array $roles): self
@@ -92,12 +124,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this;
     }
 
-    public function eraseCredentials()
-    {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
-    }
-
     public function isVerified(): bool
     {
         return $this->isVerified;
@@ -107,40 +133,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     {
         $this->isVerified = $isVerified;
         return $this;
-    }
-
-    public function isEmailAuthEnabled(): bool
-    {
-        return true; // This can be a persisted field to switch email code authentication on/off
-    }
-
-    public function getEmailAuthRecipient(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * Get the email authentication code (for 2FA).
-     * Throws an exception if the authCode is not set.
-     *
-     * @throws \LogicException if the auth code has not been set.
-     */
-    public function getEmailAuthCode(): string
-    {
-        if (null === $this->authCode) {
-            throw new \LogicException('The email authentication code was not set');
-        }
-
-        return $this->authCode;
-    }
-
-    /**
-     * Set the email authentication code (for 2FA).
-     * This should only be set when generating a new code for 2FA.
-     */
-    public function setEmailAuthCode(string $authCode): void
-    {
-        $this->authCode = $authCode;
     }
 
     public function getCreatedAt(): \DateTimeImmutable
@@ -159,6 +151,101 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this;
     }
 
-    public function isAdmin(): bool { return in_array('ROLE_ADMIN', $this->roles); }
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
 
+    public function setFirstName(string $firstName): self
+    {
+        $this->firstName = $firstName;
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): self
+    {
+        $this->lastName = $lastName;
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
+        return $this;
+    }
+
+    // Getters et Setters pour les champs spécifiques à Apprenant
+    public function getLevel(): ?string
+    {
+        return $this->level;
+    }
+
+    public function setLevel(?string $level): self
+    {
+        $this->level = $level;
+        return $this;
+    }
+
+    public function getInterests(): ?array
+    {
+        return $this->interests;
+    }
+
+    public function setInterests(?array $interests): self
+    {
+        $this->interests = $interests;
+        return $this;
+    }
+
+    
+
+    
+
+    // Getters et Setters pour les champs spécifiques à Instructeur
+    public function getBiographie(): ?string
+    {
+        return $this->biographie;
+    }
+
+    public function setBiographie(?string $biographie): self
+    {
+        $this->biographie = $biographie;
+        return $this;
+    }
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): self
+    {
+        $this->photo = $photo;
+        return $this;
+    }
+
+    
+
+    
+
+    // Méthodes de l'interface UserInterface
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // Effacer les données sensibles temporaires
+    }
 }
