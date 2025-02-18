@@ -21,6 +21,7 @@ class Quiz
     private ?string $titre = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
+    #[Assert\NotBlank(message: "Le champ temps est obligatoire")]
     private ?int $tempsMax = null;
 
     #[ORM\OneToMany(mappedBy: 'quiz', targetEntity: Question::class, cascade: ['persist', 'remove'])]

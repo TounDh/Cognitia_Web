@@ -10,10 +10,12 @@
         <div class="mb-3">
             {{ form_label(form.titre, 'Titre') }}
             {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+            {{form_errors(form.titre)}}
         </div>
         <div class="mb-3">
             {{ form_label(form.tempsMax, 'Temps Max (secondes)') }}
             {{ form_widget(form.tempsMax, {'attr': {'class': 'form-control'}}) }}
+            {{form_errors(form.tempsMax)}}
         </div>
         <div class="mb-3">
             {{ form_label(form.cours, 'Cours associé') }}

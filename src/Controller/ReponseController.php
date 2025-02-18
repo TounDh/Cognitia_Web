@@ -131,11 +131,13 @@ final class ReponseController extends AbstractController
     #[Route('/{id}', name: 'app_reponse_delete', methods: ['POST'])]
     public function delete(Request $request, Reponse $reponse, EntityManagerInterface $entityManager): Response
     {
+        $questionId = $reponse->getQuestion()->getId();  // Récupérer l'ID du question associé à la reponse
+
         if ($this->isCsrfTokenValid('delete'.$reponse->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($reponse);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_reponse_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_reponse_index', ['question_id' => $questionId], Response::HTTP_SEE_OTHER);
     }
 }
