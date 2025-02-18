@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ cours.titre }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>{{ cours.titre }}</h1>
+        <p>{{ cours.description }}</p>
+
+        <!-- Course Details -->
+        <div class="course-details">
+            <p><strong>Difficulty:</strong> {{ cours.difficulte }}</p>
+            <p><strong>Duration:</strong> {{ cours.duree }} hours</p>
+            <p><strong>Price:</strong> ${{ cours.prix }}</p>
+            <p><strong>Instructor:</strong> kifeh nzid instrectuer</p>
+            <p><strong>Published on:</strong> {{ cours.datePublication|date('Y-m-d') }}</p>
+
+            <!-- Course Image -->
+            {% if cours.image %}
+                <img src="{{ cours.image }}" alt="{{ cours.titre }}" class="img-fluid mt-3">
+            {% endif %}
+        </div>
+
+        <hr>
+
+        <!-- Modules Section -->
+        <div class="modules">
+            <h3>Modules</h3>
+            {% if modules is not empty %}
+                <ul>
+                    {% for module in modules %}
+                        <li>
+                            <strong>{{ module.titre }}</strong>: {{ module.contenu }} ({{ module.duree }} hours)
+                            <a href="{{ path('app_modules_edit', { 'id': module.id }) }}" class="btn btn-primary btn-sm">Edit</a>
+                            <form action="{{ path('app_modules_delete', { 'id': module.id }) }}" method="post" style="display: inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ module.id) }}">
+                                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No modules available for this course.</p>
+            {% endif %}
+            <!-- Always show the 'Add Module' button -->
+            <a href="{{ path('app_modules_new', { 'coursId': cours.id }) }}" class="btn btn-success btn-sm mt-3">Add a new module</a>
+        </div>
+
+        <hr>
+
+        <!-- Challenges Section (Defis) -->
+        <div class="defis">
+            <h3>Challenges</h3>
+            {% if defis is not empty %}
+                <ul>
+                    {% for defis in defis %}
+                        <li>
+                            <strong>{{ defis.titre }}</strong>: {{ defis.description }} ({{ defis.pointsRecompense }} points)
+                            <a href="{{ path('app_defis_edit', { 'id': defis.id }) }}" class="btn btn-primary btn-sm">Edit</a>
+                            <form action="{{ path('app_defis_delete', { 'id': defis.id }) }}" method="post" style="display: inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ defis.id) }}">
+                                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No challenges available for this course.</p>
+            {% endif %}
+            <!-- Always show the 'Add Challenge' button -->
+            <a href="{{ path('app_defis_new', { 'coursId': cours.id }) }}" class="btn btn-success btn-sm mt-3">Add a new challenge</a>
+        </div>
+
+        <hr>
+
+        <a href="{{ path('app_cours_index') }}" class="btn btn-secondary">Back to Courses List</a>
+    </div>
+{% endblock %}

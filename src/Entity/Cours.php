@@ -28,7 +28,13 @@ class Cours
     private \DateTimeInterface $datePublication;
 
     #[ORM\Column(type: "integer")]
-    private int $duree; // Durée du cours en minutes
+    private int $duree; // Duration of the course in minutes
+
+    #[ORM\Column(type: "string", columnDefinition: "ENUM('Beginner', 'Intermediate', 'Advanced')")]
+    private string $difficulte; // Difficulty level
+
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
+    private float $prix; // Price of the course
 
     #[ORM\ManyToOne(targetEntity: Instructeur::class, inversedBy: "cours")]
     #[ORM\JoinColumn(nullable: false)]
@@ -37,10 +43,18 @@ class Cours
     #[ORM\OneToMany(mappedBy: "cours", targetEntity: Evaluation::class)]
     private Collection $evaluations;
 
+    #[ORM\OneToMany(mappedBy: "cours", targetEntity: Modules::class)]
+    private Collection $modules;
+
+    #[ORM\OneToMany(mappedBy: "cours", targetEntity: Defis::class)]
+    private Collection $defis;
+
     public function __construct()
     {
         $this->evaluations = new ArrayCollection();
-        $this->datePublication = new \DateTime(); // Défaut à la date actuelle
+        $this->modules = new ArrayCollection();
+        $this->defis = new ArrayCollection();
+        $this->datePublication = new \DateTime(); // Default to the current date
     }
 
     // Getters & Setters
@@ -104,6 +118,28 @@ class Cours
         return $this;
     }
 
+    public function getDifficulte(): string
+    {
+        return $this->difficulte;
+    }
+
+    public function setDifficulte(string $difficulte): self
+    {
+        $this->difficulte = $difficulte;
+        return $this;
+    }
+
+    public function getPrix(): float
+    {
+        return $this->prix;
+    }
+
+    public function setPrix(float $prix): self
+    {
+        $this->prix = $prix;
+        return $this;
+    }
+
     public function getInstructeur(): ?Instructeur
     {
         return $this->instructeur;
@@ -138,6 +174,64 @@ class Cours
         if ($this->evaluations->removeElement($evaluation)) {
             if ($evaluation->getCours() === $this) {
                 $evaluation->setCours(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Modules>
+     */
+    public function getModules(): Collection
+    {
+        return $this->modules;
+    }
+
+    public function addModule(Modules $module): self
+    {
+        if (!$this->modules->contains($module)) {
+            $this->modules->add($module);
+            $module->setCours($this);
+        }
+
+        return $this;
+    }
+
+    public function removeModule(Modules $module): self
+    {
+        if ($this->modules->removeElement($module)) {
+            if ($module->getCours() === $this) {
+                $module->setCours(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Defis>
+     */
+    public function getDefis(): Collection
+    {
+        return $this->defis;
+    }
+
+    public function addDefis(Defis $defis): self
+    {
+        if (!$this->defis->contains($defis)) {
+            $this->defis->add($defis);
+            $defis->setCours($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDefis(Defis $defis): self
+    {
+        if ($this->defis->removeElement($defis)) {
+            if ($defis->getCours() === $this) {
+                $defis->setCours(null);
             }
         }
 

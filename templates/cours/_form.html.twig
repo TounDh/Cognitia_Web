@@ -1,0 +1,12 @@
+{{ form_start(form) }}
+    {{ form_row(form.titre) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.image) }}
+    {{ form_row(form.datePublication) }}
+    {{ form_row(form.duree) }}
+    {{ form_row(form.prix) }} <!-- Ensure that prix is rendered as a number input -->
+    {{ form_row(form.difficulte) }}
+    {{ form_row(form.instructeur) }}
+
+    <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
