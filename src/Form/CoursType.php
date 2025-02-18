@@ -1,9 +1,10 @@
 <?php
 
+
 namespace App\Form;
 
 use App\Entity\Cours;
-use App\Entity\Instructeur;
+use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Doctrine\ORM\EntityRepository;
 
 class CoursType extends AbstractType
 {
@@ -40,9 +42,14 @@ class CoursType extends AbstractType
                 ],
             ])
             ->add('instructeur', EntityType::class, [
-                'class' => Instructeur::class,
-                'choice_label' => 'nom', // Assuming you want to display the name of the instructor
+                'class' => User::class,
+                'choice_label' => 'email', // Display the email of the user
                 'placeholder' => 'Choose an instructor', // Optional placeholder
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.roles LIKE :role')
+                        ->setParameter('role', '%"ROLE_INSTRUCTEUR"%'); // Adjust according to the role
+                },
             ]);
     }
 
@@ -53,4 +60,3 @@ class CoursType extends AbstractType
         ]);
     }
 }
-

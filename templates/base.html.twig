@@ -72,50 +72,55 @@
 	<!-- END LOGO WITH CONTACT -->
 
 
-	<!-- START NAVBAR -->  
-	<div id="navigation" class="fixed-top navbar-light bg-faded site-navigation">
-		<div class="container top_menu_bg">
-			<div class="row">
-				<div class="col-lg-2 col-md-3 col-sm-4">
-					<div class="site-logo">
-					
-						<a href="index-2.html"><img src="{{ asset('/cognitia.png') }}" alt="" style="width: 120px; height: 60px;"></a>          			        				
-					</div>
-				</div><!--- END Col -->
-				
-				<div class="col-lg-6 col-md-9 col-sm-8 ">
-					<div class="header_right ">
-						<nav id="main-menu" class="ms-auto">
-							<ul>
-							  <li><a href="{{path('app_home')}}">Home </a></li>
+<!-- START NAVBAR -->
+<div id="navigation" class="fixed-top navbar-light bg-faded site-navigation">
+    <div class="container top_menu_bg">
+        <div class="row">
+            <div class="col-lg-2 col-md-3 col-sm-4">
+                <div class="site-logo">
+                    <a href="{{ path('app_home') }}"><img src="{{ asset('/cognitia.png') }}" alt="" style="width: 120px; height: 60px;"></a>
+                </div>
+            </div><!--- END Col -->
+            
+            <div class="col-lg-6 col-md-9 col-sm-8">
+                <div class="header_right ">
+                    <nav id="main-menu" class="ms-auto">
+                        <ul>
+                            <li><a href="{{ path('app_home') }}">Home </a></li>
+                            <li><a class="nav-link" href="{{ path('app_cours') }}">Courses</a></li>
+                            <li><a class="nav-link" href="{{ path('app_instructeur') }}">Instructeur</a></li>
+                            <li><a class="nav-link" href="{{ path('app_about') }}">About Us</a></li>
+                            <li><a class="nav-link" href="{{ path('app_contact') }}">Contact</a></li>
+                            <li><a class="nav-link" href="{{ path('app_event') }}">Evenement</a></li>
+                        </ul>
+                    </nav>
+                    <div id="mobile_menu"></div>
+                </div>
+            </div><!--- END Col -->
 
-							  <li><a class="nav-link" href="{{path('app_cours')}}">Courses</a></li>
+            <div class="col-lg-4 col-md-3 col-sm-8 m-none">
+                <div class="home_lc">
+                    <a href="#" class="hlc">
+                        <i class="ti-shopping-cart-full"></i>
+                        <span class="gactive">2</span>
+                    </a>
+                </div>
 
-							  <li><a class="nav-link" href="{{path('app_instructeur')}}">Instructeur</a></li>
+                <div class="call_to_action">
+                    {% if app.user %}
+                        <!-- Si l'utilisateur est connecté, afficher le bouton "Logout" -->
+                        <a class="btn_two" href="{{ path('app_logout') }}">Logout</a>
+                    {% else %}
+                        <!-- Si l'utilisateur n'est pas connecté, afficher le bouton "Login" -->
+                        <a class="btn_two" href="{{ path('app_login') }}">Login</a>
+                    {% endif %}
+                </div><!--- END SOCIAL PROFILE -->
+            </div><!--- END Col -->
+        </div><!--- END ROW -->
+    </div><!--- END CONTAINER -->
+</div>  
+<!-- END NAVBAR -->
 
-							  <li><a class="nav-link" href="{{path('app_about')}}">About Us</a></li>																	
-
-							    <li><a class="nav-link" href="{{path('app_contact')}}">Contact</a></li>
-							</ul>
-						</nav>
-						<div id="mobile_menu"></div>
-					</div>
-				</div><!--- END Col -->
-				<div class="col-lg-4 col-md-3 col-sm-8 m-none">
-					<div class="home_lc">
-						<a href="#" class="hlc">
-						  <i class="ti-shopping-cart-full"></i>
-						  <span class="gactive">2</span>
-					   </a>
-					</div>
-					<div class="call_to_action">
-						<a class="btn_two" href="{{path('app_login')}}">Login</a>
-					</div><!--- END SOCIAL PROFILE -->					
-				</div><!--- END Col -->
-			</div><!--- END ROW -->
-		</div><!--- END CONTAINER -->
-	</div> 	  
-	<!-- END NAVBAR -->
 
         {% block body %}{% endblock %}
 

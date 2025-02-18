@@ -30,15 +30,15 @@ class Cours
     #[ORM\Column(type: "integer")]
     private int $duree; // Duration of the course in minutes
 
-    #[ORM\Column(type: "string", columnDefinition: "ENUM('Beginner', 'Intermediate', 'Advanced')")]
-    private string $difficulte; // Difficulty level
+    #[ORM\Column(type: "string", length: 255)]
+    private string $difficulte; // Difficulty level (now treated as a string)
 
     #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private float $prix; // Price of the course
 
-    #[ORM\ManyToOne(targetEntity: Instructeur::class, inversedBy: "cours")]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "cours")]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Instructeur $instructeur = null;
+    private ?User $instructeur = null; // Changed from Instructeur to User
 
     #[ORM\OneToMany(mappedBy: "cours", targetEntity: Evaluation::class)]
     private Collection $evaluations;
@@ -125,6 +125,11 @@ class Cours
 
     public function setDifficulte(string $difficulte): self
     {
+        // Validate the value to ensure it's one of the accepted values
+        $validDifficulties = ['Beginner', 'Intermediate', 'Advanced'];
+        if (!in_array($difficulte, $validDifficulties)) {
+            throw new \InvalidArgumentException('Invalid difficulty level.');
+        }
         $this->difficulte = $difficulte;
         return $this;
     }
@@ -140,12 +145,12 @@ class Cours
         return $this;
     }
 
-    public function getInstructeur(): ?Instructeur
+    public function getInstructeur(): ?User
     {
         return $this->instructeur;
     }
 
-    public function setInstructeur(?Instructeur $instructeur): self
+    public function setInstructeur(?User $instructeur): self
     {
         $this->instructeur = $instructeur;
         return $this;

@@ -1,0 +1,18 @@
+{# templates/registration/instructeur_register.html.twig #}
+
+
+{% block title %}Inscription Instructeur{% endblock %}
+
+{% block body %}
+    <h1>Inscription Instructeur</h1>
+
+    {{ form_start(instructeurRegistrationForm) }}
+        {{ form_row(instructeurRegistrationForm.email) }}
+        {{ form_row(instructeurRegistrationForm.firstName) }}
+        {{ form_row(instructeurRegistrationForm.lastName) }}
+        {{ form_row(instructeurRegistrationForm.biographie) }}
+        {{ form_row(instructeurRegistrationForm.photo) }}
+
+        <button type="submit" class="btn btn-primary">Créer le compte</button>
+    {{ form_end(instructeurRegistrationForm) }}
+{% endblock %}
