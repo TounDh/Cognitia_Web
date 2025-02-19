@@ -22,9 +22,9 @@ class Panier
     #[ORM\Column(length: 255)]
     private string $statut;
 
-    #[ORM\ManyToOne(targetEntity: Apprenant::class, inversedBy: 'paniers')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'paniers')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Apprenant $apprenant = null;
+    private ?User $user = null;
 
     #[ORM\OneToMany(mappedBy: 'panier', targetEntity: Cours::class)]
     private Collection $cours;
@@ -68,14 +68,14 @@ class Panier
         return $this;
     }
 
-    public function getApprenant(): ?Apprenant
+    public function getUser(): ?User
     {
-        return $this->apprenant;
+        return $this->user;
     }
 
-    public function setApprenant(?Apprenant $apprenant): self
+    public function setUser(?User $user): self
     {
-        $this->apprenant = $apprenant;
+        $this->user = $user;
 
         return $this;
     }

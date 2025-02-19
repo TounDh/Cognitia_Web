@@ -1,0 +1,20 @@
+{# templates/registration/register_apprenant.html.twig #}
+
+
+
+{% block title %}Inscription Apprenant{% endblock %}
+
+{% block body %}
+    <h1>Inscription Apprenant</h1>
+
+    {{ form_start(registrationForm) }}
+        {{ form_widget(registrationForm.email) }}
+        {{ form_widget(registrationForm.plainPassword) }}
+        {{ form_widget(registrationForm.firstName) }}
+        {{ form_widget(registrationForm.lastName) }}
+        {{ form_widget(registrationForm.phoneNumber) }}
+        {{ form_widget(registrationForm.level) }}
+
+        <button type="submit" class="btn btn-primary">S'inscrire</button>
+    {{ form_end(registrationForm) }}
+{% endblock %}

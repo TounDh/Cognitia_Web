@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Courses{% endblock %}
+
+{% block body %}
+
+<!-- START SECTION TOP -->
+<section class="section-top">
+    <div class="container">
+        <div class="col-lg-10 offset-lg-1 text-center">
+            <div class="section-top-title wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0">
+                <h1>All Courses</h1>
+                <ul>
+                    <li><a href="{{ path('app_home') }}">Home</a></li>
+                    <li> / Courses</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section> 
+<!-- END SECTION TOP -->
+
+<!-- START COURSE -->
+<div class="best-cpurse section-padding">
+    <div class="container">
+        <div class="section-title">
+            <h2>Popular Courses</h2>
+            <p>Choose Our <span><u>Top Courses</u></span></p>
+        </div>
+
+        <!-- Add Course Button -->
+        <div class="text-center mb-4">
+            <a href="{{ path('app_cours_new') }}" class="btn btn-success">Add New Course</a>
+        </div>
+
+        <div class="row">
+            {% for cours in cours %}
+                <div class="col-lg-4 col-sm-6 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
+                    <div class="course-slide">
+                        <div class="course-img">
+                            <!-- Display the image using the URL -->
+                            <img src="{{ cours.image }}" alt="Course Image">
+                            <div class="course-date">
+                                <span class="month">{{ cours.prix }} TND</span>
+                            </div>
+                        </div>
+                        <div class="course-content">
+                            <a class="c_btn" href="{{ path('app_cours_show', {'id': cours.id}) }}">{{ cours.difficulte }}</a>
+                            <h3><a href="{{ path('app_cours_show', {'id': cours.id}) }}">{{ cours.titre }}</a></h3>
+                            <p>{{ cours.description|slice(0, 100) }}...</p> <!-- Slice the description to show only a preview -->
+                            <span><i class="fa fa-calendar"></i>{{ cours.datePublication|date('Y-m-d') }}</span>
+                            <span><i class="fa fa-clock-o"></i>{{ cours.duree }} hours</span>
+                            <span><i class="fa fa-star"></i>4.9</span>
+                            <span><i class="fa fa-table"></i><strong>30 Seats Available</strong></span>
+
+                            <!-- Edit and Delete Buttons -->
+                            <div class="mt-2">
+                                <a href="{{ path('app_cours_edit', {'id': cours.id}) }}" class="btn btn-primary btn-sm">Edit</a>
+                                
+                                <form action="{{ path('app_cours_delete', {'id': cours.id}) }}" method="post" style="display: inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cours.id) }}">
+                                    <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p>No courses available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- END COURSE -->
+
+{% endblock %}

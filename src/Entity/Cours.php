@@ -28,25 +28,41 @@ class Cours
     private \DateTimeInterface $datePublication;
 
     #[ORM\Column(type: "integer")]
-    private int $duree; // Durée du cours en minutes
+    private int $duree; // Duration of the course in minutes
 
-    #[ORM\ManyToOne(targetEntity: Instructeur::class, inversedBy: "cours")]
+    #[ORM\Column(type: "string", length: 255)]
+    private string $difficulte; // Difficulty level (now treated as a string)
+
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
+    private float $prix; // Price of the course
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "cours")]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Instructeur $instructeur = null;
+    private ?User $instructeur = null; // Changed from Instructeur to User
 
     #[ORM\OneToMany(mappedBy: "cours", targetEntity: Evaluation::class)]
     private Collection $evaluations;
+
 
     #[ORM\ManyToOne(targetEntity: Panier::class, inversedBy: 'cours')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Panier $panier = null;
 
 
+    #[ORM\OneToMany(mappedBy: "cours", targetEntity: Modules::class)]
+    private Collection $modules;
+
+    #[ORM\OneToMany(mappedBy: "cours", targetEntity: Defis::class)]
+    private Collection $defis;
+
+
     public function __construct()
     {
         $this->evaluations = new ArrayCollection();
         $this->datePublication = new \DateTime(); // Défaut à la date actuelle
-        
+        $this->modules = new ArrayCollection();
+        $this->defis = new ArrayCollection();
+        $this->datePublication = new \DateTime(); // Default to the current date
     }
 
     // Getters & Setters
@@ -110,12 +126,39 @@ class Cours
         return $this;
     }
 
-    public function getInstructeur(): ?Instructeur
+    public function getDifficulte(): string
+    {
+        return $this->difficulte;
+    }
+
+    public function setDifficulte(string $difficulte): self
+    {
+        // Validate the value to ensure it's one of the accepted values
+        $validDifficulties = ['Beginner', 'Intermediate', 'Advanced'];
+        if (!in_array($difficulte, $validDifficulties)) {
+            throw new \InvalidArgumentException('Invalid difficulty level.');
+        }
+        $this->difficulte = $difficulte;
+        return $this;
+    }
+
+    public function getPrix(): float
+    {
+        return $this->prix;
+    }
+
+    public function setPrix(float $prix): self
+    {
+        $this->prix = $prix;
+        return $this;
+    }
+
+    public function getInstructeur(): ?User
     {
         return $this->instructeur;
     }
 
-    public function setInstructeur(?Instructeur $instructeur): self
+    public function setInstructeur(?User $instructeur): self
     {
         $this->instructeur = $instructeur;
         return $this;
@@ -163,4 +206,62 @@ public function setPanier(?Panier $panier): self
     return $this;
 }
 
+
+    /**
+     * @return Collection<int, Modules>
+     */
+    public function getModules(): Collection
+    {
+        return $this->modules;
+    }
+
+    public function addModule(Modules $module): self
+    {
+        if (!$this->modules->contains($module)) {
+            $this->modules->add($module);
+            $module->setCours($this);
+        }
+
+        return $this;
+    }
+
+    public function removeModule(Modules $module): self
+    {
+        if ($this->modules->removeElement($module)) {
+            if ($module->getCours() === $this) {
+                $module->setCours(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Defis>
+     */
+    public function getDefis(): Collection
+    {
+        return $this->defis;
+    }
+
+    public function addDefis(Defis $defis): self
+    {
+        if (!$this->defis->contains($defis)) {
+            $this->defis->add($defis);
+            $defis->setCours($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDefis(Defis $defis): self
+    {
+        if ($this->defis->removeElement($defis)) {
+            if ($defis->getCours() === $this) {
+                $defis->setCours(null);
+            }
+        }
+
+        return $this;
+    }
 }
