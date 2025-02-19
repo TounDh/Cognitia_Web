@@ -3,12 +3,14 @@
 {% block title %}New Cours{% endblock %}
 
 {% block body %}
-    <div class="container" style="padding-top: 100px;"> <!-- Adjust this padding-top as needed -->
+ <div class="container" style="padding-top: 100px;">
+    <div class="container mx-auto py-12">
+        <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Create New Cours</h1>
 
-    <h1>Create new Cours</h1>
+        {{ include('cours/_form.html.twig') }}
 
-    {{ include('cours/_form.html.twig') }}
-
-    <a href="{{ path('app_cours_index') }}">back to list</a>
-    </div>
+        <div class="text-center mt-6">
+            <a href="{{ path('app_cours_index') }}" class="text-blue-500 hover:underline">Back to list</a>
+        </div>
+    </div></div>
 {% endblock %}
