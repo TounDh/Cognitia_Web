@@ -1,39 +1,156 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Paiement index{% endblock %}
-
 {% block body %}
-    <h1>Paiement index</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="{{ asset('styles.css') }}">
+  <script type="text/javascript" src="{{ asset('scripts.js') }}"></script>
+</head>
+<body>
+  <div class="credit-card-form">
+    <h1>PAYMENT PORTAL</h1>
+    <div class="form-container">
+      <img class="Image1" src="https://i.ibb.co/hgJ7z3J/6375aad33dbabc9c424b5713-card-mockup-01.png" alt="6375aad33dbabc9c424b5713-card-mockup-01" border="0">
+      <form>
+        <div class="form-group">
+          <label for="card-number">Card Number</label>
+          <input type="text" id="card-number" placeholder="Card number">
+        </div>
+        <div class="form-group">
+          <label for="card-holder">Card Holder</label>
+          <input type="text" id="card-holder" placeholder="Card holder's name">
+        </div>
+        <div class="form-row">
+          <div class="form-group form-column">
+            <label for="expiry-date">Expiry Date</label>
+            <input type="text" id="expiry-date" placeholder="MM/YY">
+          </div>
+          <div class="form-group form-column">
+            <label for="cvv">CVV</label>
+            <input type="text" id="cvv" placeholder="CVV">
+          </div>
+        </div>
+        <button type="submit" class="click-button" onclick="showLoading(event, this)">PAY NOW - $(TOTAL)</button>
+      </form>
+    </div>
+  </div>
+  </BR>
+</body>
+</html>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Montant</th>
-                <th>DatePaiement</th>
-                <th>Methode</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for paiement in paiements %}
-            <tr>
-                <td>{{ paiement.id }}</td>
-                <td>{{ paiement.montant }}</td>
-                <td>{{ paiement.datePaiement ? paiement.datePaiement|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ paiement.methode }}</td>
-                <td>
-                    <a href="{{ path('app_paiement_show', {'id': paiement.id}) }}">show</a>
-                    <a href="{{ path('app_paiement_edit', {'id': paiement.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500&family=Montserrat:wght@600&display=swap');
 
-    <a href="{{ path('app_paiement_new') }}">Create new</a>
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f4f4f9;
+  align-content: center;
+  text-align: center;
+}
+
+.credit-card-form {
+  margin-top: 8%;
+  margin-left: 17%;
+  max-width: 900px; /* Augmenter la largeur pour accommoder deux colonnes */
+  padding: 1em;
+  border-radius: 10px;
+  box-shadow: 0px 6px 10px rgba(255, 255, 255, 0.1);
+  font-family: 'Montserrat', sans-serif;
+  background-color: #fff;
+  text-align: center;
+  color: #424242;
+  align-content: center;
+}
+
+.credit-card-form h1 {
+  margin-bottom: 10%;
+  font-size: 24px;
+}
+
+.form-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Deux colonnes de largeur égale */
+  gap: 20px; /* Espace entre les colonnes */
+  align-items: center; /* Aligner verticalement au centre */
+}
+
+.credit-card-form .form-group {
+  margin-bottom: 15px;
+}
+
+.credit-card-form label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #777;
+}
+
+.credit-card-form input[type="text"],
+.credit-card-form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 1rem;
+  font-size: 16px;
+  font-family: 'Montserrat', sans-serif;
+  background-color:  #f9f9f9
+}
+
+.credit-card-form .form-row {
+  display: flex;
+}
+
+.credit-card-form button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  background-color: #585858;
+  color: #fff;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.credit-card-form button[type="submit"]:hover {
+  background-color: #808080;
+  color: #424242;
+  font-family: 'Montserrat', sans-serif;
+  box-shadow: 0px 6px 10px rgba(255, 255, 255, 0.1);
+}
+
+.credit-card-form button[type="submit"]:focus {
+  outline: none;
+  font-family: 'Montserrat', sans-serif;
+}
+
+p {
+  color: white;
+  margin-top: 6%;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  margin-bottom: 45px;
+  font-size: 70%;
+  text-shadow: 0 0 5px #cacaca; 
+}
+
+.Image1 {
+  width: 110%; /* Ajuster la largeur de l'image */
+  max-width: 365px; /* Limiter la largeur maximale */
+  height: auto; /* Conserver le ratio de l'image */
+}
+
+.h2 {
+  margin: 0px;
+}
+</style>
 {% endblock %}

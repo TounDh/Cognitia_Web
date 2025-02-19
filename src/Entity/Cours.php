@@ -38,7 +38,7 @@ class Cours
     private Collection $evaluations;
 
     #[ORM\ManyToOne(targetEntity: Panier::class, inversedBy: 'cours')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Panier $panier = null;
 
 

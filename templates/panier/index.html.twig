@@ -1,43 +1,317 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Panier{% endblock %}
-
 {% block body %}
-<section class="mt-5 pt-5 pb-5">
-  <div class="container">
-    <div class="row w-100">
-        <div class="col-lg-12 col-md-12 col-12">
-            <h3 class="display-5 mb-2 text-center">Votre Panier</h3>
-            <p class="mb-5 text-center">
-                <i class="text-info font-weight-bold"></i> cours dans votre panier</p>
-            <table id="shoppingCart" class="table table-condensed table-responsive">
-                <thead>
-                    <tr>
-                        <th style="width:60%">Cours</th>
-                        <th style="width:12%">Prix</th>
-                        <th style="width:10%">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% set total = 0 %}
-                    <td colspan="4" class="text-center">Votre panier est vide.</td>
-                </tbody>
-            </table>
-            <div class="col-12 text-right">
-                <h4>Total:</h4>
-                <h1>${{ total }}</h1>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .cart-container {
+        
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+        }
+        .cart-header {
+          
+            
+             margin: 0 0 1rem;
+            padding-bottom: 1rem;
+            padding-top: .5rem;
+            border-bottom: 1px dotted #e2e2e2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            font-weight: bold;
+            padding-left: 140px;
+        }
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .cart-itemm {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cart-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+        .cart-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+        .cart-item-details {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+
+        }
+
+
+        .cart-item-details h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #444;
+        }
+        .cart-item-details p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .cart-item-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff4757;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .cart-item-actions button:hover {
+            background-color: #ff6b81;
+        }
+        .cart-summary {
+            margin-top: 30px;
+            padding: 1px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            text-align: right;
+        }
+        .cart-summary p {
+            margin: 0;
+            font-size: 1.2rem;
+            color:rgb(0, 0, 0);
+            font-weight: bold;
+        }
+        .cart-summary button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2ed573;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .cart-summary button:hover {
+            background-color: #7bed9f;
+        }
+        .centeredd {
+            height: 12vh;
+        }
+        .centerd {
+            height: 2vh;
+        }
+        .cart-item-actions button.remove-item-btn {
+    font-size: 1.5rem;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background-color:rgb(247, 195, 199);
+    color: white;
+    text-align: center;
+    display: flex;
+    justify-content: center; /* Centrer horizontalement */
+    align-items: center;
+    line-height: 10px;
+    transition: background-color 0.3s;
+}
+
+.cart-item-actions button.remove-item-btn:hover {
+    background-color: #ff4757;
+}
+
+.cart-item-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ccc;
+}
+
+.cart-item-column-title {
+    flex: 1;
+    text-align: center;
+    margin: 0 20px;
+
+.cart-summary-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    border-bottom: 2px solid #ddd;
+    font-weight: bold;
+}
+
+.cart-summary-column {
+    flex: 1;
+    text-align: center;
+}
+
+.right-aligned {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.right-aligned .btn-info {
+    margin-left: auto; /* Pousse le bouton à droite */
+}
+
+}
+    </style>
+
+   <div class="centeredd"
+            <h1></h1>
+        </div>
+
+
+ <div class="cart-container">
+        <div class="cart-header">
+        <h1></h1>
+            <h1>Shopping cart</h1></br>
+
+            <div class="page-tools">
+
+                <div class="action-buttons">
+                    <a class="btn bg-white btn-light mx-1px text-95" href="#" data-title="Trash">
+                        <i class="mr-1 fa fa-trash text-danger-m1 text-120 w-2"></i>
+                        Discard cart
+                    </a>
+                </div>
+
+                <div class="action-buttons">
+                    <a class="btn bg-white btn-light mx-1px text-95" href="#" data-title="Loading...">
+                        <i class="mr-1 fa fa-spinner fa-spin" style="color:rgb(255, 94, 0);"></i>
+                        in progress..
+                    </a>
+                </div>
+            </div>
+         
+        </div>
+
+
+
+        <div class="cart-summary">
+            <div class="cart-itemm">
+                <a href="index-2.html">
+                    <img  alt="" style="width: 120px;">
+                </a>
+                <div class="cart-item-details">
+                    <div class="cart-item-column">
+                        <p>Course</p>
+                    </div>
+                    <p>Price</p>
+                    <div class="cart-item-actions">
+                        <p>Action</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="centerd"
+            <h1></h1>
+        </div>
+
+
+
+        <div class="cart-items">
+
+           <div class="cart-item">
+                <a href="index-2.html">
+                    <img src="{{ asset('/cognitia.png') }}" alt="" style="width: 100px; height: 100px;">
+                </a>
+                <div class="cart-item-details">
+                    <div class="cart-item-column">
+                        <h3>xxx</h3>
+                        <p>xxx</p>
+                    </div>
+                    <span>prix €</span>
+                    <div class="cart-item-actions">
+                        <button type="button" class="remove-item-btn">×</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cart-item">
+                <a href="index-2.html">
+                    <img src="{{ asset('/cognitia.png') }}" alt="" style="width: 100px; height: 100px;">
+                </a>
+                <div class="cart-item-details">
+                    <div class="cart-item-column">
+                        <h3>xxx</h3>
+                        <p>xxx</p>
+                    </div>
+                    <span>prix €</span>
+                    <div class="cart-item-actions">
+                        <button type="button" class="remove-item-btn">×</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="cart-item">
+                <a href="index-2.html">
+                    <img src="{{ asset('/cognitia.png') }}" alt="" style="width: 100px; height: 100px;">
+                </a>
+                <div class="cart-item-details">
+                    <div class="cart-item-column">
+                        <h3>xxx</h3>
+                        <p>xxx</p>
+                    </div>
+                    <span>prix €</span>
+                    <div class="cart-item-actions">
+                        <button type="button" class="remove-item-btn">×</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cart-summary">
+           <div class="right-aligned">
+                <a href="#" class="continue-shopping"> continue shopping</a>
+                <a href="#" class="btn btn-info btn-bold px-4 float-right mt-3 mt-lg-0">Checkout</a>
             </div>
         </div>
     </div>
-    <div class="row mt-4 d-flex align-items-center">
-        <div class="col-sm-6 order-md-2 text-right">
-            <a" class="btn btn-primary mb-4 btn-lg pl-5 pr-5">Passer la commande</a>
-        </div>
-        <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
-            <a >
-                <i class="fas fa-arrow-left mr-2"></i> Continuer vos achats</a>
-        </div>
-    </div>
-</div>
-</section>
+
 {% endblock %}
