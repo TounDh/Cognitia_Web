@@ -82,10 +82,10 @@ final class DashboardController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/ajoutInstructeur', name: 'app_ajoutInstructeur')]
+    #[Route('/dashboard/ajoutInstructeur', name: 'app_register_instructeur')]
     public function ajoutInstructeur(): Response
     {
-        return $this->render('dashboard/ajoutInstructeur.html.twig', [
+        return $this->render('registration/instructeur_register.html.twig', [
         ]);
     }
 
@@ -115,6 +115,16 @@ final class DashboardController extends AbstractController
     {
         return $this->render('dashboard/modifQuiz.html.twig', [
         ]);
+    }
+
+
+    
+    #[Route('/dashboard', name:'dashboard')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function dashboard(): Response
+    {
+        // Seuls les utilisateurs avec le rôle ROLE_ADMIN peuvent accéder ici
+        return $this->render('dashboard.html.twig');
     }
 
 }

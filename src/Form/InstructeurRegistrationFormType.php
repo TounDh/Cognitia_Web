@@ -11,9 +11,17 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\FileType; 
+use App\Form\DataTransformer\StringToFileTransformer;
+
+
+
 
 class InstructeurRegistrationFormType extends AbstractType
 {
+    
+
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -41,6 +49,14 @@ class InstructeurRegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
+            ->add('phoneNumber', TextType::class, [
+                'label' => 'Numero Telephone',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer votre Numero Telephone.',
+                    ]),
+                ],
+            ])
             ->add('biographie', TextareaType::class, [
                 'label' => 'Biographie',
                 'constraints' => [
@@ -49,10 +65,8 @@ class InstructeurRegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('photo', TextType::class, [
-                'label' => 'Photo (URL)',
-                'required' => false,
-            ]);
+           ;
+            
     }
 
     public function configureOptions(OptionsResolver $resolver): void

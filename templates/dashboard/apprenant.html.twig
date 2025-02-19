@@ -1,50 +1,55 @@
+{# templates/dashboard/apprenant.html.twig #}
+
 {% extends 'baseDashboard.html.twig' %}
 
-{% block title %}Apprenant Management{% endblock %}
+{% block title %}Liste des Apprenants{% endblock %}
 
 {% block body %}
-<div class="content-page">
-    <div class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="mt-0 header-title">List of Apprenants</h4>
-                            <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Level</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for apprenant in apprenants %}
-                                    <tr>
-                                        <td>{{ apprenant.nom }} {{ apprenant.prenom }}</td>
-                                        <td>{{ apprenant.Level }}</td>
-                                        <td>{{ apprenant.email }}</td>
-                                        <td>{{ apprenant.telephone }}</td>
-                                        <td>
-                                            <a href="{{ path('app_apprenant_show', {'id': apprenant.id}) }}" class="btn btn-info">View</a>
-                                            <a href="{{ path('app_apprenant_edit', {'id': apprenant.id}) }}" class="btn btn-warning">Edit</a>
-                                            <form action="{{ path('app_apprenant_delete', {'id': apprenant.id}) }}" method="POST" style="display:inline;">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ apprenant.id) }}">
-                                                <button type="submit" class="btn btn-danger">Delete</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+    <div class="content-page">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mt-0 header-title">Liste des Apprenants</h4>
+
+                                <table id="datatable" class="table table-bordered dt-responsive nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Prénom</th>
+                                            <th>Email</th>
+                                            <th>Téléphone</th>
+                                            <th>Niveau</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for apprenant in apprenants %}
+                                            <tr>
+                                                <td>{{ apprenant.lastName }}</td>
+                                                <td>{{ apprenant.firstName }}</td>
+                                                <td>{{ apprenant.email }}</td>
+                                                <td>{{ apprenant.phoneNumber }}</td>
+                                                <td>{{ apprenant.level }}</td>
+
+                                                <td>
+                                                    <a href="{{ path('app_apprenant_edit', {'id': apprenant.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                                                    <form action="{{ path('app_apprenant_delete', {'id': apprenant.id}) }}" method="post" style="display: inline-block;">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ apprenant.id) }}">
+                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet apprenant ?')">Supprimer</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

@@ -233,7 +233,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->photo = $photo;
         return $this;
     }
-
     
 
     

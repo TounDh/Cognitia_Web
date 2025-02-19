@@ -6,6 +6,8 @@ security:
     role_hierarchy:
         ROLE_APPRENANT: ROLE_USER
         ROLE_INSTRUCTEUR: ROLE_USER
+        ROLE_ADMIN: ROLE_USER
+
 
     
     providers:
@@ -38,9 +40,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-         - { path: ^/admin, roles: ROLE_ADMIN }
+         - { path: ^/dashboard, roles: ROLE_ADMIN }
          - { path: ^/apprenant, roles: ROLE_APPRENANT }
          - { path: ^/instructeur, roles: ROLE_INSTRUCTEUR }
+
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
