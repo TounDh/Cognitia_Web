@@ -14,13 +14,17 @@ class QuestionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $quiz = $options['quiz']; // Récupération du quiz passé en option
+
         $builder
             ->add('contenu',TextType::class, [
                 'required' => false
             ])
             ->add('quiz', EntityType::class, [
                 'class' => Quiz::class,
+                'choices' => [$quiz], // On affiche uniquement le quiz associé
                 'choice_label' => 'titre',
+                'disabled' => true, // Empêche la modification
             ])
         ;
     }
@@ -29,6 +33,7 @@ class QuestionType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Question::class,
+            'quiz' => null, // Option obligatoire pour passer le quiz spécifique
         ]);
     }
 }

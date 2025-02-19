@@ -60,7 +60,10 @@ final class QuestionController extends AbstractController
         $question = new Question();
         $question->setQuiz($quiz); // Assurez-vous que la relation est correctement définie dans votre entité Question
 
-        $form = $this->createForm(QuestionType::class, $question);
+        $form = $this->createForm(QuestionType::class, $question, [
+            'quiz' => $quiz, // Passage du quiz pour filtrer le champ
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -117,7 +120,10 @@ final class QuestionController extends AbstractController
             throw $this->createNotFoundException('Le quiz associé à cette question n\'existe pas.');
         }
 
-        $form = $this->createForm(QuestionType::class, $question);
+        $form = $this->createForm(QuestionType::class, $question, [
+        'quiz' => $quiz, // Passage du quiz pour filtrer le champ
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -186,7 +192,10 @@ final class QuestionController extends AbstractController
         $question = new Question();
         $question->setQuiz($quiz); // Assurez-vous que la relation est correctement définie dans votre entité Question
 
-        $form = $this->createForm(QuestionType::class, $question);
+        $form = $this->createForm(QuestionType::class, $question, [
+            'quiz' => $quiz, // Passage du quiz pour filtrer le champ
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -243,7 +252,10 @@ final class QuestionController extends AbstractController
             throw $this->createNotFoundException('Le quiz associé à cette question n\'existe pas.');
         }
 
-        $form = $this->createForm(QuestionType::class, $question);
+        $form = $this->createForm(QuestionType::class, $question, [
+            'quiz' => $quiz, // Passage du quiz pour filtrer le champ
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

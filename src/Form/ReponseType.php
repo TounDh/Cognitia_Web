@@ -14,6 +14,8 @@ class ReponseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $question = $options['question']; // Récupération du question passé en option
+
         $builder
             ->add('contenu',TextType::class, [
                 'required' => false
@@ -21,7 +23,9 @@ class ReponseType extends AbstractType
             ->add('estCorrecte')
             ->add('question', EntityType::class, [
                 'class' => Question::class,
+                'choices' => [$question], // On affiche uniquement le question associé
                 'choice_label' => 'contenu',
+                'disabled' => true, // Empêche la modification
             ])
         ;
     }
@@ -30,6 +34,7 @@ class ReponseType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Reponse::class,
+            'question' => null, // Option obligatoire pour passer le question spécifique
         ]);
     }
 }

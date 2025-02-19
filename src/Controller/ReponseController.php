@@ -57,7 +57,10 @@ final class ReponseController extends AbstractController
         $reponse = new Reponse();
         $reponse->setQuestion($question); // Assurez-vous que la relation est correctement définie dans votre entité Reponse
 
-        $form = $this->createForm(ReponseType::class, $reponse);
+        $form = $this->createForm(ReponseType::class, $reponse, [
+            'question' => $question, // Passage du question pour filtrer le champ
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -105,14 +108,17 @@ final class ReponseController extends AbstractController
             throw $this->createNotFoundException('La reponse spécifiée n\'existe pas.');
         }
 
-        // Récupérer le question associé à la question
+        // Récupérer le question associé à la reponse
         $question = $reponse->getQuestion();
 
         if (!$question) {
             throw $this->createNotFoundException('Le question associé à cette question n\'existe pas.');
         }
 
-        $form = $this->createForm(ReponseType::class, $reponse);
+        $form = $this->createForm(ReponseType::class, $reponse, [
+            'question' => $question, // Passage du question pour filtrer le champ
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -139,5 +145,131 @@ final class ReponseController extends AbstractController
         }
 
         return $this->redirectToRoute('app_reponse_index', ['question_id' => $questionId], Response::HTTP_SEE_OTHER);
+    }
+
+    /** Fonctionnalité pour l'admin (dashboard) */
+
+    #[Route('/dashboard/{question_id<\d+>}', name: 'dashboard_reponse_index', methods: ['GET'])]
+    public function dashboardindex(int $question_id, ReponseRepository $reponseRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer le question à partir de l'ID passé
+        $question = $entityManager->getRepository(Question::class)->find($question_id);
+        
+        // Vérifier si le question existe
+        if (!$question) {
+            throw $this->createNotFoundException('Question non trouvé');
+        }
+
+        // Récupérer toutes les reponses associées au question
+        $reponses = $reponseRepository->findBy(['question' => $question]);
+
+        return $this->render('dashboard/reponse/reponse.html.twig', [
+            'reponses' => $reponses,
+            'question' => $question, // Passer l'objet question à la vue
+        ]);
+    }
+
+    #[Route('/dashboard/{question_id}/new', name: 'dashboard_reponse_new', methods: ['GET', 'POST'])]
+    public function dashboardnew(int $question_id, Request $request, EntityManagerInterface $entityManager, QuestionRepository $questionRepository, ReponseRepository $reponseRepository): Response
+    {
+        // Récupérer le quiz par son ID
+        $question = $questionRepository->find($question_id);
+
+        if (!$question) {
+            throw $this->createNotFoundException('Le question spécifié n\'existe pas.');
+        }
+
+        // Créer une nouvelle reponse
+        $reponse = new Reponse();
+        $reponse->setQuestion($question); // Assurez-vous que la relation est correctement définie dans votre entité Reponse
+
+        $form = $this->createForm(ReponseType::class, $reponse, [
+            'question' => $question, // Passage du question pour filtrer le champ
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($reponse);
+            $entityManager->flush();
+
+            // Rediriger vers la page de liste des reponses pour ce question
+            return $this->redirectToRoute('dashboard_reponse_index', ['question_id' => $question->getId()]);
+        }
+
+        return $this->render('dashboard/reponse/ajoutReponse.html.twig', [
+            'form' => $form->createView(),
+            'question' => $question, // Passer le question à la vue
+        ]);
+    }
+
+    #[Route('/dashboard/{question_id<\d+>}/reponse/{id<\d+>}', name: 'dashboard_reponse_show', methods: ['GET'])]
+    public function dashboardshow(int $question_id, Reponse $reponse): Response
+    {
+        // Utiliser l'injection de l'EntityManager
+        $question = $this->entityManager->getRepository(Question::class)->find($question_id);
+
+        if (!$question) {
+            throw $this->createNotFoundException('Question non trouvé');
+        }
+
+        // Vérifier que la reponse appartient au question
+        if ($reponse->getQuestion()->getId() !== $question_id) {
+            throw $this->createNotFoundException('Reponse non trouvée pour ce question');
+        }
+
+        return $this->render('dashboard/reponse/showReponse.html.twig', [
+            'reponse' => $reponse,
+            'question' => $question,
+        ]);
+    }
+
+    #[Route('/dashboard/{id}/edit', name: 'dashboard_reponse_edit', methods: ['GET', 'POST'])]
+    public function dashboardedit(int $id, Request $request, ReponseRepository $reponseRepository, EntityManagerInterface $entityManager, QuestionRepository $questionRepository): Response
+    {
+        // Récupérer la reponse à éditer
+        $reponse = $reponseRepository->find($id);
+
+        if (!$reponse) {
+            throw $this->createNotFoundException('La reponse spécifiée n\'existe pas.');
+        }
+
+        // Récupérer le question associé à la reponse
+        $question = $reponse->getQuestion();
+
+        if (!$question) {
+            throw $this->createNotFoundException('Le question associé à cette question n\'existe pas.');
+        }
+
+        $form = $this->createForm(ReponseType::class, $reponse, [
+            'question' => $question, // Passage du question pour filtrer le champ
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('dashboard_reponse_index', ['question_id' => $question->getId()]);
+        }
+
+        return $this->render('dashboard/reponse/modifReponse.html.twig', [
+            'form' => $form->createView(),
+            'reponse' => $reponse,
+            'question' => $question, // Passer le question à la vue
+        ]);
+    }
+
+    #[Route('/dashboard/{id}', name: 'dashboard_reponse_delete', methods: ['POST'])]
+    public function dashboarddelete(Request $request, Reponse $reponse, EntityManagerInterface $entityManager): Response
+    {
+        $questionId = $reponse->getQuestion()->getId();  // Récupérer l'ID du question associé à la reponse
+
+        if ($this->isCsrfTokenValid('delete'.$reponse->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($reponse);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('dashboard_reponse_index', ['question_id' => $questionId], Response::HTTP_SEE_OTHER);
     }
 }

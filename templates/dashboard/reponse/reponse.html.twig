@@ -1,6 +1,6 @@
 {% extends 'baseDashboard.html.twig' %}
 
-{% block title %}Questions Management!{% endblock %}
+{% block title %}Reponses Management!{% endblock %}
 
 {% block body %}
 
@@ -18,7 +18,7 @@
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h4 class="mt-0 header-title">Liste Questions</h4>
+                                        <h4 class="mt-0 header-title">Liste Reponses</h4>
 
                                         <div id="datatable_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
                                         <div class="row">
@@ -48,32 +48,33 @@
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Contenu</th>
-                                                <th>Quiz</th>
+                                                <th>Question</th>
+                                                <th>Correcte</th>
                                                 <th>Actions</th>
                                             </tr>
                                             </thead>
     
     
                                             <tbody>
-                                            {% for question in questions %}
+                                            {% for reponse in reponses %}
                                                 <tr>
-                                                    <td>{{ question.id }}</td>
-                                                    <td>{{ question.contenu }}</td>
-                                                    <td>{{ question.quiz.titre }}</td>
+                                                    <td>{{ reponse.id }}</td>
+                                                    <td>{{ reponse.contenu }}</td>
+                                                    <td>{{ reponse.question }}</td>
+                                                    <td>{{ reponse.estCorrecte ? 'Oui' : 'Non' }}</td>
                                                     <td>
-                                                        <a href="{{ path('dashboard_question_show', {'quiz_id': quiz.id, 'id': question.id}) }}" class="btn btn-info btn-sm">Voir</a>
-                                                        <a href="{{ path('dashboard_question_edit', {'id': question.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
-                                                        <a href="{{ path('dashboard_reponse_index', {'question_id': question.id}) }}" class="btn btn-success btn-sm">Liste Reponses</a>
-                                                        <td>{{ include('dashboard/question/deleteQuestion.html.twig') }}</td>
+                                                        <a href="{{ path('dashboard_reponse_show', {'question_id': question.id, 'id': reponse.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                                                        <a href="{{ path('dashboard_reponse_edit', {'id': reponse.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                                                        <td>{{ include('dashboard/reponse/deleteReponse.html.twig') }}</td>
                                                     </td>
                                                 </tr>
                                             {% else %}
                                                 <tr>
-                                                    <td colspan="3" class="text-center">Aucune question disponible</td>
+                                                    <td colspan="5" class="text-center">Aucune réponse disponible</td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>
-                                        <a href="{{ path('dashboard_question_new', {'quiz_id': quiz.id}) }}" class="btn btn-primary mb-3">Ajouter une nouvelle question</a>
+                                        <a href="{{ path('dashboard_reponse_new', {'question_id': question.id}) }}" class="btn btn-primary">Ajouter une nouvelle réponse</a>
                                         </table>
                                         <a href="{{ path('dashboard_quiz') }}" class="btn btn-primary mt-3">Retour à la liste Quiz</a>
                                     </div>

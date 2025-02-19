@@ -1,0 +1,60 @@
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %}Reponses Management!{% endblock %}
+
+{% block body %}
+
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
+
+<div class="content-page">
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="header-title">Modifier Reponse</h4>
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                {{ form_start(form) }}
+                                                <div class="mb-3">
+                                                    {{ form_label(form.contenu, 'Contenu de la Réponse') }}
+                                                    {{ form_widget(form.contenu, {'attr': {'class': 'form-control'}}) }}
+                                                    {{form_errors(form.contenu)}}
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    {{ form_label(form.question, 'Question Associée') }}
+                                                    {{ form_widget(form.question, {'attr': {'class': 'form-control'}}) }}
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    {{ form_label(form.estCorrecte, 'Est Correcte') }}
+                                                    {{ form_widget(form.estCorrecte, {'attr': {'class': 'form-check-input'}}) }}
+                                                </div>
+
+                                                <button type="submit" class="btn btn-success">Modifier</button>
+                                                {{ form_end(form) }}
+                                            <a href="{{ path('dashboard_reponse_index', {'question_id': question.id}) }}" class="btn btn-primary mt-3">Retour à la liste Reponse</a>
+                                            </div> <!-- end col -->
+                                        </div>
+                                        <!-- end row-->
+
+                                    </div> <!-- end card-body -->
+                                </div> <!-- end card -->
+                            </div><!-- end col -->
+                        </div>
+                        <!-- end row -->
+                    </div> 
+                    <!-- end Content-->
+                </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -10,6 +10,7 @@
         <div class="mb-3">
             {{ form_label(form.contenu, 'Contenu de la Question') }}
             {{ form_widget(form.contenu, {'attr': {'class': 'form-control'}}) }}
+            {{form_errors(form.contenu)}}
         </div>
         <div class="mb-3">
             {{ form_label(form.quiz, 'Quiz associé') }}

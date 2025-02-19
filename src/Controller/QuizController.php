@@ -22,8 +22,19 @@ final class QuizController extends AbstractController
     #[Route(name: 'app_quiz_index', methods: ['GET'])]
     public function index(QuizRepository $quizRepository): Response
     { 
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+        $roles = $user->getRoles(); // Récupérer les rôles de l'utilisateur
+    
+        if (in_array('ROLE_INSTRUCTEUR', $roles)) {
+            // Si c'est un instructeur, afficher seulement ses quiz
+            $quizzes = $quizRepository->findBy(['instructeur' => $user]);
+        } else {
+            // Sinon (admin ou apprenant), afficher tous les quiz
+            $quizzes = $quizRepository->findAll();
+        }
+    
         return $this->render('quiz/index.html.twig', [
-            'quizzes' => $quizRepository->findAll(),
+            'quizzes' => $quizzes,
         ]);
     }
 
@@ -156,7 +167,6 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/quiz/{id}/stats', name: 'app_quiz_stats')]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function stats(Quiz $quiz, EntityManagerInterface $em): Response {
 
         if (!$this->isGranted('ROLE_INSTRUCTEUR') && !$this->isGranted('ROLE_ADMIN')) {

@@ -20,10 +20,12 @@
         <div class="mb-3">
             {{ form_label(form.cours, 'Cours associé') }}
             {{ form_widget(form.cours, {'attr': {'class': 'form-control'}}) }}
+            {{form_errors(form.cours)}}
         </div>
         <div class="mb-3">
             {{ form_label(form.instructeur, 'Instructeur associé') }}
             {{ form_widget(form.instructeur, {'attr': {'class': 'form-control'}}) }}
+            {{form_errors(form.instructeur)}}
         </div>
         <button type="submit" class="btn btn-success">Enregistrer</button>
         {{ form_end(form) }}
