@@ -3,23 +3,6 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-<!-- START SECTION TOP -->
-<section class="section-top">
-    <div class="container">
-        <div class="col-lg-10 offset-lg-1 text-center">
-            <div class="section-top-title wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0">
-                <h1>Register Page</h1>
-                <ul>
-                    <li><a href="{{ path('app_home') }}">Home</a></li>
-                    <li> / Register</li>
-                </ul>
-            </div><!-- //.HERO-TEXT -->
-        </div><!--- END COL -->
-    </div><!--- END CONTAINER -->
-</section>    
-<!-- END SECTION TOP -->
-
-<!-- START LOGIN AND REGISTER -->
 <section class="login_register section-padding">
     <div class="container">
         <div class="row">                
@@ -28,11 +11,16 @@
                     <h4 class="login_register_title">Create a new account:</h4>
 
                     <!-- Flash Messages -->
-                    {% for flash_error in app.flashes('verify_email_error') %}
+                    {% for flash_error in app.flashes('error') %}
                         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
                     {% endfor %}
-                    
+
                     {{ form_start(registrationForm) }}
+                    <div class="form-group">
+                        <label for="inputRole">Select Your Role </label>
+                        {{ form_row(registrationForm.role) }}  {# Corrected from 'role' to 'roles' #}
+                    </div>
+
                     <div class="form-group">
                         <label for="inputEmail">Email Address</label>
                         {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'id': 'inputEmail', 'autocomplete': 'email', 'required': 'required'}}) }}
@@ -40,7 +28,12 @@
 
                     <div class="form-group">
                         <label for="inputPassword">Password</label>
-                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'id': 'inputPassword', 'autocomplete': 'current-password', 'required': 'required'}}) }}
+                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'id': 'inputPassword', 'autocomplete': 'new-password', 'required': 'required'}}) }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputConfirmPassword">Confirm Password</label>
+                        {{ form_widget(registrationForm.confirmPassword, {'attr': {'class': 'form-control', 'id': 'inputConfirmPassword', 'autocomplete': 'new-password', 'required': 'required'}}) }}
                     </div>
 
                     <div class="form-check d-flex justify-content-center mb-4">
@@ -59,5 +52,4 @@
         </div><!--- END ROW -->
     </div><!--- END CONTAINER -->
 </section>
-<!-- END LOGIN AND REGISTER -->
 {% endblock %}

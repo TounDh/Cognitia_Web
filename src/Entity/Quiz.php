@@ -40,11 +40,9 @@ class Quiz
     #[Assert\NotBlank(message: "Le quiz doit avoir un instructeur")]
     private ?User $instructeur = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Apprenant")
-     * @ORM\JoinColumn(name="apprenant_id", referencedColumnName="id", nullable=false)
-     */
-    private $apprenant;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $apprenant = null;
 
     public function __construct()
     {
@@ -68,17 +66,8 @@ class Quiz
     public function setCours(?Cours $cours): self { $this->cours = $cours; return $this; }
     public function getInstructeur(): ?User { return $this->instructeur; }
     public function setInstructeur(?User $instructeur): self { $this->instructeur = $instructeur; return $this; }
-    public function getApprenant(): ?Apprenant
-    {
-        return $this->apprenant;
-    }
-
-    public function setApprenant(?Apprenant $apprenant): self
-    {
-        $this->apprenant = $apprenant;
-
-        return $this;
-    }
+    public function getApprenant(): ?User { return $this->apprenant; }
+    public function setApprenant(?User $apprenant): self { $this->apprenant = $apprenant; return $this; }
     public function __toString(): string { return $this->titre; }
 }
 

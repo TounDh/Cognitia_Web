@@ -1,0 +1,134 @@
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %}Questions Management!{% endblock %}
+
+{% block body %}
+
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
+
+
+                <div class="content-page">
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="mt-0 header-title">Liste Questions</h4>
+
+                                        <div id="datatable_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                                        <div class="row">
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="dataTables_length" id="datatable_length">
+                                                <label class="form-label">Show 
+                                                    <select name="datatable_length" aria-controls="datatable" class="form-select form-select-sm">
+                                                        <option value="10">10</option>
+                                                        <option value="25">25</option>
+                                                        <option value="50">50</option>
+                                                        <option value="100">100</option>
+                                                    </select> entries
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-6">
+                                            <div id="datatable_filter" class="dataTables_filter">
+                                                <label>Search:
+                                                    <input type="search" class="form-control form-control-sm" placeholder="" aria-controls="datatable">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                        <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                            <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Contenu</th>
+                                                <th>Quiz</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+    
+    
+                                            <tbody>
+                                            {% for question in questions %}
+                                                <tr>
+                                                    <td>{{ question.id }}</td>
+                                                    <td>{{ question.contenu }}</td>
+                                                    <td>{{ question.quiz.titre }}</td>
+                                                    <td>
+                                                        <a href="{{ path('dashboard_question_show', {'quiz_id': quiz.id, 'id': question.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                                                        <a href="{{ path('dashboard_question_edit', {'id': question.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                                                        <a href="{{ path('app_reponse_index', {'question_id': question.id}) }}" class="btn btn-success btn-sm">Liste Reponses</a>
+                                                        <td>{{ include('dashboard/question/deleteQuestion.html.twig') }}</td>
+                                                    </td>
+                                                </tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="3" class="text-center">Aucune question disponible</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        <a href="{{ path('dashboard_question_new', {'quiz_id': quiz.id}) }}" class="btn btn-primary mb-3">Ajouter une nouvelle question</a>
+                                        </table>
+                                        <a href="{{ path('dashboard_quiz') }}" class="btn btn-primary mt-3">Retour à la liste Quiz</a>
+                                    </div>
+
+
+
+
+                                    <div class="row">
+                                    
+
+                                    <div class="col-sm-12 col-md-5">
+                                        <div class="dataTables_info" id="datatable_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-7">
+                                        <div class="dataTables_paginate paging_simple_numbers" id="datatable_paginate">
+                                            <ul class="pagination">
+                                                <li class="paginate_button page-item previous disabled" id="datatable_previous">
+                                                    <a href="#" aria-controls="datatable" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                                </li>
+                                                <li class="paginate_button page-item active">
+                                                    <a href="#" aria-controls="datatable" data-dt-idx="1" tabindex="0" class="page-link">1</a>
+                                                </li>
+                                                <li class="paginate_button page-item ">
+                                                    <a href="#" aria-controls="datatable" data-dt-idx="2" tabindex="0" class="page-link">2</a>
+                                                </li>
+                                                <li class="paginate_button page-item ">
+                                                    <a href="#" aria-controls="datatable" data-dt-idx="3" tabindex="0" class="page-link">3</a>
+                                                </li>
+                                                <li class="paginate_button page-item ">
+                                                    <a href="#" aria-controls="datatable" data-dt-idx="4" tabindex="0" class="page-link">4</a>
+                                                </li>
+                                                <li class="paginate_button page-item ">
+                                                    <a href="#" aria-controls="datatable" data-dt-idx="5" tabindex="0" class="page-link">5</a>
+                                                </li>
+                                                <li class="paginate_button page-item ">
+                                                    <a href="#" aria-controls="datatable" data-dt-idx="6" tabindex="0" class="page-link">6</a>
+                                                </li>
+                                                <li class="paginate_button page-item next" id="datatable_next">
+                                                    <a href="#" aria-controls="datatable" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                </div>
+                               
+                            </div>
+                        </div> <!-- end row -->
+                    </div>
+                </div>
+            </div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %}Quiz Management!{% endblock %}
+
+{% block body %}
+
+
+<div class="content-page">
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="header-title">Statistiques pour Quiz "{{ quiz.titre }}"</h4>
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="card p-4 shadow">
+                                                    <p><strong>Moyenne des scores :</strong> {{ moyenne }}%</p>
+                                                    <p><strong>Meilleur score :</strong> {{ meilleur }}%</p>
+                                                    <p><strong>Nombre de tentatives :</strong> {{ tentatives }}</p>
+                                                </div>
+                                                <a href="{{ path('dashboard_quiz') }}" class="btn btn-primary mt-3">Retour à la liste</a>
+                                            </div> <!-- end col -->
+
+                                            
+                                        </div>
+                                        <!-- end row-->
+
+                                    </div> <!-- end card-body -->
+                                </div> <!-- end card -->
+                            </div><!-- end col -->
+                        </div>
+                        <!-- end row -->
+                    </div> 
+                    <!-- end Content-->
+                </div>
+</div>
+
+
+{% endblock %}
