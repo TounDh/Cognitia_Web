@@ -3,6 +3,9 @@
 {% block title %}Détails du Quiz{% endblock %}
 
 {% block body %}
+
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
     <div class="container mt-5">
         <h1 class="text-center mb-4">Détails du Quiz</h1>
 
@@ -42,4 +45,7 @@
                 </tbody>
             </table>
     </div>
+
+{% endif %}
+
 {% endblock %}

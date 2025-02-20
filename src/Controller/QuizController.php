@@ -39,12 +39,9 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/new', name: 'app_quiz_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        if (!$this->isGranted('ROLE_INSTRUCTEUR') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException("Accès refusé.");
-        }
-    
         $quiz = new Quiz();
         $form = $this->createForm(QuizType::class, $quiz);
         $form->handleRequest($request);
@@ -63,24 +60,18 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_quiz_show', methods: ['GET'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function show(Quiz $quiz): Response
     {
-        if (!$this->isGranted('ROLE_INSTRUCTEUR') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException("Accès refusé.");
-        }
-    
         return $this->render('quiz/show.html.twig', [
             'quiz' => $quiz,
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_quiz_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function edit(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
-        if (!$this->isGranted('ROLE_INSTRUCTEUR') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException("Accès refusé.");
-        }
-    
         $form = $this->createForm(QuizType::class, $quiz);
         $form->handleRequest($request);
 
@@ -97,12 +88,9 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_quiz_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function delete(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
-        if (!$this->isGranted('ROLE_INSTRUCTEUR') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException("Accès refusé.");
-        }
-    
         if ($this->isCsrfTokenValid('delete'.$quiz->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($quiz);
             $entityManager->flush();
@@ -167,12 +155,9 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/quiz/{id}/stats', name: 'app_quiz_stats')]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function stats(Quiz $quiz, EntityManagerInterface $em): Response {
 
-        if (!$this->isGranted('ROLE_INSTRUCTEUR') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException("Accès refusé.");
-        }
-    
         // Convertir la Collection en tableau
         $resultats = $quiz->getResultats()->toArray();
 
@@ -196,7 +181,7 @@ final class QuizController extends AbstractController
     /** Fonctionnalité pour l'admin (dashboard) */
 
     #[Route('/dashboard/quiz', name: 'dashboard_quiz')]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardQuiz(QuizRepository $quizRepository): Response
     {
         return $this->render('dashboard/quiz/quiz.html.twig', [
@@ -205,7 +190,7 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/dashboard/newQuiz', name: 'dashboard_quiz_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardnew(Request $request, EntityManagerInterface $entityManager): Response
     {
         $quiz = new Quiz();
@@ -226,7 +211,7 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/dashboard/{id}/edit', name: 'dashboard_quiz_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardedit(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(QuizType::class, $quiz);
@@ -245,7 +230,7 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/dashboard/{id}', name: 'dashboard_quiz_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboarddelete(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$quiz->getId(), $request->getPayload()->getString('_token'))) {
@@ -257,7 +242,7 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/dashboard/{id}', name: 'dashboard_quiz_show', methods: ['GET'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardshow(Quiz $quiz): Response
     {
         return $this->render('dashboard/quiz/showQuiz.html.twig', [
@@ -266,7 +251,7 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/dashboard/quiz/{id}/stats', name: 'dashboard_quiz_stats')]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardstats(Quiz $quiz, EntityManagerInterface $em): Response {
          // Convertir la Collection en tableau
         $resultats = $quiz->getResultats()->toArray();

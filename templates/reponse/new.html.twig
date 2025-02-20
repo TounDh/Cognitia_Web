@@ -3,6 +3,8 @@
 {% block title %}Ajouter une Réponse{% endblock %}
 
 {% block body %}
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
 <div class="container mt-5">
     <h1 class="text-center mb-4">Ajouter une Réponse pour la Question : "{{ question.contenu }}"</h1>
 
@@ -32,4 +34,7 @@
         <a href="{{ path('app_reponse_index', {'question_id': question.id}) }}" class="btn btn-primary mt-3">Retour à la liste</a>
     </div>
 </div>
+
+{% endif %}
+
 {% endblock %}

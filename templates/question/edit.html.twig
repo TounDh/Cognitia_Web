@@ -3,6 +3,8 @@
 {% block title %}Modifier une Question{% endblock %}
 
 {% block body %}
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
 <div class="container mt-5">
     <h1 class="text-center mb-4">Modifier une Question</h1>
     <div class="card p-4 shadow">
@@ -14,4 +16,7 @@
         <a href="{{ path('app_question_index', {'quiz_id': quiz.id}) }}" class="btn btn-primary btn-sm">Retour à la liste</a>
     </div>
 </div>
+
+{% endif %}
+
 {% endblock %}

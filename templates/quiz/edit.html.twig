@@ -3,6 +3,9 @@
 {% block title %}Modifier un Quiz{% endblock %}
 
 {% block body %}
+
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
 <div class="container mt-5">
     <h1 class="text-center">Modifier un Quiz</h1>
     <div class="card p-4 shadow">
@@ -16,4 +19,7 @@
         </div>
     </div>
 </div>
+
+{% endif %}
+
 {% endblock %}

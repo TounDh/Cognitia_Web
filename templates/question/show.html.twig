@@ -3,6 +3,8 @@
 {% block title %}Détails de la Question{% endblock %}
 
 {% block body %}
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
 <div class="container mt-5">
     <h2 class="text-center">Détails de la Question</h2>
 
@@ -40,4 +42,7 @@
                 </tbody>
             </table>
 </div>
+
+{% endif %}
+
 {% endblock %}

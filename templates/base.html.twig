@@ -91,7 +91,7 @@
 							<li><a class="nav-link">Instructeur <span class="ti-angle-down"></span></a>
 								<ul>
 									<li><a class="nav-link" href="{{ path('app_instructeur') }}">Instructeur</a></li>
-									{% if is_granted('ROLE_APPRENANT')  or is_granted('ROLE_INSTRUCTEUR') %}
+									{% if is_granted('ROLE_APPRENANT')  or is_granted('ROLE_INSTRUCTEUR') or is_granted('ROLE_ADMIN') %}
 									<li><a href="{{path('app_quiz_index')}}">Liste Quiz</a></li>
 									{% endif %}
 								</ul>

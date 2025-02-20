@@ -3,6 +3,8 @@
 {% block title %}Statistiques - {{ quiz.titre }}{% endblock %}
 
 {% block body %}
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
 <div class="container mt-5">
     <h2 class="text-center">Statistiques pour Quiz "{{ quiz.titre }}"</h2>
     
@@ -14,4 +16,7 @@
 
     <a href="{{ path('app_quiz_index') }}" class="btn btn-primary mt-3">Retour à la liste des quiz</a>
 </div>
+
+{% endif %}
+
 {% endblock %}

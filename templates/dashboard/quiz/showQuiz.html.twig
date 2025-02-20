@@ -4,6 +4,8 @@
 
 {% block body %}
 
+{% if is_granted('ROLE_ADMIN') %}
+
 
 <div class="content-page">
                 <div class="content">
@@ -60,5 +62,6 @@
                 </div>
 </div>
 
+{% endif %}
 
 {% endblock %}

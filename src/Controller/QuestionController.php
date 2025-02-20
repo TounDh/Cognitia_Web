@@ -15,8 +15,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/question')]
-#[IsGranted('ROLE_INSTRUCTEUR')]
-
 final class QuestionController extends AbstractController
 {
     private $entityManager;
@@ -47,6 +45,7 @@ final class QuestionController extends AbstractController
     }
 
     #[Route('/{quiz_id}/new', name: 'app_question_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function new(int $quiz_id, Request $request, EntityManagerInterface $entityManager, QuizRepository $quizRepository, QuestionRepository $questionRepository): Response
     {
         // Récupérer le quiz par son ID
@@ -82,6 +81,7 @@ final class QuestionController extends AbstractController
 
 
     #[Route('/{quiz_id<\d+>}/question/{id<\d+>}', name: 'app_question_show', methods: ['GET'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function show(int $quiz_id, Question $question): Response
     {
         // Utiliser l'injection de l'EntityManager
@@ -104,6 +104,7 @@ final class QuestionController extends AbstractController
 
 
     #[Route('/{id}/edit', name: 'app_question_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function edit(int $id, Request $request, QuestionRepository $questionRepository, EntityManagerInterface $entityManager, QuizRepository $quizRepository): Response
     {
         // Récupérer la question à éditer
@@ -141,6 +142,7 @@ final class QuestionController extends AbstractController
 
 
     #[Route('/{id}/delete', name: 'app_question_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function delete(Request $request, Question $question, EntityManagerInterface $entityManager): Response
     {
         $quizId = $question->getQuiz()->getId();  // Récupérer l'ID du quiz associé à la question
@@ -157,7 +159,7 @@ final class QuestionController extends AbstractController
     /** Fonctionnalité pour l'admin (dashboard) */
 
     #[Route('/dashboard/{quiz_id<\d+>}', name: 'dashboard_question_index', methods: ['GET'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardindex(int $quiz_id, QuestionRepository $questionRepository, EntityManagerInterface $entityManager): Response
     {
         // Récupérer le quiz à partir de l'ID passé
@@ -178,7 +180,7 @@ final class QuestionController extends AbstractController
     }
 
     #[Route('/dashboard/{quiz_id}/new', name: 'dashboard_question_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardnew(int $quiz_id, Request $request, EntityManagerInterface $entityManager, QuizRepository $quizRepository, QuestionRepository $questionRepository): Response
     {
         // Récupérer le quiz par son ID
@@ -213,7 +215,7 @@ final class QuestionController extends AbstractController
     }
 
     #[Route('/dashboard/{quiz_id<\d+>}/question/{id<\d+>}', name: 'dashboard_question_show', methods: ['GET'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardshow(int $quiz_id, Question $question): Response
     {
         // Utiliser l'injection de l'EntityManager
@@ -235,7 +237,7 @@ final class QuestionController extends AbstractController
     }
 
     #[Route('/dashboard/{id}/edit', name: 'dashboard_question_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardedit(int $id, Request $request, QuestionRepository $questionRepository, EntityManagerInterface $entityManager, QuizRepository $quizRepository): Response
     {
         // Récupérer la question à éditer
@@ -272,7 +274,7 @@ final class QuestionController extends AbstractController
     }
 
     #[Route('/dashboard/{id}/delete', name: 'dashboard_question_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboarddelete(Request $request, Question $question, EntityManagerInterface $entityManager): Response
     {
         $quizId = $question->getQuiz()->getId();  // Récupérer l'ID du quiz associé à la question

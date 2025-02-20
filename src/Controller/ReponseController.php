@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/reponse')]
 final class ReponseController extends AbstractController
@@ -24,6 +25,7 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/{question_id<\d+>}', name: 'app_reponse_index', methods: ['GET'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function index(int $question_id, ReponseRepository $reponseRepository, EntityManagerInterface $entityManager): Response
     {
         // Récupérer le question à partir de l'ID passé
@@ -44,6 +46,7 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/{question_id}/new', name: 'app_reponse_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function new(int $question_id, Request $request, EntityManagerInterface $entityManager, QuestionRepository $questionRepository, ReponseRepository $reponseRepository): Response
     {
         // Récupérer le quiz par son ID
@@ -78,6 +81,7 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/{question_id<\d+>}/reponse/{id<\d+>}', name: 'app_reponse_show', methods: ['GET'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function show(int $question_id, Reponse $reponse): Response
     {
         // Utiliser l'injection de l'EntityManager
@@ -99,6 +103,7 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_reponse_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function edit(int $id, Request $request, ReponseRepository $reponseRepository, EntityManagerInterface $entityManager, QuestionRepository $questionRepository): Response
     {
         // Récupérer la reponse à éditer
@@ -135,6 +140,7 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_reponse_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function delete(Request $request, Reponse $reponse, EntityManagerInterface $entityManager): Response
     {
         $questionId = $reponse->getQuestion()->getId();  // Récupérer l'ID du question associé à la reponse
@@ -150,6 +156,7 @@ final class ReponseController extends AbstractController
     /** Fonctionnalité pour l'admin (dashboard) */
 
     #[Route('/dashboard/{question_id<\d+>}', name: 'dashboard_reponse_index', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardindex(int $question_id, ReponseRepository $reponseRepository, EntityManagerInterface $entityManager): Response
     {
         // Récupérer le question à partir de l'ID passé
@@ -170,6 +177,7 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/dashboard/{question_id}/new', name: 'dashboard_reponse_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardnew(int $question_id, Request $request, EntityManagerInterface $entityManager, QuestionRepository $questionRepository, ReponseRepository $reponseRepository): Response
     {
         // Récupérer le quiz par son ID
@@ -204,6 +212,7 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/dashboard/{question_id<\d+>}/reponse/{id<\d+>}', name: 'dashboard_reponse_show', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardshow(int $question_id, Reponse $reponse): Response
     {
         // Utiliser l'injection de l'EntityManager
@@ -225,6 +234,7 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/dashboard/{id}/edit', name: 'dashboard_reponse_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboardedit(int $id, Request $request, ReponseRepository $reponseRepository, EntityManagerInterface $entityManager, QuestionRepository $questionRepository): Response
     {
         // Récupérer la reponse à éditer
@@ -261,6 +271,7 @@ final class ReponseController extends AbstractController
     }
 
     #[Route('/dashboard/{id}', name: 'dashboard_reponse_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboarddelete(Request $request, Reponse $reponse, EntityManagerInterface $entityManager): Response
     {
         $questionId = $reponse->getQuestion()->getId();  // Récupérer l'ID du question associé à la reponse
