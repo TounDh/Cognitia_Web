@@ -1,0 +1,109 @@
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %}New Course{% endblock %}
+
+{% block body %}
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="mt-0 header-title">Create New Course</h4>
+                                <a href="{{ path('app_coursManage') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Back to List
+                                </a>
+                            </div>
+
+                            {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form_label(form.titre, 'Title', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(form.titre) }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '4'}}) }}
+                                        {{ form_errors(form.description) }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ form_label(form.duree, 'Duration (hours)', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(form.duree, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(form.duree) }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ form_label(form.instructeur, 'Instructor', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(form.instructeur, {'attr': {'class': 'form-select'}}) }}
+                                        {{ form_errors(form.instructeur) }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form_label(form.difficulte, 'Difficulty', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(form.difficulte, {'attr': {'class': 'form-select'}}) }}
+                                        {{ form_errors(form.difficulte) }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ form_label(form.prix, 'Price (TND)', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(form.prix, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(form.prix) }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ form_label(form.datePublication, 'Publication Date', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(form.datePublication, {
+                                            'attr': {
+                                                'class': 'form-control',
+                                                'type': 'date'
+                                            }
+                                        }) }}
+                                        {{ form_errors(form.datePublication) }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ form_label(form.imageFile, 'Course Image', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(form.imageFile) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Create Course
+                                    </button>
+                                </div>
+                            </div>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .form-label {
+        font-weight: 500;
+        margin-bottom: .5rem;
+    }
+    .invalid-feedback {
+        display: block;
+        color: #dc3545;
+    }
+</style>
+{% endblock %} 

@@ -99,10 +99,10 @@ final class CoursController extends AbstractController
     #[Route('/{id}/edit', name: 'app_cours_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Cours $cours, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR');
-        
-        if ($this->getUser() !== $cours->getInstructeur()) {
-            throw new AccessDeniedException('You can only edit your own courses.');
+        // Allow both ADMIN and the course instructor to edit
+        if (!$this->isGranted('ROLE_ADMIN') && 
+            (!$this->isGranted('ROLE_INSTRUCTEUR') || $this->getUser() !== $cours->getInstructeur())) {
+            throw new AccessDeniedException('You do not have permission to edit this course.');
         }
         
         $form = $this->createForm(CoursType::class, $cours);
@@ -123,10 +123,10 @@ final class CoursController extends AbstractController
     #[Route('/{id}', name: 'app_cours_delete', methods: ['POST'])]
     public function delete(Request $request, Cours $cours, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR');
-        
-        if ($this->getUser() !== $cours->getInstructeur()) {
-            throw new AccessDeniedException('You can only delete your own courses.');
+        // Allow both ADMIN and the course instructor to delete
+        if (!$this->isGranted('ROLE_ADMIN') && 
+            (!$this->isGranted('ROLE_INSTRUCTEUR') || $this->getUser() !== $cours->getInstructeur())) {
+            throw new AccessDeniedException('You do not have permission to delete this course.');
         }
 
         if ($this->isCsrfTokenValid('delete'.$cours->getId(), $request->request->get('_token'))) {
@@ -134,6 +134,86 @@ final class CoursController extends AbstractController
             $entityManager->flush();
         }
 
+        // Redirect back to dashboard if coming from there
+        $referer = $request->headers->get('referer');
+        if (strpos($referer, 'dashboard/cours') !== false) {
+            return $this->redirectToRoute('app_coursManage');
+        }
+        
         return $this->redirectToRoute('app_cours_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    // Add this new route for dashboard course creation
+    #[Route('/dashboard/cours/new', name: 'app_cours_dashboard_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function newInDashboard(Request $request, CoursRepository $coursRepository): Response
+    {
+        $cours = new Cours();
+        $form = $this->createForm(CoursType::class, $cours);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $imageFile */
+            $imageFile = $form->get('imageFile')->getData();
+
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = $originalFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('cours_images_directory'),
+                        $newFilename
+                    );
+                    
+                    $cours->setImage($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image');
+                }
+            }
+
+            $coursRepository->save($cours, true);
+            $this->addFlash('success', 'Course created successfully!');
+            return $this->redirectToRoute('app_coursManage');
+        }
+
+        return $this->render('dashboard/cours_new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/dashboard/cours/{id}/edit', name: 'app_cours_dashboard_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function editInDashboard(Request $request, Cours $cours, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(CoursType::class, $cours);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = $originalFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('cours_images_directory'),
+                        $newFilename
+                    );
+                    $cours->setImage($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'An error occurred while uploading the image');
+                }
+            }
+
+            $entityManager->flush();
+            $this->addFlash('success', 'Course updated successfully!');
+            return $this->redirectToRoute('app_coursManage');
+        }
+
+        return $this->render('dashboard/cours_edit.html.twig', [
+            'cour' => $cours,
+            'form' => $form->createView(),
+        ]);
     }
 }

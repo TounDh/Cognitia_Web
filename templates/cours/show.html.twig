@@ -191,7 +191,7 @@
             </div>
 
             <!-- Admin Actions -->
-            {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+            {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur) %}
                 <div class="card shadow-sm mt-4">
                     <div class="card-body">
                         <h5 class="card-title">Admin Actions</h5>
@@ -207,6 +207,8 @@
         </div>
     </div>
 </div>
+
+<a href="{{ path('app_cours_index') }}" class="btn btn-secondary">Back to list</a>
 {% endblock %}
 
 {% block stylesheets %}
