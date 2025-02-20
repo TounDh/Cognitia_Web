@@ -1,0 +1,29 @@
+{% extends 'Quizbase.html.twig' %}
+
+{% block title %}Ajouter une Question{% endblock %}
+
+{% block body %}
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
+<div class="container mt-5">
+    <h1 class="text-center">Ajouter une Question pour le Quiz : "{{ quiz.titre }}"</h1>
+    <div class="card p-4 shadow">
+        {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_label(form.contenu, 'Contenu de la Question') }}
+            {{ form_widget(form.contenu, {'attr': {'class': 'form-control'}}) }}
+            {{form_errors(form.contenu)}}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.quiz, 'Quiz associé') }}
+            {{ form_widget(form.quiz, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+        {{ form_end(form) }}
+    </div>
+    <a href="{{ path('app_question_index', {'quiz_id': quiz.id}) }}" class="btn btn-primary mt-3">Retour à la liste</a>
+</div>
+
+{% endif %}
+
+{% endblock %}

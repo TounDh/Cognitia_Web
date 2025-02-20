@@ -5,8 +5,13 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     cours_images_directory: '%kernel.project_dir%/public/uploads/cours'
+    upload_directory: '%kernel.project_dir%/public/uploads/photos'
 
 services:
+     # Register the form type as a service
+    App\Form\InstructeurRegistrationFormType:
+        arguments:
+            $uploadDirectory: '%upload_directory%'
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

@@ -13,6 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Form\CoursType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/cours')]
 final class CoursController extends AbstractController
@@ -28,9 +31,11 @@ final class CoursController extends AbstractController
 
     // New course route: Add a new course
     #[Route('/new', name: 'app_cours_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, CoursRepository $coursRepository): Response
+    #[IsGranted('ROLE_INSTRUCTEUR')]
+    public function new(Request $request, CoursRepository $coursRepository, EntityManagerInterface $entityManager): Response
     {
         $cours = new Cours();
+        $cours->setInstructeur($this->getUser());
         $form = $this->createForm(CoursType::class, $cours);
         $form->handleRequest($request);
 
@@ -92,28 +97,41 @@ final class CoursController extends AbstractController
 
     // Edit route: Edit an existing course
     #[Route('/{id}/edit', name: 'app_cours_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Cours $cour, CoursRepository $coursRepository): Response
+    public function edit(Request $request, Cours $cours, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(CoursType::class, $cour);
+        $this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR');
+        
+        if ($this->getUser() !== $cours->getInstructeur()) {
+            throw new AccessDeniedException('You can only edit your own courses.');
+        }
+        
+        $form = $this->createForm(CoursType::class, $cours);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $coursRepository->save($cour, true);
+            $entityManager->flush();
             return $this->redirectToRoute('app_cours_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('cours/edit.html.twig', [
-            'cour' => $cour,
+            'cour' => $cours,
             'form' => $form,
         ]);
     }
 
     // Delete route: Delete a course
     #[Route('/{id}', name: 'app_cours_delete', methods: ['POST'])]
-    public function delete(Request $request, Cours $cour, CoursRepository $coursRepository): Response
+    public function delete(Request $request, Cours $cours, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$cour->getId(), $request->get('_token'))) {
-            $coursRepository->remove($cour, true);
+        $this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR');
+        
+        if ($this->getUser() !== $cours->getInstructeur()) {
+            throw new AccessDeniedException('You can only delete your own courses.');
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$cours->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($cours);
+            $entityManager->flush();
         }
 
         return $this->redirectToRoute('app_cours_index', [], Response::HTTP_SEE_OTHER);

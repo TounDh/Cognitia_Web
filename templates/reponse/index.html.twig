@@ -1,0 +1,52 @@
+{% extends 'Quizbase.html.twig' %}
+
+{% block title %} Liste des Réponses{% endblock %}
+
+{% block body %}
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Liste des Réponses pour la Question : "{{ question.contenu }}"</h1>
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{{ path('app_reponse_new', {'question_id': question.id}) }}" class="btn btn-primary">Créer une nouvelle réponse</a>
+    </div>
+
+    <div class="card p-4 shadow">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Contenu</th>
+                    <th>Question</th>
+                    <th>Est Correcte</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for reponse in reponses %}
+                <tr>
+                    <td>{{ reponse.id }}</td>
+                    <td>{{ reponse.contenu }}</td>
+                    <td>{{ reponse.question }}</td>
+                    <td>{{ reponse.estCorrecte ? 'Oui' : 'Non' }}</td>
+                    <td>
+                        <a href="{{ path('app_reponse_show', {'question_id': question.id, 'id': reponse.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                        <a href="{{ path('app_reponse_edit', {'id': reponse.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                        <td>{{ include('reponse/_delete_form.html.twig') }}</td>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Aucune réponse disponible</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ path('app_quiz_index') }}" class="btn btn-secondary mt-3">Retour à la liste Quiz</a>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

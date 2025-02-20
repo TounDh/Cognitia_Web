@@ -3,14 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -78,9 +78,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     
 
+    #[ORM\OneToMany(mappedBy: 'instructeur', targetEntity: Quiz::class)]
+    private Collection $quizzes;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->quizzes = new ArrayCollection();
         $this->roles = ['ROLE_USER']; // Rôle par défaut
        
     }
@@ -155,6 +159,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->firstName;
     }
+
+    public function getQuizzes(): Collection { return $this->quizzes; }
+
 
     public function setFirstName(string $firstName): self
     {
@@ -233,7 +240,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->photo = $photo;
         return $this;
     }
-
     
 
     
