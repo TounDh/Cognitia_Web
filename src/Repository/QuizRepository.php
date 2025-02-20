@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Quiz;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,6 +16,18 @@ class QuizRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Quiz::class);
     }
+
+
+/** afficher seulement les quiz associe a l'instructeur connecte */
+    public function findByInstructeur(User $instructeur): array
+{
+    return $this->createQueryBuilder('q')
+        ->andWhere('q.instructeur = :instructeur')
+        ->setParameter('instructeur', $instructeur)
+        ->getQuery()
+        ->getResult();
+}
+
 
     //    /**
     //     * @return Quiz[] Returns an array of Quiz objects

@@ -1,0 +1,55 @@
+{% extends 'Quizbase.html.twig' %}
+
+{% block title %}{{ quiz.titre }} - Quiz{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="text-center">{{ quiz.titre }}</h2>
+    
+    <p>Temps restant : <span id="timer"></span></p>
+    <form id="quiz-form" method="POST">
+
+    <form method="POST">
+        {% for question in quiz.questions %}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ question.contenu }}</h5>
+                    {% for reponse in question.reponses %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="question_{{ question.id }}[]" value="{{ reponse.id }}" id="reponse_{{ reponse.id }}">
+                            <label class="form-check-label" for="reponse_{{ reponse.id }}">
+                                {{ reponse.contenu }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success">Valider le Quiz</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    let timeLeft = {{ quiz.tempsMax ?? 10 }}; // Temps max en secondes (défaut : 60s)
+    let timerDisplay = document.getElementById('timer');
+
+    function updateTimer() {
+        let minutes = Math.floor(timeLeft / 10);
+        let seconds = timeLeft % 10;
+        timerDisplay.innerText = `${minutes}:${seconds < 5 ? '0' : ''}${seconds}`;
+        
+        if (timeLeft > 0) {
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
+        } else {
+            document.getElementById('quiz-form').submit(); // Soumission auto
+        }
+    }
+
+    window.onload = updateTimer;
+</script>
+
+{% endblock %}

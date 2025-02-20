@@ -1,0 +1,53 @@
+{# templates/dashboard/inst.html.twig #}
+
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %}Liste des Instructeurs{% endblock %}
+
+{% block body %}
+    <div class="content-page">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mt-0 header-title">Liste des Instructeurs</h4>
+
+                                <table id="datatable" class="table table-bordered dt-responsive nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Prénom</th>
+                                            <th>Email</th>
+                                            <th>Téléphone</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for instructeur in instructeurs %}
+                                            <tr>
+                                                <td>{{ instructeur.lastName }}</td>
+                                                <td>{{ instructeur.firstName }}</td>
+                                                <td>{{ instructeur.email }}</td>
+                                                <td>{{ instructeur.phoneNumber }}</td>
+                                                <td>
+                                                    <a href="{{ path('app_instructeur_show', {'id': instructeur.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                                                    <a href="{{ path('app_instructeur_edit', {'id': instructeur.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                                                    <form action="{{ path('app_instructeur_delete', {'id': instructeur.id}) }}" method="post" style="display: inline-block;">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ instructeur.id) }}">
+                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet instructeur ?')">Supprimer</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -6,6 +6,8 @@ use App\Repository\CoursRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: CoursRepository::class)]
 class Cours
@@ -30,9 +32,13 @@ class Cours
     #[ORM\Column(type: "integer")]
     private int $duree; // Durée du cours en minutes
 
-    #[ORM\ManyToOne(targetEntity: Instructeur::class, inversedBy: "cours")]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Instructeur $instructeur = null;
+    #[Assert\NotBlank(message: "Le cours doit être associé à un instructeur")]
+    private ?User $instructeur = null;
+
+    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Quiz::class, cascade: ['persist', 'remove'])]
+    private Collection $quizzes;
 
     #[ORM\OneToMany(mappedBy: "cours", targetEntity: Evaluation::class)]
     private Collection $evaluations;
@@ -41,6 +47,8 @@ class Cours
     {
         $this->evaluations = new ArrayCollection();
         $this->datePublication = new \DateTime(); // Défaut à la date actuelle
+        $this->quizzes = new ArrayCollection();
+
     }
 
     // Getters & Setters
@@ -103,17 +111,12 @@ class Cours
         $this->duree = $duree;
         return $this;
     }
+    
+    public function getInstructeur(): ?User { return $this->instructeur; }
+    public function setInstructeur(?User $instructeur): self { $this->instructeur = $instructeur; return $this; }
 
-    public function getInstructeur(): ?Instructeur
-    {
-        return $this->instructeur;
-    }
+    public function getQuizzes(): Collection { return $this->quizzes; }
 
-    public function setInstructeur(?Instructeur $instructeur): self
-    {
-        $this->instructeur = $instructeur;
-        return $this;
-    }
 
     /**
      * @return Collection<int, Evaluation>

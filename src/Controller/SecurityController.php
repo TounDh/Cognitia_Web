@@ -13,7 +13,13 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
          if ($this->getUser()) {
-             return $this->redirectToRoute('app_admin');
+            if ($this->isGranted('ROLE_ADMIN')) {
+                #return $this->redirectToRoute('app_dashboard');
+                return $this->render('dashboard/index.html.twig', [
+                ]);
+            }
+            
+             return $this->redirectToRoute('app_cours');
          }
 
         // get the login error if there is one
