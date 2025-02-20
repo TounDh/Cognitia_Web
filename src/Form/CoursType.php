@@ -23,9 +23,13 @@ class CoursType extends AbstractType
         $builder
             ->add('titre', TextType::class) // Title as text input
             ->add('description', TextType::class) // Description as a text input (or TextareaType if you prefer a larger text box)
-            ->add('image', FileType::class, [
-                'required' => false, // Make image optional
-                'mapped' => false,  // Don't map this to the Cours entity directly
+            ->add('imageFile', FileType::class, [
+                'label' => 'Course Image',
+                'mapped' => false,
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control'
+                ]
             ])
             ->add('datePublication', DateType::class, [ // Corrected to DateType
                 'widget' => 'single_text', // A single text field for the date

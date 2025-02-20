@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\CoursType;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[Route('/cours')]
 final class CoursController extends AbstractController
@@ -28,18 +30,37 @@ final class CoursController extends AbstractController
     #[Route('/new', name: 'app_cours_new', methods: ['GET', 'POST'])]
     public function new(Request $request, CoursRepository $coursRepository): Response
     {
-        $cour = new Cours();
-        $form = $this->createForm(CoursType::class, $cour);
+        $cours = new Cours();
+        $form = $this->createForm(CoursType::class, $cours);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $coursRepository->save($cour, true);
+            /** @var UploadedFile $imageFile */
+            $imageFile = $form->get('imageFile')->getData();
+
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = $originalFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('cours_images_directory'),
+                        $newFilename
+                    );
+                    
+                    $cours->setImage($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image');
+                }
+            }
+
+            $coursRepository->save($cours, true);
             return $this->redirectToRoute('app_cours_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('cours/new.html.twig', [
-            'cour' => $cour,
-            'form' => $form,
+            'cours' => $cours,
+            'form' => $form->createView(),
         ]);
     }
 

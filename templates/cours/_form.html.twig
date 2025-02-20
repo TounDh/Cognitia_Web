@@ -39,46 +39,51 @@
 {% endblock %}
 
 {% block body %}
-    <div class="form-container">
-        <div class="card">
-            <h2>{{ button_label|default('Save') }} Cours</h2>
-            {{ form_start(form) }}
-            <table class="form-table">
-                <tr>
-                    <td>{{ form_label(form.titre) }}</td>
-                    <td>{{ form_widget(form.titre) }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form_label(form.description) }}</td>
-                    <td>{{ form_widget(form.description) }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form_label(form.image) }}</td>
-                    <td>{{ form_widget(form.image) }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form_label(form.datePublication) }}</td>
-                    <td>{{ form_widget(form.datePublication) }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form_label(form.duree) }}</td>
-                    <td>{{ form_widget(form.duree) }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form_label(form.prix) }}</td>
-                    <td>{{ form_widget(form.prix) }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form_label(form.difficulte) }}</td>
-                    <td>{{ form_widget(form.difficulte) }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form_label(form.instructeur) }}</td>
-                    <td>{{ form_widget(form.instructeur) }}</td>
-                </tr>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-top: 100px;">
+    <div class="card p-4 shadow-lg" style="width: 50rem; border-radius: 15px;">
+        <h2 class="text-center mb-4">{{ button_label|default('Save Course') }}</h2>
+        {{ form_start(form) }}
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <td>{{ form_label(form.titre) }}</td>
+                        <td>{{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.description) }}</td>
+                        <td>{{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.imageFile) }}</td>
+                        <td>{{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.datePublication) }}</td>
+                        <td>{{ form_widget(form.datePublication, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.duree) }}</td>
+                        <td>{{ form_widget(form.duree, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.difficulte) }}</td>
+                        <td>{{ form_widget(form.difficulte, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.prix) }}</td>
+                        <td>{{ form_widget(form.prix, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.instructeur) }}</td>
+                        <td>{{ form_widget(form.instructeur, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                </tbody>
             </table>
-            <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
-            {{ form_end(form) }}
-        </div>
+            <div class="text-center">
+                <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+            </div>
+            {{ form_rest(form) }}
+        {{ form_end(form) }}
     </div>
+</div>
 {% endblock %}
