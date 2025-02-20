@@ -40,16 +40,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-<<<<<<< HEAD
-         - { path: ^/admin, roles: ROLE_ADMIN }
-         - { path: ^/apprenant, roles: ROLE_APPRENANT }
-         - { path: ^/instructeur, roles: ROLE_INSTRUCTEUR }
-=======
          - { path: ^/dashboard, roles: ROLE_ADMIN }
          - { path: ^/apprenant, roles: ROLE_APPRENANT }
          - { path: ^/instructeur, roles: ROLE_INSTRUCTEUR }
 
->>>>>>> ff400d94e09b38852143b21382373a28088aaf39
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
