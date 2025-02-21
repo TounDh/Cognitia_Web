@@ -1,9 +1,10 @@
-{% extends 'Quizbase.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Liste des Quiz{% endblock %}
 
-{% block body %}
-<div class="container mt-5">
+{% block body %} 
+<div class="container mt-5" style="padding: 150px;">
+
     <h1 class="text-center">Liste des Quiz</h1>
     {% if is_granted('ROLE_INSTRUCTEUR') %}
     <a href="{{ path('app_quiz_new') }}" class="btn btn-primary mb-3">Créer un nouveau quiz</a>

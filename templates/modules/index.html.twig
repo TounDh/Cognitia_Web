@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modules index{% endblock %}
+
+{% block body %}
+    <h1>Modules index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titre</th>
+                <th>Contenu</th>
+                <th>Duree</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for module in modules %}
+            <tr>
+                <td>{{ module.id }}</td>
+                <td>{{ module.titre }}</td>
+                <td>{{ module.contenu }}</td>
+                <td>{{ module.duree }}</td>
+                <td>
+                    <a href="{{ path('app_modules_show', {'id': module.id}) }}">show</a>
+                    <a href="{{ path('app_modules_edit', {'id': module.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_modules_new') }}">Create new</a>
+{% endblock %}

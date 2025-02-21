@@ -1,0 +1,259 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ cours.titre }}{% endblock %}
+
+{% block body %}
+<!-- Course Header Section -->
+<div class="container-fluid bg-light py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_cours_index') }}">Courses</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ cours.titre }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Main Course Content -->
+        <div class="col-lg-8">
+            <!-- Course Image and Basic Info -->
+            <div class="card shadow-sm mb-4">
+                {% if cours.image %}
+                    <img src="{{ asset('uploads/cours/' ~ cours.image) }}" 
+                         class="card-img-top" 
+                         alt="{{ cours.titre }}"
+                         style="height: 400px; object-fit: cover;"
+                    >
+                {% endif %}
+                <div class="card-body">
+                    <h1 class="card-title">{{ cours.titre }}</h1>
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-primary me-2">{{ cours.difficulte }}</span>
+                        <span class="me-3"><i class="fas fa-clock"></i> {{ cours.duree }} hours</span>
+                        <span><i class="fas fa-calendar"></i> {{ cours.datePublication|date('d M Y') }}</span>
+                    </div>
+                    <p class="card-text">{{ cours.description }}</p>
+                </div>
+            </div>
+
+     <!-- Course Modules -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Course Modules</h3>
+        {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+            <a href="{{ path('app_modules_new', {'cours': cours.id}) }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Add Module
+            </a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="accordion" id="moduleAccordion">
+            {% for module in cours.modules %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#module{{ module.id }}">
+                            {{ module.titre }}
+                        </button>
+                    </h2>
+                    <div id="module{{ module.id }}" class="accordion-collapse collapse" data-bs-parent="#moduleAccordion">
+                        <div class="accordion-body">
+                            <p>{{ module.contenu }}</p>
+                            <small class="text-muted"><i class="fas fa-clock"></i> {{ module.duree }} minutes</small>
+                            {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+                                <div class="mt-3">
+                                    <a href="{{ path('app_modules_edit', {'id': module.id}) }}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form method="post" action="{{ path('app_modules_delete', {'id': module.id}) }}" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this module?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ module.id) }}">
+                                        <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-muted">No modules available for this course.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Course Challenges -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Course Challenges</h3>
+        {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+            <a href="{{ path('app_defis_new', {'cours': cours.id}) }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Add Challenge
+            </a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        {% for defi in cours.defis %}
+            <div class="mb-3 p-3 border rounded">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h4>{{ defi.titre }}</h4>
+                        <p>{{ defi.description }}</p>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-info me-2">Points: {{ defi.pointsRecompense }}</span>
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+                            <a href="{{ path('app_defis_edit', {'id': defi.id}) }}" class="btn btn-warning btn-sm mb-2 d-block">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form method="post" action="{{ path('app_defis_delete', {'id': defi.id}) }}" onsubmit="return confirm('Are you sure you want to delete this challenge?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ defi.id) }}">
+                                <button class="btn btn-danger btn-sm d-block w-100">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-muted">No challenges available for this course.</p>
+        {% endfor %}
+    </div>
+</div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Course Info Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">{{ cours.prix }} TND</h3>
+                    <button class="btn btn-primary w-100 mb-3">Enroll Now</button>
+                    <hr>
+                    <h4>What you'll learn:</h4>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i> Complete course content</li>
+                        <li><i class="fas fa-check text-success me-2"></i> {{ cours.modules|length }} modules</li>
+                        <li><i class="fas fa-check text-success me-2"></i> {{ cours.defis|length }} practical challenges</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Certificate upon completion</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Instructor Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h3 class="mb-0">Instructor</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        {% if cours.instructeur.photo %}
+                            <img src="{{ asset('uploads/instructeurs/' ~ cours.instructeur.photo) }}" 
+                                 class="rounded-circle me-3" 
+                                 alt="{{ cours.instructeur.firstName }}"
+                                 style="width: 60px; height: 60px; object-fit: cover;">
+                        {% else %}
+                            <img src="{{ asset('/default-avatar.png') }}" 
+                                 class="rounded-circle me-3" 
+                                 alt="Default Avatar"
+                                 style="width: 60px; height: 60px; object-fit: cover;">
+                        {% endif %}
+                        <div>
+                            <h5 class="mb-0">{{ cours.instructeur.firstName }} {{ cours.instructeur.lastName }}</h5>
+                            <small class="text-muted">{{ cours.instructeur.email }}</small>
+                        </div>
+                    </div>
+                    {% if cours.instructeur.biographie %}
+                        <p class="mb-3">{{ cours.instructeur.biographie }}</p>
+                    {% endif %}
+                    <div class="instructor-details">
+                        <p class="mb-2">
+                            <i class="fas fa-phone text-primary me-2"></i>
+                            {{ cours.instructeur.phoneNumber }}
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-calendar text-primary me-2"></i>
+                            Member since {{ cours.instructeur.createdAt|date('M Y') }}
+                        </p>
+                        {% if cours.instructeur.lastConnexion %}
+                            <p class="mb-0">
+                                <i class="fas fa-clock text-primary me-2"></i>
+                                Last seen {{ cours.instructeur.lastConnexion|date('d M Y') }}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Actions -->
+            {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur) %}
+                <div class="card shadow-sm mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Admin Actions</h5>
+                        <a href="{{ path('app_cours_edit', {'id': cours.id}) }}" class="btn btn-warning btn-sm w-100 mb-2">Edit Course</a>
+                        <form method="post" action="{{ path('app_cours_delete', {'id': cours.id}) }}" onsubmit="return confirm('Are you sure you want to delete this course?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cours.id) }}">
+                            <button class="btn btn-danger btn-sm w-100">Delete Course</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+          
+        </div>
+    </div>
+</div>
+
+<a href="{{ path('app_cours_index') }}" class="btn btn-secondary">Back to list</a>
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .accordion-button:not(.collapsed) {
+        background-color: #f8f9fa;
+        color: #0d6efd;
+    }
+    .badge {
+        padding: 0.5em 1em;
+    }
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+    .card-header {
+        border-bottom: 1px solid rgba(0,0,0,.125);
+    }
+    .breadcrumb {
+        background: transparent;
+    }
+        .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .accordion-body .btn {
+        margin-right: 0.5rem;
+    }
+    
+    form {
+        display: inline-block;
+    }
+    
+    .accordion-body {
+        position: relative;
+    }
+    
+    .accordion-body .mt-3 {
+        border-top: 1px solid #dee2e6;
+        padding-top: 1rem;
+    }
+    
+    .btn i {
+        margin-right: 0.25rem;
+    }
+</style>
+{% endblock %}
