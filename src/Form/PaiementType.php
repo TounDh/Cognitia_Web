@@ -4,10 +4,13 @@ namespace App\Form;
 
 use App\Entity\Commande;
 use App\Entity\Paiement;
+use Doctrine\DBAL\Types\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PaiementType extends AbstractType
 {
@@ -23,6 +26,10 @@ class PaiementType extends AbstractType
                 'class' => Commande::class,
                 'choice_label' => 'id',
             ])
+
+
+
+            
         ;
     }
 

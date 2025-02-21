@@ -34,8 +34,8 @@ class Panier
 
     public function __construct()
     {
-        $this->dateCreation = new \DateTime();  // Par défaut, la date de création est la date actuelle
-        $this->statut = 'en attente';  // Par défaut, le statut peut être 'en attente'
+        $this->dateCreation = new \DateTime();  
+        $this->statut = 'in progress..';  
         $this->cours = new ArrayCollection();
     }
 
@@ -108,4 +108,27 @@ class Panier
 
         return $this;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+public function addCour(Cours $cours): self
+{
+    if (!$this->cours->contains($cours)) {
+        $this->cours[] = $cours;
+        $cours->setPanier($this); 
+    }
+
+    return $this;
+}
 }

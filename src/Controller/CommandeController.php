@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Commande;
+use App\Entity\Paiement;
 use App\Form\CommandeType;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,13 +43,117 @@ final class CommandeController extends AbstractController
         ]);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//l'affichage
+
     #[Route('/{id}', name: 'app_commande_show', methods: ['GET'])]
     public function show(Commande $commande): Response
     {
-        return $this->render('commande/show.html.twig', [
-            'commande' => $commande,
+        $panier = $commande->getPanier();
+        $user = $panier ? $panier->getUser() : null;
+        $cours = $panier ? $panier->getCours() : []; 
+
+
+
+        $sum = array_reduce($commande->getPanier()->getCours()->toArray(), function ($carry, $cours) {
+            return $carry + $cours->getPrix();
+        }, 0);
+        
+        $tax = $sum * 0.10; 
+        $total = $sum + $tax;
+
+
+        return $this->render('commande/index.html.twig', [
+        'commande' => $commande,
+        'panier' => $panier,
+        'user' => $user,
+        'cours' => $cours,
+        'subtotal' => $sum,
+        'tax' => $tax,
+        'total' => $total,
         ]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //paiement creation
+    #[Route('/commande/{id}/pay', name: 'app_paiement_create', methods: ['POST'])]
+    public function createPaiement(Commande $commande, EntityManagerInterface $entityManager): Response
+    {
+        // Get the panier from the commande
+        $panier = $commande->getPanier();
+    
+        if (!$panier) {
+            throw $this->createNotFoundException('No cart associated with this order.');
+        }
+    
+        // Calculate total
+        $sum = array_reduce($panier->getCours()->toArray(), function ($carry, $cours) {
+            return $carry + $cours->getPrix();
+        }, 0);
+    
+        $tax = $sum * 0.10;
+        $total = $sum + $tax;
+    
+        // Create a new Paiement instance
+        $paiement = new Paiement();
+        $paiement->setCommande($commande);
+        $paiement->setDatePaiement(new \DateTime());
+        $paiement->setMontant($total); // Use calculated total
+        $paiement->setMethode('Pending');
+        $paiement->setCardHolder('');
+        $paiement->setCardNumber('');
+        $paiement->setExpiryDate('');
+        $paiement->setCvv('');
+
+    
+        // Persist and flush to the database
+        $entityManager->persist($paiement);
+        $entityManager->flush();
+    
+        // Redirect to the payment page
+        return $this->redirectToRoute('payment', ['id' => $commande->getId()]);
+    }
+
+
+
+
 
     #[Route('/{id}/edit', name: 'app_commande_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Commande $commande, EntityManagerInterface $entityManager): Response
@@ -68,14 +173,21 @@ final class CommandeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_commande_delete', methods: ['POST'])]
-    public function delete(Request $request, Commande $commande, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$commande->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($commande);
-            $entityManager->flush();
-        }
 
-        return $this->redirectToRoute('app_commande_index', [], Response::HTTP_SEE_OTHER);
-    }
+
+
+
+
+    #[Route('/{id}/delete', name: 'app_commande_delete', methods: ['GET'])]
+public function delete(Commande $commande, EntityManagerInterface $entityManager): Response
+{
+    $panier = $commande->getPanier();
+
+    $entityManager->remove($commande);
+    $entityManager->flush();
+
+    return $this->redirectToRoute('app_panier_show', ['id' => $panier->getId()]);
+}
+
+
 }

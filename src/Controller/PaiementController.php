@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Commande;
 use App\Entity\Paiement;
 use App\Form\PaiementType;
 use App\Repository\PaiementRepository;
@@ -17,10 +18,57 @@ final class PaiementController extends AbstractController
     #[Route(name: 'app_paiement_index', methods: ['GET'])]
     public function index(PaiementRepository $paiementRepository): Response
     {
+
         return $this->render('paiement/index.html.twig', [
             'paiements' => $paiementRepository->findAll(),
         ]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//payment id
+    #[Route('/payment/{id}', name: 'payment')]
+    public function payment(Commande $commande): Response
+    {
+
+        $sum = array_reduce($commande->getPanier()->getCours()->toArray(), function ($carry, $cours) {
+            return $carry + $cours->getPrix();
+        }, 0);
+        
+        $tax = $sum * 0.10; 
+        $total = $sum + $tax;
+
+
+
+        return $this->render('paiement/index.html.twig', [
+            'commande' => $commande,
+            'total' => $total, 
+        ]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     #[Route('/new', name: 'app_paiement_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
