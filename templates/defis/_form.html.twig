@@ -1,4 +1,36 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+<div class="card mx-auto mt-5" style="max-width: 600px; padding: 20px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <h2 class="text-center mb-4">Défis Form</h2>
+
+    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>{{ form_label(form.titre) }}</td>
+                <td>{{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_label(form.description) }}</td>
+                <td>{{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_label(form.pointsRecompense) }}</td>
+                <td>{{ form_widget(form.pointsRecompense, {'attr': {'class': 'form-control'}}) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_label(form.badgeRecompense) }}</td>
+                <td>{{ form_widget(form.badgeRecompense, {'attr': {'class': 'form-control'}}) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_label(form.cours) }}</td>
+                <td>{{ form_widget(form.cours, {'attr': {'class': 'form-control'}}) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="text-center mt-3">
+        <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+    </div>
+
+    {{ form_end(form) }}
+</div>

@@ -5,6 +5,9 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\CoursRepository;
+
 
 final class DashboardController extends AbstractController
 {
@@ -31,9 +34,13 @@ final class DashboardController extends AbstractController
 
 
     #[Route('/dashboard/cours', name: 'app_coursManage')]
-    public function cours(): Response
+    #[IsGranted('ROLE_ADMIN')]
+    public function cours(CoursRepository $coursRepository): Response
     {
+        $courses = $coursRepository->findAll();
+        
         return $this->render('dashboard/cours.html.twig', [
+            'courses' => $courses,
         ]);
     }
 
@@ -74,6 +81,12 @@ final class DashboardController extends AbstractController
         return $this->render('dashboard/contact.html.twig', [
         ]);
     }
+    #[Route('/dashboard/ajoutEv', name: 'app_ajoutEv')] 
+    public function ajoutEv(): Response
+    {
+        return $this->render('dashboard/ajoutevent.html.twig', [
+        ]);
+    }
 
     #[Route('/dashboard/ajoutApprenant', name: 'app_ajoutApprenant')]
     public function ajoutApprenant(): Response
@@ -82,10 +95,10 @@ final class DashboardController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/ajoutInstructeur', name: 'app_ajoutInstructeur')]
+    #[Route('/dashboard/ajoutInstructeur', name: 'app_register_instructeur')]
     public function ajoutInstructeur(): Response
     {
-        return $this->render('dashboard/ajoutInstructeur.html.twig', [
+        return $this->render('registration/instructeur_register.html.twig', [
         ]);
     }
 
@@ -115,6 +128,16 @@ final class DashboardController extends AbstractController
     {
         return $this->render('dashboard/modifQuiz.html.twig', [
         ]);
+    }
+
+
+    
+    #[Route('/dashboard', name:'dashboard')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function dashboard(): Response
+    {
+        // Seuls les utilisateurs avec le rôle ROLE_ADMIN peuvent accéder ici
+        return $this->render('dashboard.html.twig');
     }
 
 }

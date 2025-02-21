@@ -1,14 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Cours{% endblock %}
+{% block title %}New Course{% endblock %}
 
 {% block body %}
-    <div class="container" style="padding-top: 100px;"> <!-- Adjust this padding-top as needed -->
-
-    <h1>Create new Cours</h1>
-
-    {{ include('cours/_form.html.twig') }}
-
-    <a href="{{ path('app_cours_index') }}">back to list</a>
-    </div>
+    {{ include('cours/_form.html.twig', {'button_label': 'Create Course'}) }}
 {% endblock %}

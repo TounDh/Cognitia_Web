@@ -20,7 +20,7 @@ use Symfony\Component\Mime\Address;
 
 class InstructeurRegistrationController extends AbstractController
 {
-    #[Route('/registration/instructeur_register', name: 'app_register_instructeur')]
+    #[Route('/dashboard/ajoutInstructeur', name: 'app_register_instructeur')]
     public function register(
         Request $request,   
         UserPasswordHasherInterface $userPasswordHasher,
@@ -89,7 +89,7 @@ class InstructeurRegistrationController extends AbstractController
         }
 
         // Afficher le formulaire d'inscription
-        return $this->render('registration/instructeur_register.html.twig', [
+        return $this->render('dashboard/ajoutInstructeur.html.twig', [
             'instructeurRegistrationForm' => $form->createView(),
         ]);
     }

@@ -1,4 +1,35 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+
+
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-top: 100px;">
+    <div class="card p-4 shadow-lg" style="width: 50rem; border-radius: 15px;">
+        <h2 class="text-center mb-4">{{ button_label|default('Save Module') }}</h2>
+        <form method="post">
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <td>{{ form_label(form.titre) }}</td>
+                        <td>{{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.contenu) }}</td>
+                        <td>{{ form_widget(form.contenu, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.duree) }}</td>
+                        <td>{{ form_widget(form.duree, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.cours) }}</td>
+                        <td>{{ form_widget(form.cours, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center">
+                <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+            </div>
+            {{ form_rest(form) }}
+        </form>
+    </div>
+</div>
+{% endblock %}

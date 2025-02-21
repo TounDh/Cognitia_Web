@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} home  {% endblock %}
+{% block title %} Accueil  {% endblock %}
 
 {% block body %}
 <style>
@@ -39,22 +39,24 @@
 			<div class="row">
 				<div class="col-lg-12 col-sm-12 col-xs-12 text-center">	
 					<div class="home_content">
-						<h1>Yale is the best choice <br />for everyone!</h1>
-						<p>It is a long established fact that reader will be distracted readable content of a page when.</p>						
+						<h1>Cognitia est le meilleur choix <br />pour tout le monde !</h1>
+						<p>C'est un fait établi depuis longtemps que le lecteur sera distrait par le contenu lisible d'une page lorsqu'il sera lu.</p>						
 					</div>
 					<div class="home_sb">
 						<form action="#" class="banner_subs">
-							<input type="text" class="form-control home_si" placeholder="Search your course here" required="required">
-							<button type="button" class="subscribe__btn">Search <i class="fa fa-paper-plane-o"></i></button>
+							<input type="text" class="form-control home_si" placeholder="Recherchez votre cours ici" required="required">
+							<button type="button" class="subscribe__btn">Cherchez <i class="fa fa-paper-plane-o"></i></button>
 						</form>
 					</div>
-					<div class="home_tag">
+					
+					<!--<div class="home_tag">
 						<span>Popular Topic:</span>
 						<a href="#">Design, </a>
 						<a href="#">Development, </a>
 						<a href="#">Graphics, </a>
 						<a href="#">Marketing </a>
-					</div>		  
+					</div>	-->	  
+
 				</div><!-- END COL-->
 			</div><!--- END ROW -->			
 		</div><!--- END CONTAINER -->
@@ -65,16 +67,16 @@
 	<section class="tp_feature section-padding">
 	   <div class="container">			
 			<div class="section_top text-center">
-				<h4>Start Learning </h4>
-				<h2>Build Better skills, faster From Today.</h2>
+				<h4>Commencer à apprendre </h4>
+				<h2>Développez de meilleures compétences, plus rapidement, dès aujourd'hui.</h2>
 				<p>Lorem ipsum dolor sit amet, consectetur notted adipisicing elit sed do eiusmod tempor incididunt ut labore. </p>
 			</div>				
 			<div class="row">					
 				<div class="col-lg-4 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s" data-wow-offset="0">
 					<div class="single_tp">
-						<h3>Quality Education</h3>
+						<h3>Éducation de qualité</h3>
 						<p>Lorem ipsum dolor sit amet, consectetur notted adipisicing elit sed do eiusmod tempor incididunt ut labore. </p>
-						<a href="#" class="cta"><span>Explore</span>
+						<a href="{{path('app_cours')}}" class="cta"><span>Explorer</span>
 						  <svg width="13px" height="10px" viewBox="0 0 13 10">
 							<path d="M1,5 L11,5"></path>
 							<polyline points="8 1 12 5 8 9"></polyline>
@@ -84,9 +86,9 @@
 				</div><!-- END COL -->			
 				<div class="col-lg-4 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0">
 					<div class="single_tp">
-						<h3>Experienced Teachers</h3>
+						<h3>Professeurs expérimentés</h3>
 						<p>Lorem ipsum dolor sit amet, consectetur notted adipisicing elit sed do eiusmod tempor incididunt ut labore.</p>
-						<a href="#" class="cta"><span>Explore</span>
+						<a href="{{path('app_instructeur')}}" class="cta"><span>Explorer</span>
 						  <svg width="13px" height="10px" viewBox="0 0 13 10">
 							<path d="M1,5 L11,5"></path>
 							<polyline points="8 1 12 5 8 9"></polyline>
@@ -96,9 +98,9 @@
 				</div><!-- END COL -->			
 				<div class="col-lg-4 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s" data-wow-offset="0">
 					<div class="single_tp">
-						<h3>Life Time Support</h3>
+						<h3>Assistance à vie</h3>
 						<p>Lorem ipsum dolor sit amet, consectetur notted adipisicing elit sed do eiusmod tempor incididunt ut labore.</p>
-						<a href="#" class="cta"><span>Explore</span>
+						<a href="{{path('app_about')}}" class="cta"><span>Explore</span>
 						  <svg width="13px" height="10px" viewBox="0 0 13 10">
 							<path d="M1,5 L11,5"></path>
 							<polyline points="8 1 12 5 8 9"></polyline>
@@ -117,20 +119,20 @@
 			<div class="row">								
 				<div class="col-lg-6 col-sm-12 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
 					<div class="ab_content">
-						<h2>Learn & grow your  <u><span>skills from</span></u> anywhere.</h2>
+						<h2>Apprenez & développez vos <u><span>compétences </span></u> où que vous soyez.</h2>
 						<p>Lorem ipsum dolor sit amet, consectetur notted adipisicing elit sed do eiusmod tempor incididunt ut labore et simply.</p>
 					</div>
 					<div class="abmv">
 						<span class="ti-medall"></span>
-						<h4>Our Mission</h4>
+						<h4>Notre Mission</h4>
 						<p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor ut labore.</p>
 					</div>
 					<div class="abmv">
 						<span class="ti-wand"></span>
-						<h4>Our Vision</h4>
+						<h4>Notre vision</h4>
 						<p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor ut labore.</p>
 					</div>	
-					<a class="btn_one" href="about.html">Discover More</a>
+					<a class="btn_one" href="{{path('app_about')}}">En savoir plus</a>
 				</div><!--- END COL -->				
 				<div class="col-lg-6 col-sm-12 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s" data-wow-offset="0">
 					<div class="ab_img">
@@ -149,135 +151,68 @@
 	<section class="topic_content_p2 section-padding">
 	   <div class="container">
 			<div class="section-title">
-				<h2>Start Learning </h2>
-				<p>Popular <span><u>Categories</u></span> From Today.</p>
+				<h2>Commencer à apprendre </h2>
+				<p>Populaire <span><u>Catégories</u></span> À partir d'aujourd'hui.</p>
 			</div>		
 			<div class="row">									
 				<div class="col-lg-4 col-sm-6 col-xs-12">
 					<div class="single_tca sc_one">
 						<img src="assets/images/icon/ct1.svg" alt="" />
 						<h2><a href="#">UI/UX Design</a></h2>
-						<span>71 Courses</span>
+						<span>71 Cours</span>
 					</div>					
 				</div><!-- END COL -->							
 				<div class="col-lg-4 col-sm-6 col-xs-12">
 					<div class="single_tca sc_two">
 						<img src="assets/images/icon/ct2.svg" alt="" />
-						<h2><a href="#">Digital Program</a></h2>
-						<span>59 Courses</span>
+						<h2><a href="{{path('app_cours')}}">Digital Program</a></h2>
+						<span>59 Cours</span>
 					</div>					
 				</div><!-- END COL -->							
 				<div class="col-lg-4 col-sm-6 col-xs-12">
 					<div class="single_tca sc_three">
 						<img src="assets/images/icon/ct3.svg" alt="" />
-						<h2><a href="#">Finance</a></h2>
-						<span>68 Courses</span>
+						<h2><a href="{{path('app_cours')}}">Finance</a></h2>
+						<span>68 Cours</span>
 					</div>					
 				</div><!-- END COL -->							
 				<div class="col-lg-4 col-sm-6 col-xs-12">
 					<div class="single_tca sc_four">
 						<img src="assets/images/icon/ct4.svg" alt="" />
-						<h2><a href="#">Modern Physics</a></h2>
-						<span>83 Courses</span>
+						<h2><a href="{{path('app_cours')}}">Modern Physics</a></h2>
+						<span>83 Cours</span>
 					</div>					
 				</div><!-- END COL -->							
 				<div class="col-lg-4 col-sm-6 col-xs-12">
 					<div class="single_tca sc_five">
 						<img src="assets/images/icon/ct5.svg" alt="" />
-						<h2><a href="#">Music Production</a></h2>
-						<span>37 Courses</span>
+						<h2><a href="{{path('app_cours')}}">Music Production</a></h2>
+						<span>37 Cours</span>
 					</div>					
 				</div><!-- END COL -->							
 				<div class="col-lg-4 col-sm-6 col-xs-12">
 					<div class="single_tca sc_six">
 						<img src="assets/images/icon/ct6.svg" alt="" />
-						<h2><a href="#">Data Science</a></h2>
-						<span>51 Courses</span>
+						<h2><a href="{{path('app_cours')}}">Data Science</a></h2>
+						<span>51 Cours</span>
 					</div>					
 				</div><!-- END COL -->	
 				<div class="col-lg-12 text-center">
 					<div class="cc_btn">
-						<a class="btn_one" href="course.html">View All category</a>
+						<a class="btn_one" href="{{path('app_cours')}}">Voir Tous Les Catégories</a>
 					</div>
 				</div><!--END COL -->					
 			</div><!-- END ROW -->
 		</div><!-- END CONTAINER -->
 	</section>
 	<!-- END TOPIC -->		
-
-	<!-- START WHY CHOOSE US-->
-	<section class="marketing_content_area section-padding">
-	   <div class="container">
-			<div class="section-title">
-				<h2>Why Choose Yale</h2>
-				<p>Find the <span><u>best features</u></span> of Yale.</p>
-			</div>		
-			<div class="row">									
-				<div class="col-lg-4 col-sm-6 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
-					<div class="single_feature_one">
-						<div class="sf_top">
-							<span class="ti-book ss_one"></span>
-							<h2><a href="single-service.html" target="_blank">Learn More Anywhere</a></h2>
-						</div>
-						<p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor ut labore.</p>
-					</div>					
-				</div><!-- END COL -->								
-				<div class="col-lg-4 col-sm-6 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s" data-wow-offset="0">
-					<div class="single_feature_one">
-						<div class="sf_top">
-							<span class="ti-heart ss_two"></span>
-							<h2><a href="single-service.html" target="_blank">Expert <br />Instructor</a></h2>
-						</div>	
-						<p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor ut labore.</p>
-					</div>					
-				</div><!-- END COL -->								
-				<div class="col-lg-4 col-sm-6 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0">
-					<div class="single_feature_one">
-						<div class="sf_top">
-							<span class="ti-user ss_three"></span>
-							<h2><a href="single-service.html" target="_blank">Team <br />Management</a></h2>
-						</div>	
-						<p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor ut labore.</p>
-					</div>					
-				</div><!-- END COL -->								
-				<div class="col-lg-4 col-sm-6 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s" data-wow-offset="0">
-					<div class="single_feature_one">
-						<div class="sf_top">
-							<span class="ti-eye ss_four"></span>
-							<h2><a href="single-service.html" target="_blank">Course <br /> Planing</a></h2>
-						</div>	
-						<p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor ut labore.</p>
-					</div>					
-				</div><!-- END COL -->								
-				<div class="col-lg-4 col-sm-6 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.5s" data-wow-offset="0">
-					<div class="single_feature_one">
-						<div class="sf_top">
-							<span class="ti-light-bulb ss_five"></span>
-							<h2><a href="single-service.html" target="_blank">Teacher Monitoring</a></h2>
-						</div>		
-						<p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor ut labore.</p>
-					</div>					
-				</div><!-- END COL -->								
-				<div class="col-lg-4 col-sm-6 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.6s" data-wow-offset="0">
-					<div class="single_feature_one">
-						<div class="sf_top">
-							<span class="ti-email ss_six"></span>
-							<h2><a href="single-service.html" target="_blank">24/7 Strong Support</a></h2>
-						</div>		
-						<p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor ut labore.</p>
-					</div>					
-				</div><!-- END COL -->																
-			</div><!-- END ROW -->
-		</div><!-- END CONTAINER -->
-	</section>
-	<!-- END WHY CHOOSE US -->	
 	
 	<!--START COURSE -->
 	<div class="best-cpurse section-padding">
 		<div class="container">
 			<div class="section-title">
-			  <h2>Popular Courses</h2>
-			  <p>Choose Our <span><u>Top Courses</u></span></p>
+			  <h2>Populaire Cours</h2>
+			  <p>Choisissez Nos <span><u>Meilleurs Cours</u></span></p>
 			</div>				
 			<div class="row">					
 				<div class="col-lg-4 col-sm-6 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
@@ -427,7 +362,7 @@
 				</div><!--END COL -->
 				<div class="col-lg-12 text-center">
 					<div class="cc_btn">
-						<a class="btn_one" href="course.html">View All Course</a>
+						<a class="btn_one" href="{{path('app_cours')}}">Voir Tous les Catégories</a>
 					</div>
 				</div><!--END COL -->				
 			</div><!--END ROW -->		
@@ -441,17 +376,16 @@
 			<div class="row">								
 				<div class="col-lg-6 col-sm-12 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
 					<div class="cp_content">
-						<h4>Best Online Learning Platform</h4>
-						<h2>Get your quality <span><u>skills certificate</u></span> with Yale</h2>
-						<p>From blogs to emails to ad copies, auto-generate catchy, original, and high-converting copies in popular tones languages.</p>
+						<h4>Meilleure plateforme d'apprentissage en ligne</h4>
+						<h2>Obtenez votre qualité <span><u>certificat de compétences</u></span> avec Cognitia</h2>
 						<ul>
-							<li><span class="ti-check"></span>9/10 Average Satisfaction Rate</li>
-							<li><span class="ti-check"></span>96% Completitation Rate</li>
-							<li><span class="ti-check"></span>Friendly Environment & Expert Teacher</li>
+							<li><span class="ti-check"></span>9/10 Taux de satisfaction moyen</li>
+							<li><span class="ti-check"></span>96% Taux d'achèvement</li>
+							<li><span class="ti-check"></span>Environnement convivial & professeur expert</li>
 						</ul>
 					</div>
 					<div class="cp_btn">
-						<a class="btn_one" href="course.html">Explore Our Courses</a>
+						<a class="btn_one" href="{{path('app_cours')}}">Explorer nos Courses</a>
 					</div>
 				</div><!--- END COL -->						
 				<div class="col-lg-6 col-sm-12 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s" data-wow-offset="0">
@@ -471,8 +405,8 @@
     <section id="counts" class="counts section-padding">
       <div class="container count_bg" data-aos="fade-up">
 		<div class="section-title">
-		  <h2>Some Fun Fact</h2>
-		  <p>Our Great <span><u>Achievement</u></span></p>
+		  <h2>Quelques faits amusants</h2>
+		  <p>Nos grand <span><u>Réalisation</u></span></p>
 		</div>	  
         <div class="row gy-4">
           <div class="col-lg-3 col-md-6">
@@ -480,7 +414,7 @@
               <i class="ti-face-smile" style="color: #11312c;"></i>
               <div>
                 <span data-purecounter-start="0" data-purecounter-end="8232" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Enrolled Students</p>
+                <p>Étudiants inscrits</p>
               </div>
             </div>
           </div><!--- END COL -->		
@@ -489,7 +423,7 @@
               <i class="ti-files" style="color: #ee6c20;"></i>
               <div>
                 <span data-purecounter-start="0" data-purecounter-end="521" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Academic Programs</p>
+                <p>Programmes académiques</p>
               </div>
             </div>
           </div><!--- END COL -->		
@@ -498,7 +432,7 @@
               <i class="ti-headphone-alt" style="color: #15be56;"></i>
               <div>
                 <span data-purecounter-start="0" data-purecounter-end="163" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Winning Award</p>
+                <p>Prix gagnant</p>
               </div>
             </div>
           </div><!--- END COL -->		
@@ -507,7 +441,7 @@
               <i class="ti-user" style="color: #bb0852;"></i>
               <div>
                 <span data-purecounter-start="0" data-purecounter-end="93" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Certified Students</p>
+                <p>Étudiants certifiés</p>
               </div>
             </div>
           </div><!--- END COL -->		
@@ -522,8 +456,8 @@
 			<div class="row">
 				<div class="col-lg-6">
 					<div class="partner_title">
-						<h4>Our Partner</h4>
-						<h1>Trusted Company Arround The World!</h1>
+						<h4>Nos Partenaire</h4>
+						<h1>Entreprise de confiance dans le monde entier !</h1>
 						<p>Lorem ipsum dolor sit amet consectur adipiscing elit sed eiusmod tempor incididunt.</p>
 					</div>
 				</div><!-- END COL  -->
@@ -531,32 +465,32 @@
 					<div class="row text-center">
 						<div class="col-lg-4 col-sm-4 col-xs-12">
 							<div class="partner_logo">
-								<a href="#"><img src="assets/images/all-img/clients/1.png" alt="" class="img-fluid"/></a>
+								<img src="assets/images/all-img/clients/1.png" alt="" class="img-fluid"/>
 							</div>						
 						</div><!--- END COL -->	
 						<div class="col-lg-4 col-sm-4 col-xs-12">
 							<div class="partner_logo">
-								<a href="#"><img src="assets/images/all-img/clients/2.png" alt="" class="img-fluid"/></a>
+								<img src="assets/images/all-img/clients/2.png" alt="" class="img-fluid"/>
 							</div>						
 						</div><!--- END COL -->	
 						<div class="col-lg-4 col-sm-4 col-xs-12">
 							<div class="partner_logo">
-								<a href="#"><img src="assets/images/all-img/clients/3.png" alt="" class="img-fluid"/></a>
+								<img src="assets/images/all-img/clients/3.png" alt="" class="img-fluid"/>
 							</div>						
 						</div><!--- END COL -->	
 						<div class="col-lg-4 col-sm-4 col-xs-12">
 							<div class="partner_logo">
-								<a href="#"><img src="assets/images/all-img/clients/4.png" alt="" class="img-fluid"/></a>
+								<img src="assets/images/all-img/clients/4.png" alt="" class="img-fluid"/>
 							</div>						
 						</div><!--- END COL -->	
 						<div class="col-lg-4 col-sm-4 col-xs-12">
 							<div class="partner_logo">
-								<a href="#"><img src="assets/images/all-img/clients/5.png" alt="" class="img-fluid"/></a>
+								<img src="assets/images/all-img/clients/5.png" alt="" class="img-fluid"/>
 							</div>						
 						</div><!--- END COL -->	
 						<div class="col-lg-4 col-sm-4 col-xs-12">
 							<div class="partner_logo">
-								<a href="#"><img src="assets/images/all-img/clients/1.png" alt="" class="img-fluid"/></a>
+								<img src="assets/images/all-img/clients/1.png" alt="" class="img-fluid"/>
 							</div>						
 						</div><!--- END COL -->	
 					</div><!--- END ROW -->					
@@ -570,27 +504,27 @@
 	<section class="team_member section-padding">
 	   <div class="container">
 			<div class="section-title">
-				<h2>Our Instructor</h2>
-				<p>Our Expert <span><u>Instructors</u></span></p>
+				<h2>Nos Instructeurs</h2>
+				<p>Nos Expert <span><u>Instructeurs</u></span></p>
 			</div>		
 			<div class="row text-center">								
 				<div class="col-md-3 col-sm-6 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
 					<div class="our-team">
 						<div class="team_img">
 							<img src="assets/images/all-img/team5.png" alt="team-image">
-							<ul class="social">
+							<!--<ul class="social">
 								<li><a href="#"><i class="fa fa-facebook"></i></a></li>
 								<li><a href="#"><i class="fa fa-twitter"></i></a></li>
 								<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
 								<li><a href="#"><i class="fa fa-instagram"></i></a></li>
-							</ul>
+							</ul>-->
 						</div>
 						<div class="team-content">
 							<h3 class="title">Stephen Cronin</h3>
 							<span class="post">Designer</span>
 							<div class="sth_det2">
-								<span class="ti-file"> <u>5 Course</u></span>
-								<span class="ti-user"> <u>12 Student</u></span>
+								<span class="ti-file"> <u>5 Cours</u></span>
+								<span class="ti-user"> <u>12 Etudiants</u></span>
 							</div>								
 						</div>						
 					</div>
@@ -599,19 +533,19 @@
 					<div class="our-team">
 						<div class="team_img">
 							<img src="assets/images/all-img/team6.png" alt="team-image">
-							<ul class="social">
+							<!--<ul class="social">
 								<li><a href="#"><i class="fa fa-facebook"></i></a></li>
 								<li><a href="#"><i class="fa fa-twitter"></i></a></li>
 								<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
 								<li><a href="#"><i class="fa fa-instagram"></i></a></li>
-							</ul>
+							</ul>-->
 						</div>
 						<div class="team-content">
 							<h3 class="title">Rachel Park</h3>
 							<span class="post">Developer</span>
 							<div class="sth_det2">
-								<span class="ti-file"> <u>19 Course</u></span>
-								<span class="ti-user"> <u>41 Student</u></span>
+								<span class="ti-file"> <u>19 Cours</u></span>
+								<span class="ti-user"> <u>41 Etudiants</u></span>
 							</div>								
 						</div>
 					</div>
@@ -620,19 +554,19 @@
 					<div class="our-team">
 						<div class="team_img">
 							<img src="assets/images/all-img/team7.png" alt="team-image">
-							<ul class="social">
+							<!--<ul class="social">
 								<li><a href="#"><i class="fa fa-facebook"></i></a></li>
 								<li><a href="#"><i class="fa fa-twitter"></i></a></li>
 								<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
 								<li><a href="#"><i class="fa fa-instagram"></i></a></li>
-							</ul>
+							</ul>-->
 						</div>
 						<div class="team-content">
 							<h3 class="title">Dan Billson</h3>
 							<span class="post">Marketer</span>
 							<div class="sth_det2">
-								<span class="ti-file"> <u>14 Course</u></span>
-								<span class="ti-user"> <u>33 Student</u></span>
+								<span class="ti-file"> <u>14 Cours</u></span>
+								<span class="ti-user"> <u>33 Etudiants</u></span>
 							</div>								
 						</div>
 					</div>
@@ -641,19 +575,19 @@
 					<div class="our-team">
 						<div class="team_img">
 							<img src="assets/images/all-img/team8.png" alt="team-image">
-							<ul class="social">
+							<!--<ul class="social">
 								<li><a href="#"><i class="fa fa-facebook"></i></a></li>
 								<li><a href="#"><i class="fa fa-twitter"></i></a></li>
 								<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
 								<li><a href="#"><i class="fa fa-instagram"></i></a></li>
-							</ul>
+							</ul>-->
 						</div>
 						<div class="team-content">
 							<h3 class="title">Gina Mellow</h3>
 							<span class="post">Co-founder</span>
 							<div class="sth_det2">
-								<span class="ti-file"> <u>11 Course</u></span>
-								<span class="ti-user"> <u>27 Student</u></span>
+								<span class="ti-file"> <u>11 Cours</u></span>
+								<span class="ti-user"> <u>27 Etudiants</u></span>
 							</div>								
 						</div>
 					</div>
@@ -662,124 +596,22 @@
 		</div><!-- END CONTAINER -->
 	</section>
 	<!-- END TEAM -->	
-	
-	<!-- START TESTIMONIALS-->
-	<section class="testi_home_area section-padding">
-	   <div class="container">
-			<div class="section-title">
-				<h2>Testimonial</h2>
-				<p>What Says <span><u>Our Students</u></span></p>
-			</div>		
-			<div class="row">								
-				<div class="col-lg-12">
-					<div id="testimonial-slider" class="owl-carousel">
-						<div class="testimonial">
-							<div class="testi_pic_title tpt_one">
-								<div class="pic">
-									<img src="assets/images/all-img/t1.png" alt="">
-								</div>
-								<h4>James Clayton</h4>
-								<small class="post">- Design Expert</small>	
-							</div>							
-							<div class="testimonial_content">													
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr sed diam nonumy eirmod tempor.</p>
-							</div>
-						</div><!-- END TESTIMONIAL -->
-						<div class="testimonial">
-							<div class="testimonial_content">													
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr sed diam nonumy eirmod tempor.</p>
-							</div>
-							<div class="testi_pic_title tpt_two">
-								<div class="pic">
-									<img src="assets/images/all-img/t2.png" alt="">
-								</div>
-								<h4>James Simmons</h4>
-								<small class="post">- Marketing Expert</small>	
-							</div>
-						</div><!-- END TESTIMONIAL -->
-						<div class="testimonial">
-							<div class="testi_pic_title tpt_three">
-								<div class="pic">
-									<img src="assets/images/all-img/t3.png" alt="">
-								</div>
-								<h4>Alex feroundo</h4>
-								<small class="post">- Founder</small>	
-							</div>							
-							<div class="testimonial_content">													
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr sed diam nonumy eirmod tempor.</p>
-							</div>
-						</div><!-- END TESTIMONIAL -->
-						<div class="testimonial">
-							<div class="testimonial_content">													
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr sed diam nonumy eirmod tempor.</p>
-							</div>
-							<div class="testi_pic_title tpt_one">
-								<div class="pic">
-									<img src="assets/images/all-img/t4.png" alt="">
-								</div>
-								<h4>Kallu Mastan</h4>
-								<small class="post">- Mastan group</small>	
-							</div>
-						</div><!-- END TESTIMONIAL -->
-						<div class="testimonial">
-							<div class="testi_pic_title tpt_two">
-								<div class="pic">
-									<img src="assets/images/all-img/t1.png" alt="">
-								</div>
-								<h4>Devid max</h4>
-								<small class="post">- Max iNC</small>	
-							</div>							
-							<div class="testimonial_content">													
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr sed diam nonumy eirmod tempor.</p>
-							</div>
-						</div><!-- END TESTIMONIAL -->
-					</div><!-- END TESTIMONIAL SLIDER -->
-				</div><!-- END COL  -->																							
-			</div><!-- END ROW -->
-		</div><!-- END CONTAINER -->
-	</section>
-	<!-- END TESTIMONIALS -->
 
 	<!-- START BLOG -->
 	<section id="blog" class="blog_area section-padding">
 		<div class="container">
 			<div class="section-title">
-				<h2>News</h2>
-				<p>Our Latest <span><u>Blogs</u></span></p>
+				<h2>Nouvelles</h2>
+				<p>Nos dernières <span><u>Evénement</u></span></p>
 			</div>	
 			<div class="row">		
 				<div class="col-lg-4 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
 					<div class="single_blog">
 						<img src="assets/images/blog/1.png" class="img-fluid" alt="image" />
 						<div class="content_box">
-							<span>August 26, 2024 | <a href="blog_single.html">Education</a></span>
-							<h2><a href="blog_single.html">Professional Mobile Painting and Sculpting</a></h2>
-							<a href="#" class="cta"><span>READ MORE</span>
+							<span>Août 26, 2024 | <a href="{{path('app_event')}}">Education</a></span>
+							<h2><a href="{{path('app_event')}}">Peinture et sculpture mobiles professionnelles</a></h2>
+							<a href="{{path('app_event')}}" class="cta"><span>EN SAVOIR PLUS</span>
 							  <svg width="13px" height="10px" viewBox="0 0 13 10">
 								<path d="M1,5 L11,5"></path>
 								<polyline points="8 1 12 5 8 9"></polyline>
@@ -792,9 +624,9 @@
 					<div class="single_blog">
 						<img src="assets/images/blog/2.png" class="img-fluid" alt="image" />
 						<div class="content_box">
-							<span>August 26, 2024 | <a href="blog_single.html">Education</a></span>
-							<h2><a href="blog_single.html">Professional Ceramic Moulding for Beginner</a></h2>
-							<a href="#" class="cta"><span>READ MORE</span>
+							<span>Août 26, 2024 | <a href="{{path('app_event')}}">Education</a></span>
+							<h2><a href="{{path('app_event')}}">Professional Ceramic Moulding for Beginner</a></h2>
+							<a href="{{path('app_event')}}" class="cta"><span>EN SAVOIR PLUS</span>
 							  <svg width="13px" height="10px" viewBox="0 0 13 10">
 								<path d="M1,5 L11,5"></path>
 								<polyline points="8 1 12 5 8 9"></polyline>
@@ -807,9 +639,9 @@
 					<div class="single_blog">
 						<img src="assets/images/blog/3.png" class="img-fluid" alt="image" />
 						<div class="content_box">
-							<span>August 28, 2024 | <a href="blog_single.html">Programing</a></span>
-							<h2><a href="blog_single.html">Education Is About Create Leaders For Tomorrow </a></h2>
-							<a href="#" class="cta"><span>READ MORE</span>
+							<span>Août 28, 2024 | <a href="{{path('app_event')}}">Programation</a></span>
+							<h2><a href="{{path('app_event')}}">L'éducation consiste à créer les leaders de demain</a></h2>
+							<a href="{{path('app_event')}}" class="cta"><span>EN SAVOIR PLUS</span>
 							  <svg width="13px" height="10px" viewBox="0 0 13 10">
 								<path d="M1,5 L11,5"></path>
 								<polyline points="8 1 12 5 8 9"></polyline>
@@ -822,25 +654,6 @@
 		</div><!-- END CONTAINER  -->
 	</section>	
 	<!-- END BLOG -->	
-
-	<!-- START NEWSLETTER -->
-	<section class="newsletter_area section-padding">
-		<div class="container">
-			<div class="row text-center">			
-				<div class="col-lg-6 offset-lg-3 col-sm-12 col-xs-12">
-					<div class="subs_form">
-						<h3>Subscripbe to our newsletter, We don't make any spam.</h3>
-						<p>Lorem ipsum dolor sit amet consectetur adipisicing elitsed eiusmod tempor enim minim</p>
-						<form action="#" class="home_subs">
-							<input type="text" class="subscribe__input" placeholder="Enter your Email Address">
-							<button type="button" class="subscribe__btn"><i class="fa fa-paper-plane-o"></i></button>
-						</form>
-					</div>
-				</div><!-- END COL -->
-			</div><!-- END ROW -->	
-		</div><!--- END CONTAINER -->	
-	</section>
-	<!-- END NEWSLETTER -->	
 
 
 

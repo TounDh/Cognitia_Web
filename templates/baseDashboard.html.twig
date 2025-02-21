@@ -207,9 +207,8 @@
     
                         <li class="dropdown notification-list topbar-dropdown">
                             <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                                <img src="assetsDash/images/users/user-1.jpg" alt="user-image" class="rounded-circle">
                                 <span class="pro-user-name ms-1">
-                                    Nowak <i class="mdi mdi-chevron-down"></i> 
+                                     <i class="mdi mdi-chevron-down"></i> 
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
@@ -218,14 +217,10 @@
                                     <h6 class="text-overflow m-0">Welcome !</h6>
                                 </div>
     
-                                <!-- item-->
-                                <a href="contacts-profile.html" class="dropdown-item notify-item">
-                                    <i class="fe-user"></i>
-                                    <span>My Account</span>
-                                </a>
+                                
     
                                 <!-- item-->
-                                <a href="auth-logout.html" class="dropdown-item notify-item">
+                                <a href="{{ path('app_logout') }}" class="dropdown-item notify-item">
                                     <i class="fe-log-out"></i>
                                     <span>Logout</span>
                                 </a>
@@ -282,7 +277,8 @@
 
                         <img src="{{ asset('/cognitia.png') }}" style="width: 120px; height: 100px;" alt="user-img" title="Mat Helme" class="rounded-circle img-thumbnail avatar-md">
                             <div class="dropdown">
-                                <a href="#" class="user-name dropdown-toggle h5 mt-2 mb-1 d-block" data-bs-toggle="dropdown"  aria-expanded="false">Nowak Helme</a>
+                                    {{ app.user.firstName }} {# Affiche le prénom de l'utilisateur connecté #}
+                                </a>
                             </div>
                     </div>
 
@@ -315,9 +311,7 @@
                                         <li>
                                             <a href="{{path('app_ajoutApprenant')}}">Ajouter Apprenant</a>
                                         </li>
-                                        <li>
-                                            <a href="{{path('app_modifApprenant')}}">Modifier Apprenant</a>
-                                        </li>
+                                        
                                     </ul>
                                 </div>
                             </li>
@@ -334,11 +328,9 @@
                                             <a href="{{path('app_inst')}}">Liste Instructeur </a>
                                         </li>
                                         <li>
-                                            <a href="{{path('app_ajoutInstructeur')}}">Ajouter Instructeur</a>
+                                            <a href="{{path('app_register_instructeur')}}">Ajouter Instructeur</a>
                                         </li>
-                                        <li>
-                                            <a href="{{path('app_modifInstructeur')}}">Modifier Instructeur</a>
-                                        </li>
+                                        
                                     </ul>
                                 </div>
                             </li>
@@ -352,13 +344,10 @@
                                 <div class="collapse" id="contacts">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="{{path('app_ev')}}">Liste Event </a>
+                                            <a href="{{path('dashboard_event_index')}}">Liste Event </a>
                                         </li>
                                         <li>
-                                            <a href="{{path('app_inst')}}">Ajouter Event</a>
-                                        </li>
-                                        <li>
-                                            <a href="{{path('app_ev')}}">Modifier Event</a>
+                                            <a href="{{path('dashboard_event_new')}}">Ajouter Event</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -373,13 +362,10 @@
                                 <div class="collapse" id="sidebarAuth">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="{{path('app_coursManage')}}">Liste Cours </a>
+                                            <a href="{{path('app_coursManage')}}">Liste Cours</a>
                                         </li>
                                         <li>
-                                            <a href="{{path('app_inst')}}">Ajouter Cours</a>
-                                        </li>
-                                        <li>
-                                            <a href="{{path('app_ev')}}">Modifier Cours</a>
+                                            <a href="{{path('app_cours_dashboard_new')}}">Ajouter Cours</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -436,13 +422,10 @@
                                 <div class="collapse" id="sidebarLayouts">
                                     <ul class="nav-second-level">
                                         <li>
-                                            <a href="{{path('app_quiz')}}">Liste Quiz</a>
+                                            <a href="{{path('dashboard_quiz')}}">Liste Quiz</a>
                                         </li>                       
                                         <li>
-                                            <a href="{{path('app_ajoutQuiz')}}">Ajouter Quiz</a>
-                                        </li>
-                                        <li>
-                                            <a href="{{path('app_modifQuiz')}}">Modifier Quiz</a>
+                                            <a href="{{path('dashboard_quiz_new')}}">Ajouter Quiz</a>
                                         </li>
                                     </ul>
                                 </div>

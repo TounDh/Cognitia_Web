@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Form;
 
 use App\Entity\Cours;
@@ -12,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\DateType; // Added for date
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
@@ -22,12 +22,16 @@ class CoursType extends AbstractType
     {
         $builder
             ->add('titre', TextType::class) // Title as text input
-            ->add('description') // Description as text area
-            ->add('image', FileType::class, [
-                'required' => false, // Make image optional
-                'mapped' => false,  // Don't map this to the Cours entity directly
+            ->add('description', TextType::class) // Description as a text input (or TextareaType if you prefer a larger text box)
+            ->add('imageFile', FileType::class, [
+                'label' => 'Course Image',
+                'mapped' => false,
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control'
+                ]
             ])
-            ->add('datePublication', null, [
+            ->add('datePublication', DateType::class, [ // Corrected to DateType
                 'widget' => 'single_text', // A single text field for the date
             ])
             ->add('duree', IntegerType::class) // Duration as integer input

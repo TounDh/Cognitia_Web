@@ -13,16 +13,25 @@ class Evaluation
     #[ORM\Column]
     private ?int $id = null;
 
-   
-
-   
-
+    #[ORM\ManyToOne(targetEntity: Cours::class, inversedBy: "evaluations")]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Cours $cours = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
+    public function getCours(): ?Cours
+    {
+        return $this->cours;
+    }
+    
+    public function setCours(?Cours $cours): self
+    {
+        $this->cours = $cours;
+        return $this;
+    }
+    
 
 
 }

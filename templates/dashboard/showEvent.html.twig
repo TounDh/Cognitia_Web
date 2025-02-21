@@ -1,0 +1,72 @@
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %}Event Management!{% endblock %}
+
+{% block body %}
+
+
+
+<div class="content-page">
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="header-title">Détails d'événement</h4>
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>Id</th>
+                                                            <td>{{ event.id }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Titre</th>
+                                                            <td>{{ event.titre }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Description</th>
+                                                            <td>{{ event.description }} sec</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Date Début</th>
+                                                            <td>{{ event.dateDebut|date('d-m-Y H:i') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Date Fin</th>
+                                                            <td>{{ event.dateFin|date('d-m-Y H:i') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Lieu</th>
+                                                            <td>{{ event.lieu }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Type</th>
+                                                            <td>{{ event.type }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <a href="{{ path('dashboard_event_index') }}" class="btn btn-primary mt-3">Retour à la liste</a>
+                                            </div> <!-- end col -->
+
+                                            
+                                        </div>
+                                        <!-- end row-->
+
+                                    </div> <!-- end card-body -->
+                                </div> <!-- end card -->
+                            </div><!-- end col -->
+                        </div>
+                        <!-- end row -->
+                    </div> 
+                    <!-- end Content-->
+                </div>
+</div>
+
+{% endblock %}

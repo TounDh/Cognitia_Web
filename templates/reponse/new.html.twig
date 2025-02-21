@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une Réponse{% endblock %}
+
+{% block body %}
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
+<div class="container mt-5" style="padding: 150px;">
+    <h1 class="text-center mb-4">Ajouter une Réponse pour la Question : "{{ question.contenu }}"</h1>
+
+    <div class="card p-4 shadow">
+        {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_label(form.contenu, 'Contenu de la Réponse') }}
+            {{ form_widget(form.contenu, {'attr': {'class': 'form-control'}}) }}
+            {{form_errors(form.contenu)}}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.question, 'Question Associée') }}
+            {{ form_widget(form.question, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.estCorrecte, 'Est Correcte') }}
+            {{ form_widget(form.estCorrecte, {'attr': {'class': 'form-check-input'}}) }}
+        </div>
+
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+        {{ form_end(form) }}
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a href="{{ path('app_reponse_index', {'question_id': question.id}) }}" class="btn btn-primary mt-3">Retour à la liste</a>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

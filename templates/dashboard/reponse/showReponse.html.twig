@@ -1,0 +1,63 @@
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %}Reponses Management!{% endblock %}
+
+{% block body %}
+
+{% if is_granted('ROLE_ADMIN') %}
+
+
+<div class="content-page">
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="header-title">Détails du Reponse</h4>
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>Id</th>
+                                                            <td>{{ reponse.id }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Contenu</th>
+                                                            <td>{{ reponse.contenu }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Question</th>
+                                                            <td>{{ reponse.question }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Est Correcte</th>
+                                                            <td>{{ reponse.estCorrecte ? 'Oui' : 'Non' }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            <a href="{{ path('dashboard_reponse_index', {'question_id': question.id}) }}" class="btn btn-primary mt-3">Retour à la liste Reponse</a>
+                                            </div> <!-- end col -->
+
+                                            
+                                        </div>
+                                        <!-- end row-->
+
+                                    </div> <!-- end card-body -->
+                                </div> <!-- end card -->
+                            </div><!-- end col -->
+                        </div>
+                        <!-- end row -->
+                    </div> 
+                    <!-- end Content-->
+                </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

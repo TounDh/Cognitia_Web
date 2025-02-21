@@ -20,7 +20,7 @@ class AdminController extends AbstractController
 		$user = $this->getUser();
 
 		return match ($user->isVerified()) {
-			true => $this->render("admin/index.html.twig"),
+			true => $this->render("dashboard/index.html.twig"),
 			false => $this->render("admin/please-verify-email.html.twig"),
 		};
     }

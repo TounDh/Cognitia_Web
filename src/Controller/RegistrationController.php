@@ -19,7 +19,7 @@ class RegistrationController extends AbstractController
     {
         // Rediriger l'utilisateur s'il est déjà connecté
         if ($this->getUser()) {
-            return $this->redirectToRoute('display_dashboard');
+            return $this->redirectToRoute('app_home');
         }
     
         // Créer une nouvelle instance de User
