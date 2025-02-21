@@ -8,7 +8,7 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id_commentaire</th>
+                <th>Id</th>
                 <th>Titre</th>
                 <th>Contenu</th>
                 <th>Date_actuelle</th>
@@ -18,13 +18,13 @@
         <tbody>
         {% for commentaire in commentaires %}
             <tr>
-                <td>{{ commentaire.idCommentaire }}</td>
+                <td>{{ commentaire.id }}</td>
                 <td>{{ commentaire.titre }}</td>
                 <td>{{ commentaire.contenu }}</td>
                 <td>{{ commentaire.dateActuelle ? commentaire.dateActuelle|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_commentaire_show', {'id_commentaire': commentaire.id_commentaire}) }}">show</a>
-                    <a href="{{ path('app_commentaire_edit', {'id_commentaire': commentaire.id_commentaire}) }}">edit</a>
+                    <a href="{{ path('app_commentaire_show', {'id': commentaire.id}) }}">show</a>
+                    <a href="{{ path('app_commentaire_edit', {'id': commentaire.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}

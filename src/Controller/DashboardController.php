@@ -76,6 +76,12 @@ final class DashboardController extends AbstractController
         return $this->render('dashboard/contact.html.twig', [
         ]);
     }
+    #[Route('/dashboard/ajoutEv', name: 'app_ajoutEv')] 
+    public function ajoutEv(): Response
+    {
+        return $this->render('dashboard/ajoutevent.html.twig', [
+        ]);
+    }
 
     #[Route('/dashboard/ajoutApprenant', name: 'app_ajoutApprenant')]
     public function ajoutApprenant(): Response

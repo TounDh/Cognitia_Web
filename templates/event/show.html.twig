@@ -1,50 +1,86 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Event{% endblock %}
+{% block title %}{{ event.titre }}{% endblock %}
 
 {% block body %}
-    <h1>Event</h1>
+<div class="container mt-4">
+    <h1 class="mb-4">{{ event.titre }}</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ event.id }}</td>
-            </tr>
-            <tr>
-                <th>Titre</th>
-                <td>{{ event.titre }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ event.description }}</td>
-            </tr>
-            <tr>
-                <th>DateDebut</th>
-                <td>{{ event.dateDebut ? event.dateDebut|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DateFin</th>
-                <td>{{ event.dateFin ? event.dateFin|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Lieu</th>
-                <td>{{ event.lieu }}</td>
-            </tr>
-            <tr>
-                <th>Type</th>
-                <td>{{ event.type }}</td>
-            </tr>
-            <tr>
-                <th>Image</th>
-                <td>{{ event.image }}</td>
-            </tr>
-        </tbody>
-    </table>
+    {% if event.image %}
+    <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="Image de l'événement" class="img-fluid">
+    {% else %}
+        <p>Aucune image disponible pour cet événement.</p>
+    {% endif %}
 
-    <a href="{{ path('app_event_index') }}">back to list</a>
+    <div class="mb-3">
+        <h4>Description:</h4>
+        <p>{{ event.description }}</p>
+    </div>
 
-    <a href="{{ path('app_event_edit', {'id': event.id}) }}">edit</a>
+    <div class="mb-3">
+        <h4>Lieu:</h4>
+        <p>{{ event.lieu }}</p>
+    </div>
 
-    {{ include('event/_delete_form.html.twig') }}
+    <div class="mb-3">
+        <h4>Type:</h4>
+        <p>{{ event.type }}</p>
+    </div>
+
+    <div class="mb-3">
+        <h4>Date de début:</h4>
+        <p>{{ event.dateDebut|date('Y-m-d H:i') }}</p>
+    </div>
+
+    <div class="mb-3">
+        <h4>Date de fin:</h4>
+        <p>{{ event.dateFin|date('Y-m-d H:i') }}</p>
+    </div>
+
+    <hr>
+
+    <h3>Commentaires</h3>
+
+    {# Display existing comments #}
+    <div class="mb-3">
+        {% for commentaire in event.commentaires %}
+            <div class="card p-3 mb-2">
+                <h5>{{ commentaire.titre }}</h5>
+                <p>{{ commentaire.contenu }}</p>
+                <small>Publié le: {{ commentaire.dateActuelle|date('Y-m-d H:i') }}</small>
+            </div>
+        {% else %}
+            <p>Aucun commentaire pour cet événement.</p>
+        {% endfor %}
+   
+
+<h2>Instructeurs</h2>
+<ul>
+    {% for participant in event.participants %}
+        {% if 'ROLE_INSTRUCTEUR' in participant.roles %}
+            <li>{{ participant.firstName }} {{ participant.lastName }}</li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+    {# Display the comment form #}
+    <h4>Ajouter un commentaire</h4>
+    {{ form_start(commentaireForm) }}
+        <div class="mb-3">
+            {{ form_label(commentaireForm.titre) }}
+            {{ form_widget(commentaireForm.titre, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(commentaireForm.titre) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(commentaireForm.contenu) }}
+            {{ form_widget(commentaireForm.contenu, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(commentaireForm.contenu) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Publier le commentaire</button>
+    {{ form_end(commentaireForm) }}
+
+    <a href="{{ path('app_event_index') }}" class="btn btn-secondary mt-3">Retour à la liste des événements</a>
+</div>
 {% endblock %}

@@ -84,10 +84,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->eventsParticipated = new ArrayCollection();
         $this->quizzes = new ArrayCollection();
         $this->roles = ['ROLE_USER']; // Rôle par défaut
        
     }
+    
 
     // Getters et Setters pour les champs communs
     public function getId(): ?int
@@ -253,5 +255,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // Effacer les données sensibles temporaires
+    }
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'participants')]
+    private Collection $eventsParticipated;
+
+   
+    // ... autres méthodes ...
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getEventsParticipated(): Collection
+    {
+        return $this->eventsParticipated;
+    }
+
+    public function addEventParticipated(Event $event): self
+    {
+        if (!$this->eventsParticipated->contains($event)) {
+            $this->eventsParticipated[] = $event;
+            $event->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventParticipated(Event $event): self
+    {
+        if ($this->eventsParticipated->removeElement($event)) {
+            $event->removeParticipant($this);
+        }
+
+        return $this;
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\Event;
 
 use App\Entity\Commentaire;
 use App\Form\CommentaireType;
@@ -42,15 +43,29 @@ final class CommentaireController extends AbstractController
         ]);
     }
 
-    #[Route('/{id_commentaire}', name: 'app_commentaire_show', methods: ['GET'])]
-    public function show(Commentaire $commentaire): Response
-    {
-        return $this->render('commentaire/show.html.twig', [
-            'commentaire' => $commentaire,
-        ]);
+    #[Route('/{id}', name: 'app_event_show', methods: ['GET', 'POST'])]
+public function show(Event $event, Request $request, EntityManagerInterface $entityManager): Response
+{
+    $commentaire = new Commentaire();
+    $commentaire->setEvenement($event); // Make sure the comment is associated with the event
+
+    $form = $this->createForm(CommentaireType::class, $commentaire);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->persist($commentaire);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
     }
 
-    #[Route('/{id_commentaire}/edit', name: 'app_commentaire_edit', methods: ['GET', 'POST'])]
+    return $this->render('event/show.html.twig', [
+        'event' => $event,
+        'commentaireForm' => $form->createView(),
+    ]);
+}
+
+    #[Route('/{id}/edit', name: 'app_commentaire_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Commentaire $commentaire, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(CommentaireType::class, $commentaire);
@@ -68,10 +83,10 @@ final class CommentaireController extends AbstractController
         ]);
     }
 
-    #[Route('/{id_commentaire}', name: 'app_commentaire_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_commentaire_delete', methods: ['POST'])]
     public function delete(Request $request, Commentaire $commentaire, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$commentaire->getId_commentaire(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$commentaire->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($commentaire);
             $entityManager->flush();
         }

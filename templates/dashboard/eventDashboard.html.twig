@@ -1,0 +1,75 @@
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %}Gestion des événements{% endblock %}
+
+{% block body %}
+
+{% if is_granted('ROLE_ADMIN') %}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title">Liste des événements</h4>
+                            <div class="d-flex justify-content-end mb-3">
+                            </div>
+                            <table class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Image</th>
+                                        <th>Titre</th>
+                                        <th>Description</th>
+                                        <th>Date de début</th>
+                                        <th>Lieu</th>
+                                        <th>Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for event in events %}
+                                    <tr>
+                                        <td>{{ event.id }}</td>
+                                        <td>
+                                            {% if event.image %}
+                                                <img src="{{ asset('uploads/' ~ event.image) }}" alt="Image" style="height: 50px; width: 50px; object-fit: cover;">
+                                            {% else %}
+                                                <span class="text-muted">Aucune image</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ event.titre }}</td>
+                                        <td>{{ event.description|slice(0, 50) ~ '...' }}</td>
+                                        <td>{{ event.dateDebut ? event.dateDebut|date('Y-m-d H:i') : '-' }}</td>
+                                        <td>{{ event.lieu }}</td>
+                                        <td><span class="badge bg-info text-dark">{{ event.type }}</span></td>
+                                        <td>
+                                            <a href="{{ path('dashboard_event_show', {'id': event.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                                            <a href="{{ path('dashboard_event_edit', {'id': event.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                                            <form action="{{ path('dashboard_event_delete', {'id': event.id}) }}" method="post" style="display:inline;">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">Supprimer</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">Aucun événement trouvé</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
