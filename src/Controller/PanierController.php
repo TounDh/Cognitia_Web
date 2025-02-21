@@ -86,42 +86,33 @@ final class PanierController extends AbstractController
     #[Route('/add-to-cart/{coursId}', name: 'app_panier_add_to_cart', methods: ['POST'])]
     public function addToCart(int $coursId, EntityManagerInterface $entityManager, Security $security): Response
     {
-        // Get the currently logged-in user
         $user = $security->getUser();
     
         if (!$user) {
-            // If the user is not logged in, redirect to the login page
             return $this->redirectToRoute('app_login');
         }
     
-        // Fetch the Cours entity
         $cours = $entityManager->getRepository(Cours::class)->find($coursId);
     
         if (!$cours) {
             throw $this->createNotFoundException('Course not found');
         }
     
-        // Check if the user already has a Panier
         $panier = $entityManager->getRepository(Panier::class)->findOneBy(['user' => $user]);
     
         if (!$panier) {
-            // If no Panier exists, create a new one
             $panier = new Panier();
             $panier->setUser($user);
             $panier->setDateCreation(new \DateTime());
-            $panier->setStatut('en attente');
+            $panier->setStatut('in progress..');
     
-            // Persist the new Panier
             $entityManager->persist($panier);
         }
     
-        // Add the Cours to the Panier
-        $panier->addCour($cours); // Ensure you have an addCour method in your Panier entity
+        $panier->addCour($cours); 
     
-        // Persist changes to the database
         $entityManager->flush();
     
-        // Redirect to the cart page or any other page
         return $this->redirectToRoute('app_panier_show', ['id' => $panier->getId()]);
     }
 
@@ -206,12 +197,10 @@ final class PanierController extends AbstractController
 
 
     //el checkout
-
-
     #[Route('/checkout/{id}', name: 'app_panier_checkout', methods: ['POST'])]
 public function checkout(Panier $panier, EntityManagerInterface $entityManager, Request $request): Response
 {
-    // Validate CSRF token (optional but recommended)
+   
     $submittedToken = $request->request->get('_token');
     if (!$this->isCsrfTokenValid('checkout_' . $panier->getId(), $submittedToken)) {
         throw $this->createAccessDeniedException('Invalid CSRF token');
@@ -219,20 +208,15 @@ public function checkout(Panier $panier, EntityManagerInterface $entityManager, 
 
     $panier->setStatut('confirmed');
 
-    // instance mta3 commande
     $commande = new Commande();
     $commande->setPanier($panier);
-    $commande->setDateAchat(new \DateTime()); // Set the current date and time
+    $commande->setDateAchat(new \DateTime()); 
     $commande->setStatut('unpaid'); 
 
-    // Persist the Commande
     $entityManager->persist($commande);
 
-    // Flush changes to the database
     $entityManager->flush();
 
-
-    // Redirect to a confirmation page or the cart page
     return $this->redirectToRoute('app_commande_show', ['id' => $commande->getId()]);
 }
 
@@ -251,37 +235,29 @@ public function checkout(Panier $panier, EntityManagerInterface $entityManager, 
 
 //tan7it el cours
 
-
 #[Route('/panier/remove-cours/{coursId}', name: 'app_panier_remove_cours', methods: ['POST'])]
 public function removeCoursFromPanier(int $coursId, EntityManagerInterface $entityManager, Security $security): Response
 {
-    // Get the currently logged-in user
     $user = $security->getUser();
 
     if (!$user) {
-        // If the user is not logged in, redirect to the login page
         return $this->redirectToRoute('app_login');
     }
 
-    // Fetch the Cours entity
     $cours = $entityManager->getRepository(Cours::class)->find($coursId);
 
     if (!$cours) {
         throw $this->createNotFoundException('Course not found');
     }
 
-    // Get the panier for the user
     $panier = $entityManager->getRepository(Panier::class)->findOneBy(['user' => $user]);
 
     if ($panier) {
-        // Set the panier_id to NULL
-        $cours->setPanier(null); // Ensure you have this method in your Cours entity
+        $cours->setPanier(null); 
         
-        // Persist changes to the database
         $entityManager->flush();
     }
 
-    // Redirect to the cart page
     return $this->redirectToRoute('app_panier_show', ['id' => $panier->getId()]);
 }
 
@@ -330,19 +306,19 @@ public function removeCoursFromPanier(int $coursId, EntityManagerInterface $enti
 
 
 
+ 
+//delete panier
 
-
-
-    #[Route('/{id}', name: 'app_panier_delete', methods: ['POST'])]
-    public function delete(Request $request, Panier $panier, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$panier->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($panier);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_panier_show');
+#[Route('/{id}', name: 'app_panier_delete', methods: ['POST'])]
+public function delete(Request $request, Panier $panier, EntityManagerInterface $entityManager): Response
+{
+    if ($this->isCsrfTokenValid('delete'.$panier->getId(), $request->getPayload()->getString('_token'))) {
+        $entityManager->remove($panier);
+        $entityManager->flush();
     }
+
+    return $this->redirectToRoute('app_panier_index');
+}
 
 
 

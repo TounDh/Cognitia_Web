@@ -116,14 +116,12 @@ final class CommandeController extends AbstractController
     #[Route('/commande/{id}/pay', name: 'app_paiement_create', methods: ['POST'])]
     public function createPaiement(Commande $commande, EntityManagerInterface $entityManager): Response
     {
-        // Get the panier from the commande
         $panier = $commande->getPanier();
     
         if (!$panier) {
             throw $this->createNotFoundException('No cart associated with this order.');
         }
     
-        // Calculate total
         $sum = array_reduce($panier->getCours()->toArray(), function ($carry, $cours) {
             return $carry + $cours->getPrix();
         }, 0);
@@ -131,7 +129,6 @@ final class CommandeController extends AbstractController
         $tax = $sum * 0.10;
         $total = $sum + $tax;
     
-        // Create a new Paiement instance
         $paiement = new Paiement();
         $paiement->setCommande($commande);
         $paiement->setDatePaiement(new \DateTime());
@@ -143,11 +140,9 @@ final class CommandeController extends AbstractController
         $paiement->setCvv('');
 
     
-        // Persist and flush to the database
         $entityManager->persist($paiement);
         $entityManager->flush();
     
-        // Redirect to the payment page
         return $this->redirectToRoute('payment', ['id' => $commande->getId()]);
     }
 
@@ -182,6 +177,12 @@ final class CommandeController extends AbstractController
 public function delete(Commande $commande, EntityManagerInterface $entityManager): Response
 {
     $panier = $commande->getPanier();
+
+    if ($panier) {
+        $panier->setStatut('in progress..');
+        $entityManager->persist($panier); 
+    }
+
 
     $entityManager->remove($commande);
     $entityManager->flush();

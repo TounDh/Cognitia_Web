@@ -23,8 +23,9 @@ class Panier
     private string $statut;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'paniers')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?User $user = null;
+
 
     #[ORM\OneToMany(mappedBy: 'panier', targetEntity: Cours::class)]
     private Collection $cours;

@@ -39,7 +39,7 @@ class Paiement
 
 
     #[ORM\OneToOne(targetEntity: Commande::class, inversedBy: 'paiement')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Commande $commande = null;
 
     public function __construct()
