@@ -34,7 +34,6 @@
                                                 <td>{{ instructeur.phoneNumber }}</td>
                                                 <td>{{ instructeur.biographie }}</td>
                                                 <td>
-                                                    <a href="{{ path('app_instructeur_show', {'id': instructeur.id}) }}" class="btn btn-info btn-sm">Voir</a>
                                                     <a href="{{ path('app_instructeur_edit', {'id': instructeur.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
                                                     <form action="{{ path('app_instructeur_delete', {'id': instructeur.id}) }}" method="post" style="display: inline-block;">
                                                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ instructeur.id) }}">
