@@ -1,11 +1,11 @@
-{% extends 'Quizbase.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Liste des Questions{% endblock %}
 
 {% block body %}
 {% if is_granted('ROLE_INSTRUCTEUR') %}
 
-<div class="container mt-5">
+<div class="container mt-5" style="padding: 150px;">
     <h1 class="text-center">Liste des Questions pour la Quiz : "{{ quiz.titre }}"</h1>
     <a href="{{ path('app_question_new', {'quiz_id': quiz.id}) }}" class="btn btn-primary mb-3">Créer une nouvelle question</a>
     <table class="table table-striped">

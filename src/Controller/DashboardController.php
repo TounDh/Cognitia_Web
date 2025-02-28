@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\CoursRepository;
 
 
 final class DashboardController extends AbstractController
@@ -33,9 +34,13 @@ final class DashboardController extends AbstractController
 
 
     #[Route('/dashboard/cours', name: 'app_coursManage')]
-    public function cours(): Response
+    #[IsGranted('ROLE_ADMIN')]
+    public function cours(CoursRepository $coursRepository): Response
     {
+        $courses = $coursRepository->findAll();
+        
         return $this->render('dashboard/cours.html.twig', [
+            'courses' => $courses,
         ]);
     }
 
@@ -74,6 +79,12 @@ final class DashboardController extends AbstractController
     public function contact(): Response
     {
         return $this->render('dashboard/contact.html.twig', [
+        ]);
+    }
+    #[Route('/dashboard/ajoutEv', name: 'app_ajoutEv')] 
+    public function ajoutEv(): Response
+    {
+        return $this->render('dashboard/ajoutevent.html.twig', [
         ]);
     }
 

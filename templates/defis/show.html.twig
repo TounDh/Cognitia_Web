@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Defis{% endblock %}
+
+{% block body %}
+    <h1>Defis</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ defi.id }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ defi.titre }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ defi.description }}</td>
+            </tr>
+            <tr>
+                <th>PointsRecompense</th>
+                <td>{{ defi.pointsRecompense }}</td>
+            </tr>
+            <tr>
+                <th>BadgeRecompense</th>
+                <td>{{ defi.badgeRecompense }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_defis_index') }}">back to list</a>
+
+    <a href="{{ path('app_defis_edit', {'id': defi.id}) }}">edit</a>
+
+    {{ include('defis/_delete_form.html.twig') }}
+{% endblock %}

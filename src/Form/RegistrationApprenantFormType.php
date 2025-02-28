@@ -19,7 +19,7 @@ class RegistrationApprenantFormType extends AbstractType
         $builder
         ->add('email', TextType::class, [
             'label' => 'Email',
-            'required' => true, // Ensure the field is required
+            'required' => false, // Ensure the field is required
             'constraints' => [
                 new NotBlank([
                     'message' => 'Veuillez entrer un email.',
@@ -45,6 +45,7 @@ class RegistrationApprenantFormType extends AbstractType
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
+                'required' => false,
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer votre prénom.',
@@ -54,6 +55,7 @@ class RegistrationApprenantFormType extends AbstractType
             ])
             ->add('lastName', TextType::class, [
                 'label' => 'Nom',
+                'required' => false,
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer votre nom.',
@@ -63,6 +65,7 @@ class RegistrationApprenantFormType extends AbstractType
             ])
             ->add('phoneNumber', TextType::class, [
                 'label' => 'Numéro de téléphone',
+                'required' => false,
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer votre numéro de téléphone.',
@@ -72,6 +75,7 @@ class RegistrationApprenantFormType extends AbstractType
             ])
             ->add('level', TextType::class, [
                 'label' => 'Niveau',
+                'required' => false,
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer votre niveau.',

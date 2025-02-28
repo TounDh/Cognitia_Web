@@ -1,0 +1,103 @@
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %}Créer un événement{% endblock %}
+
+{% block body %}
+
+
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title">Créer un nouvel événement</h4>
+
+                            {# Affichage des erreurs sous forme d'alertes #}
+                            {% for message in app.flashes('error') %}
+                                <div class="alert alert-danger">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="p-4 shadow-sm">
+                                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+                                        <div class="mb-3">
+                                            {{ form_label(form.titre, 'Titre') }}
+                                            {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.titre) }}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ form_label(form.description, 'Description') }}
+                                            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.description) }}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ form_label(form.lieu, 'Lieu') }}
+                                            {{ form_widget(form.lieu, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.lieu) }}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ form_label(form.type, 'Type') }}
+                                            {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.type) }}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ form_label(form.dateDebut, 'Date de début') }}
+                                            {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.dateDebut) }}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ form_label(form.dateFin, 'Date de fin') }}
+                                            {{ form_widget(form.dateFin, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.dateFin) }}
+                                        </div>
+
+                                        <button type="submit" class="btn btn-success">Modifier</button>
+
+                                        {{ form_end(form) }}
+
+                                        <a href="{{ path('dashboard_event_index') }}" class="btn btn-primary mt-3">Retour à la liste</a>
+                                    </div>
+                                </div> <!-- end col -->
+                            </div>
+                            <!-- end row-->
+
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div><!-- end col -->
+            </div>
+            <!-- end row -->
+        </div> 
+        <!-- end Content-->
+    </div>
+</div>
+
+{% block javascripts %}
+    <script>
+        // Client-side validation
+        document.querySelector('form').addEventListener('submit', function(event) {
+            let dateDebut = document.querySelector('#form_dateDebut').value;
+            let dateFin = document.querySelector('#form_dateFin').value;
+
+            if (!dateDebut || !dateFin) {
+                event.preventDefault();
+                alert("Les dates de début et de fin sont obligatoires.");
+            }
+        });
+    </script>
+{% endblock %}
+
+{% endblock %}

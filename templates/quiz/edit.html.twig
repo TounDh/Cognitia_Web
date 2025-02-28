@@ -1,4 +1,4 @@
-{% extends 'Quizbase.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Modifier un Quiz{% endblock %}
 
@@ -6,7 +6,7 @@
 
 {% if is_granted('ROLE_INSTRUCTEUR') %}
 
-<div class="container mt-5">
+<div class="container mt-5" style="padding: 150px;">
     <h1 class="text-center">Modifier un Quiz</h1>
     <div class="card p-4 shadow">
         {{ include('quiz/_form.html.twig', {'button_label': 'Mettre à jour'}) }}

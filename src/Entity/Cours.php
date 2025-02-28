@@ -5,39 +5,57 @@ namespace App\Entity;
 use App\Repository\CoursRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 #[ORM\Entity(repositoryClass: CoursRepository::class)]
+#[Vich\Uploadable]
 class Cours
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $titre;
+    #[ORM\Column(length: 255)]
+    private ?string $titre = null;
 
-    #[ORM\Column(type: "text")]
-    private string $description;
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $description = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
-    #[ORM\Column(type: "datetime")]
-    private \DateTimeInterface $datePublication;
+    #[Vich\UploadableField(mapping: 'cours_images', fileNameProperty: 'image')]
+    private ?File $imageFile = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $duree; // Durée du cours en minutes
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $datePublication = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\Column]
+    private ?int $duree = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $difficulte = null;
+
+    #[ORM\Column]
+    private ?float $prix = null;
+
+    #[ORM\ManyToOne(inversedBy: 'cours')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotBlank(message: "Le cours doit être associé à un instructeur")]
     private ?User $instructeur = null;
 
-    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Quiz::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Modules::class, orphanRemoval: true)]
+    private Collection $modules;
+
+    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Defis::class, orphanRemoval: true)]
+    private Collection $defis;
+
+    // Add new Quiz relationship
+    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Quiz::class, orphanRemoval: true)]
     private Collection $quizzes;
 
     #[ORM\OneToMany(mappedBy: "cours", targetEntity: Evaluation::class)]
@@ -45,35 +63,35 @@ class Cours
 
     public function __construct()
     {
-        $this->evaluations = new ArrayCollection();
-        $this->datePublication = new \DateTime(); // Défaut à la date actuelle
+        $this->modules = new ArrayCollection();
+        $this->defis = new ArrayCollection();
         $this->quizzes = new ArrayCollection();
-
+        $this->datePublication = new \DateTime();
+        $this->evaluations = new ArrayCollection();
     }
 
-    // Getters & Setters
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getTitre(): string
+    public function getTitre(): ?string
     {
         return $this->titre;
     }
 
-    public function setTitre(string $titre): self
+    public function setTitre(?string $titre): self
     {
         $this->titre = $titre;
         return $this;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
         return $this;
@@ -90,33 +108,141 @@ class Cours
         return $this;
     }
 
-    public function getDatePublication(): \DateTimeInterface
+    public function getDatePublication(): ?\DateTimeInterface
     {
         return $this->datePublication;
     }
 
-    public function setDatePublication(\DateTimeInterface $datePublication): self
+    public function setDatePublication(?\DateTimeInterface $datePublication): self
     {
         $this->datePublication = $datePublication;
         return $this;
     }
 
-    public function getDuree(): int
+    public function getDuree(): ?int
     {
         return $this->duree;
     }
 
-    public function setDuree(int $duree): self
+    public function setDuree(?int $duree): self
     {
         $this->duree = $duree;
         return $this;
     }
-    
-    public function getInstructeur(): ?User { return $this->instructeur; }
-    public function setInstructeur(?User $instructeur): self { $this->instructeur = $instructeur; return $this; }
 
-    public function getQuizzes(): Collection { return $this->quizzes; }
+    public function getDifficulte(): ?string
+    {
+        return $this->difficulte;
+    }
 
+    public function setDifficulte(?string $difficulte): self
+    {
+        $this->difficulte = $difficulte;
+        return $this;
+    }
+
+    public function getPrix(): ?float
+    {
+        return $this->prix;
+    }
+
+    public function setPrix(?float $prix): self
+    {
+        $this->prix = $prix;
+        return $this;
+    }
+
+    public function getInstructeur(): ?User
+    {
+        return $this->instructeur;
+    }
+
+    public function setInstructeur(?User $instructeur): self
+    {
+        $this->instructeur = $instructeur;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Modules>
+     */
+    public function getModules(): Collection
+    {
+        return $this->modules;
+    }
+
+    public function addModule(Modules $module): self
+    {
+        if (!$this->modules->contains($module)) {
+            $this->modules->add($module);
+            $module->setCours($this);
+        }
+        return $this;
+    }
+
+    public function removeModule(Modules $module): self
+    {
+        if ($this->modules->removeElement($module)) {
+            if ($module->getCours() === $this) {
+                $module->setCours(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Defis>
+     */
+    public function getDefis(): Collection
+    {
+        return $this->defis;
+    }
+
+    public function addDefis(Defis $defis): self
+    {
+        if (!$this->defis->contains($defis)) {
+            $this->defis->add($defis);
+            $defis->setCours($this);
+        }
+        return $this;
+    }
+
+    public function removeDefis(Defis $defis): self
+    {
+        if ($this->defis->removeElement($defis)) {
+            if ($defis->getCours() === $this) {
+                $defis->setCours(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Quiz>
+     */
+    public function getQuizzes(): Collection
+    {
+        return $this->quizzes;
+    }
+
+    public function addQuiz(Quiz $quiz): self
+    {
+        if (!$this->quizzes->contains($quiz)) {
+            $this->quizzes->add($quiz);
+            $quiz->setCours($this);
+        }
+        return $this;
+    }
+
+    public function removeQuiz(Quiz $quiz): self
+    {
+        if ($this->quizzes->removeElement($quiz)) {
+            if ($quiz->getCours() === $this) {
+                $quiz->setCours(null);
+            }
+        }
+        return $this;
+    }
 
     /**
      * @return Collection<int, Evaluation>
@@ -132,7 +258,6 @@ class Cours
             $this->evaluations->add($evaluation);
             $evaluation->setCours($this);
         }
-
         return $this;
     }
 
@@ -143,7 +268,6 @@ class Cours
                 $evaluation->setCours(null);
             }
         }
-
         return $this;
     }
 }

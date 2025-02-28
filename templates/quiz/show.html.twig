@@ -1,4 +1,4 @@
-{% extends 'Quizbase.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Détails du Quiz{% endblock %}
 
@@ -6,7 +6,7 @@
 
 {% if is_granted('ROLE_INSTRUCTEUR') %}
 
-    <div class="container mt-5">
+<div class="container mt-5" style="padding: 150px;">
         <h1 class="text-center mb-4">Détails du Quiz</h1>
 
         <div class="card shadow-sm">

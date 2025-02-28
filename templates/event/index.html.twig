@@ -1,47 +1,52 @@
+{# templates/event/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Event index{% endblock %}
+{% block title %}Event List{% endblock %}
 
 {% block body %}
-    <h1>Event index</h1>
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Event List</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Titre</th>
-                <th>Description</th>
-                <th>DateDebut</th>
-                <th>DateFin</th>
-                <th>Lieu</th>
-                <th>Type</th>
-                <th>Image</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="d-flex justify-content-end mb-3">
+    </div>
+
+    <div class="row">
         {% for event in events %}
-            <tr>
-                <td>{{ event.id }}</td>
-                <td>{{ event.titre }}</td>
-                <td>{{ event.description }}</td>
-                <td>{{ event.dateDebut ? event.dateDebut|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ event.dateFin ? event.dateFin|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ event.lieu }}</td>
-                <td>{{ event.type }}</td>
-                <td>{{ event.image }}</td>
-                <td>
-                    <a href="{{ path('app_event_show', {'id': event.id}) }}">show</a>
-                    <a href="{{ path('app_event_edit', {'id': event.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="9">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    {% if event.image %}
+                        <img src="{{ asset('uploads/' ~ event.image) }}" class="card-img-top" alt="Event Image" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div class="card-img-top" style="height: 200px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                            <span class="text-muted">No Image</span>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.titre }}</h5>
+                        <p class="card-text">{{ event.description|slice(0, 100) ~ '...' }}</p>
+                        <p class="text-muted">Start: {{ event.dateDebut ? event.dateDebut|date('Y-m-d H:i') : '-' }}</p>
+                        <p class="text-muted">Location: {{ event.lieu }}</p>
+                        <span class="badge bg-info text-dark">{{ event.type }}</span>
 
-    <a href="{{ path('app_event_new') }}">Create new</a>
+                        <div class="d-flex justify-content-between mt-3">
+                            <a href="{{ path('app_event_show', {'id': event.id}) }}" class="btn btn-sm btn-outline-primary">View</a>
+
+                            {# Formulaire pour participer #}
+                            <form action="{{ path('event_participate', {'id': event.id}) }}" method="post" style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('participate' ~ event.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-success">Participer</button>
+                            </form>
+
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center text-muted">
+                <p>No events found</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

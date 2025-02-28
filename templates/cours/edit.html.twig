@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Cours{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto py-12">
+        <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Edit Cours</h1>
+
+        {{ include('cours/_form.html.twig', {'button_label': 'Update'}) }}
+
+        <div class="text-center mt-6">
+            <a href="{{ path('app_cours_index') }}" class="text-blue-500 hover:underline">Back to list</a>
+        </div>
+
+        {{ include('cours/_delete_form.html.twig') }}
+    </div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Defis{% endblock %}
+
+{% block body %}
+    <div class="container" style="padding-top: 100px;"> <!-- Adjust this padding-top as needed -->
+
+    <h1>Create new Defis</h1>
+
+    {{ include('defis/_form.html.twig') }}
+
+    <a href="{{ path('app_cours_index') }}">back to list</a>
+    </div>
+{% endblock %}

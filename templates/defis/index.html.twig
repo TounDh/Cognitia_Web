@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Defis index{% endblock %}
+
+{% block body %}
+    <h1>Defis index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>PointsRecompense</th>
+                <th>BadgeRecompense</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for defi in defis %}
+            <tr>
+                <td>{{ defi.id }}</td>
+                <td>{{ defi.titre }}</td>
+                <td>{{ defi.description }}</td>
+                <td>{{ defi.pointsRecompense }}</td>
+                <td>{{ defi.badgeRecompense }}</td>
+                <td>
+                    <a href="{{ path('app_defis_show', {'id': defi.id}) }}">show</a>
+                    <a href="{{ path('app_defis_edit', {'id': defi.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_defis_new') }}">Create new</a>
+{% endblock %}

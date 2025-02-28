@@ -1,9 +1,10 @@
-{% extends 'Quizbase.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Résultat du Quiz{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
+    <div class="container mt-5" style="padding: 150px;">
+
         <h2 class="text-center">Résultat du Quiz</h2>
         <p class="text-center">Score obtenu : <strong>{{ resultat.score }}%</strong></p>
         
