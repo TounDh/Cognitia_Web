@@ -4,19 +4,61 @@
 
 {% block body %}
 {% if is_granted('ROLE_INSTRUCTEUR') %}
-
-<div class="container mt-5" style="padding: 150px;">
-    <h2 class="text-center">Statistiques pour Quiz "{{ quiz.titre }}"</h2>
-    
-    <div class="card p-4 shadow">
-        <p><strong>Moyenne des scores :</strong> {{ moyenne }}%</p>
-        <p><strong>Meilleur score :</strong> {{ meilleur }}%</p>
-        <p><strong>Nombre de tentatives :</strong> {{ tentatives }}</p>
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12" style="margin-top: 80px;">
+            <h1 class="text-primary fw-bold text-center mb-4">Statistiques du Quiz</h1>
+        </div>
     </div>
 
-    <a href="{{ path('app_quiz_index') }}" class="btn btn-primary mt-3">Retour à la liste des quiz</a>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm hover-shadow transition-all">
+                <div class="card-header bg-primary bg-opacity-10">
+                    <h5 class="card-title mb-0 text-primary">{{ quiz.titre }} #{{ quiz.id }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-chart-line me-2 text-primary"></i>Moyenne des scores
+                        </h6>
+                        <p class="ms-4 h3 text-success">{{ moyenne }}%</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-trophy me-2 text-primary"></i>Meilleur score
+                        </h6>
+                        <p class="ms-4 h3 text-warning">{{ meilleur }}%</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-users me-2 text-primary"></i>Nombre de tentatives
+                        </h6>
+                        <p class="ms-4 h3 text-info">{{ tentatives }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ path('app_quiz_index') }}" class="btn btn-outline-primary rounded-pill">
+                    <i class="fas fa-arrow-left me-2"></i>Retour à la liste des quiz
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
-{% endif %}
+<style>
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
 
+.transition-all {
+    transition: all 0.3s ease;
+}
+</style>
+{% endif %}
 {% endblock %}

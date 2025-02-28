@@ -99,6 +99,13 @@ final class QuizController extends AbstractController
         return $this->redirectToRoute('app_quiz_index', [], Response::HTTP_SEE_OTHER);
     }
 
+    #[Route('/quiz/{id}/startSession', name: 'app_quiz_start_session')]
+    #[IsGranted('ROLE_APPRENANT')]
+    public function startSession(Quiz $quiz): Response
+    {
+        return $this->render('quiz/startSession.html.twig', ['quiz' => $quiz]);
+    }
+
     #[Route('/quiz/{id}/start', name: 'app_quiz_start')]
     #[IsGranted('ROLE_APPRENANT')]
     public function start(
