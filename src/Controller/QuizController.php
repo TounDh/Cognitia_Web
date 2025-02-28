@@ -99,14 +99,14 @@ final class QuizController extends AbstractController
         return $this->redirectToRoute('app_quiz_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/quiz/{id}/startSession', name: 'app_quiz_start_session')]
+    #[Route('/{id}/startSession', name: 'app_quiz_start_session')]
     #[IsGranted('ROLE_APPRENANT')]
     public function startSession(Quiz $quiz): Response
     {
         return $this->render('quiz/startSession.html.twig', ['quiz' => $quiz]);
     }
 
-    #[Route('/quiz/{id}/start', name: 'app_quiz_start')]
+    #[Route('/{id}/start', name: 'app_quiz_start')]
     #[IsGranted('ROLE_APPRENANT')]
     public function start(
         Quiz $quiz, 
@@ -155,13 +155,13 @@ final class QuizController extends AbstractController
         return $this->render('quiz/start.html.twig', ['quiz' => $quiz]);
     }
 
-    #[Route('/quiz/result/{id}', name: 'quiz_result')]
+    #[Route('/result/{id}', name: 'quiz_result')]
     public function result(Resultat $resultat): Response
     {
         return $this->render('quiz/result.html.twig', ['resultat' => $resultat]);
     }
 
-    #[Route('/quiz/{id}/stats', name: 'app_quiz_stats')]
+    #[Route('/{id}/stats', name: 'app_quiz_stats')]
     #[IsGranted('ROLE_INSTRUCTEUR')]
     public function stats(Quiz $quiz, EntityManagerInterface $em): Response {
 
