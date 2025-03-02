@@ -178,7 +178,7 @@ final class EventController extends AbstractController
 
         // Vérifier si l'utilisateur est connecté et a le rôle ROLE_PARTICIPANT
         if (!$user instanceof User || !in_array('ROLE_APPRENANT', $user->getRoles())) {
-            throw new AccessDeniedException('Seuls les participants peuvent s\'inscrire à cet événement.');
+            throw new AccessDeniedException('Seuls les Apprenants peuvent s\'inscrire à cet événement.');
         }
 
         // Ajouter l'utilisateur comme participant

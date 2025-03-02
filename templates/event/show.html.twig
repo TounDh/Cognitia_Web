@@ -7,7 +7,12 @@
     <h1 class="mb-4">{{ event.titre }}</h1>
 
     {% if event.image %}
-    <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="Image de l'événement" class="img-fluid">
+        <div class="mb-4">
+            <img src="{{ asset('uploads/' ~ event.image) }}" 
+                 alt="Image de l'événement" 
+                 class="img-fluid rounded"
+                 style="max-height: 400px; width: auto;">
+        </div>
     {% else %}
         <p>Aucune image disponible pour cet événement.</p>
     {% endif %}
