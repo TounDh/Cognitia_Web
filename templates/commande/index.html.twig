@@ -1,0 +1,302 @@
+{% extends 'base.html.twig' %}
+{% block title %}Invoice{% endblock %}
+{% block body %}
+    <style>
+        body {
+            margin-top: 20px;
+            color: #484b51;
+        }
+        .text-secondary-d1 {
+            color: #728299 !important;
+        }
+        .badge {
+            background-color: rgba(191, 204, 6, 0.92) !important;
+        }
+        .page-header {
+            margin: 0 0 1rem;
+            padding-bottom: 1rem;
+            padding-top: .5rem;
+            border-bottom: 1px dotted #e2e2e2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .page-title {
+            padding: 0;
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 300;
+        }
+        .brc-default-l1 {
+            border-color: #dce9f0 !important;
+        }
+        .ml-n1, .mx-n1 {
+            margin-left: -.25rem !important;
+        }
+        .mr-n1, .mx-n1 {
+            margin-right: -.25rem !important;
+        }
+        .mb-4, .my-4 {
+            margin-bottom: 1.5rem !important;
+        }
+        hr {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            border: 0;
+            border-top: 1px solid rgba(0,0,0,.1);
+        }
+        .text-grey-m2 {
+            color: #888a8d !important;
+        }
+        .text-success-m2 {
+            color: #86bd68 !important;
+        }
+        .font-bolder, .text-600 {
+            font-weight: 600 !important;
+        }
+        .text-110 {
+            font-size: 110% !important;
+        }
+        .text-blue {
+            color: #478fcc !important;
+        }
+        .pb-25, .py-25 {
+            padding-bottom: .75rem !important;
+        }
+        .pt-25, .py-25 {
+            padding-top: .75rem !important;
+        }
+        .bgc-default-tp1 {
+            background-color: rgba(121,169,197,.92) !important;
+        }
+        .bgc-default-l4, .bgc-h-default-l4:hover {
+            background-color: #f3f8fa !important;
+        }
+        .page-header .page-tools {
+            align-self: flex-end;
+        }
+        .btn-light {
+            color: #757984;
+            background-color: #f5f6f9;
+            border-color: #dddfe4;
+        }
+        .w-2 {
+            width: 1rem;
+        }
+        .text-120 {
+            font-size: 120% !important;
+        }
+        .text-primary-m1 {
+            color: #4087d4 !important;
+        }
+        .text-danger-m1 {
+            color: #dd4949 !important;
+        }
+        .text-blue-m2 {
+            color: #68a3d5 !important;
+        }
+        .text-150 {
+            font-size: 150% !important;
+        }
+        .text-60 {
+            font-size: 60% !important;
+        }
+        .text-grey-m1 {
+            color: #7b7d81 !important;
+        }
+        .align-bottom {
+            vertical-align: bottom !important;
+        }
+        .centered {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .centeredd {
+            height: 12vh;
+        }
+        .right-aligned {
+            display: flex;
+            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+    </style>
+
+    <div class="page-content container">
+        <div class="centeredd"
+            <h1></h1>
+        </div>
+        <div class="page-header text-blue-d2">
+           
+            <h1 class="page-title text-secondary-d1">
+                Invoice
+                <small class="page-info">
+                    <i class="fa fa-angle-double-right text-80"></i>
+                    ID: #{{ commande.id }}
+                </small>
+            </h1>
+
+            <div class="page-tools">
+                <div class="action-buttons">
+                    <a class="btn bg-white btn-light mx-1px text-95" href="#" data-title="PDF">
+                        <i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2"></i>
+                        Export
+                    </a>
+
+                    <a class="btn bg-white btn-light mx-1px text-95" href="#" data-title="Print">
+                        <i class="mr-1 fa fa-print text-primary-m1 text-120 w-2"></i>
+                        Print
+                    </a>
+
+<a href="{{ path('app_commande_delete', {'id': commande.id}) }}" 
+   class="btn bg-white btn-light mx-1px text-95"
+   onclick="return confirm('Are you sure you want to delete this order?');">
+    <i class="mr-1 fa fa-trash text-danger-m1 text-120 w-2"></i>
+    Discard
+</a>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="container px-0">
+            <div class="row mt-4">
+                <div class="col-12 col-lg-12">
+                    
+
+                    <div class="centered">
+        <a href="index-2.html"><img src="{{ asset('/cognitia.png') }}" alt="" style="width: 100px; height: 100px;"></a>
+    </div>
+
+                    <hr class="row brc-default-l1 mx-n1 mb-4" />
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div>
+                                <span class="text-sm text-grey-m2 align-middle">From: </span>
+                                <span class="text-600 text-110 text-blue align-middle">{{ user.firstName }} {{ user.lastName }}</span>
+                            </div>
+                            <div class="text-grey-m2">
+                                <div class="my-1">
+                                    {{ user.email }}
+                                </div>
+                                
+                                <div class="my-1"><i class="fa fa-phone fa-flip-horizontal text-secondary"></i> <b class="text-600">{{ user.phoneNumber }}</b></div>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                    
+
+                        <div class="text-95 col-sm-6 align-self-start d-sm-flex justify-content-end">
+                            <hr class="d-sm-none" />
+                            <div class="text-grey-m2">
+                                <div class="mt-1 mb-2 text-secondary-m1 text-600 text-125">
+                                    Invoice
+                                </div>
+
+                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">ID:</span> #{{ commande.id }}</div>
+
+                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Issue Date:</span> {{ commande.dateAchat|date('Y-m-d') }} </div>
+
+                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Status:</span> <span class="badge badge-warning badge-pill px-25">{{ commande.statut }}</span></div>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="row text-600 text-white bgc-default-tp1 py-25">
+                            <div class="d-none d-sm-block col-1">#</div>
+                            <div class="col-2 col-sm-3">Title</div>
+                            <div class="d-none d-sm-block col-sm-5">Description</div>
+                            <div class="col-2">Amount</div>
+                        </div>
+
+                        <div class="text-95 text-secondary-d3">
+
+                            {% for cours in cours %}
+
+
+    <div class="row mb-2 mb-sm-0 py-25 {% if loop.index is even %}bgc-default-l4{% endif %}">
+
+                            <div class="d-none d-sm-block col-1">#</div>
+                            <div class="col-2 col-sm-3">{{ cours.titre }}</div>
+                            <div class="d-none d-sm-block col-sm-5" style="word-wrap: break-word;" >{{ cours.description }} </div>
+                            <div class="col-2">{{ cours.prix }}</div>
+                              
+                            </div>
+
+
+
+                            {% endfor %}
+
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+    <div class="row mt-3">
+        <div class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
+            Only current online payment methods are allowed..
+        </div>
+
+        <div class="col-12 col-sm-3 text-grey text-90 order-first order-sm-last">
+            <div class="row my-2">
+                <div class="col-7 text-right">
+                    SubTotal
+                </div>
+                <div class="col-5">
+                    <span class="text-110 text-secondary-d1">{{ subtotal }} TND</span>
+                </div>
+            </div>
+
+            <div class="row my-2">
+                <div class="col-7 text-right">
+                    Tax (10%)
+                </div>
+                <div class="col-5">
+                    <span class="text-110 text-secondary-d1">{{ tax }} TND</span>
+                </div>
+            </div>
+
+            <div class="row my-2 align-items-center bgc-primary-l3 p-2">
+                <div class="col-7 text-right">
+                    Total Amount
+                </div>
+
+                <div class="col-5">
+                    <span class="text-150 text-success-d3 opacity-2">{{ total }}TND</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+<div class="right-aligned">
+        <span class="text-secondary-d1 text-105">Thank you for your business</span>
+
+
+
+        
+
+            <form action="{{ path('app_paiement_create', {'id': commande.id}) }}" method="POST" style="display:inline;">
+        <button type="submit" class="btn btn-info btn-bold px-4 float-right mt-3 mt-lg-0">
+            Pay Now
+        </button>
+    </form>
+
+
+
+    </div>
+<div class="centeredd"
+            <h1></h1>
+        </div>
+    
+</div>
+{% endblock %}

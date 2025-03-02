@@ -4,6 +4,36 @@
 
 {% block body %}
 
+<style>
+.cart_btn {
+    display: inline-block;
+    background-color:rgb(122, 128, 219); /* Bright orange color */
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 3px 5px;
+    margin-top: 10px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0);
+	float: right;
+	clear: both;
+}
+
+.cart_btn:hover {
+    background-color: rgb(96, 101, 177); /* Darker shade for hover */
+    transform: scale(1.05);
+}
+
+.cart_btn:active {
+    background-color: rgb(72, 76, 129); /* Even darker for active click */
+    transform: scale(0.98);
+}
+
+</style>
+
 <!-- START SECTION TOP -->
 <section class="section-top">
     <div class="container">
@@ -67,7 +97,6 @@
                             <span><i class="fa fa-star"></i>4.9</span>
                             <span><i class="fa fa-table"></i><strong>30 Seats Available</strong></span>
 
-                            <!-- Edit and Delete Buttons -->
                             <div class="d-flex justify-content-between align-items-center">
                                 <a href="{{ path('app_cours_show', {'id': cours.id}) }}" class="btn btn-primary">
                                     <i class="fas fa-eye"></i> View
@@ -88,6 +117,13 @@
                                     </div>
                                 {% endif %}
                             </div>
+
+                            <form action="{{ path('app_panier_add_to_cart', {'coursId': cours.id}) }}" method="POST" style="display: inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart_' ~ cours.id) }}">
+                                <button class="cart_btn btn-info btn-bold" type="submit">
+                                    <i class="fa fa-shopping-cart"></i> | Add to Cart
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -106,6 +142,25 @@
 </div>
 <!-- END COURSE -->
 
+<script>
+function addToCart(courseId) {
+    fetch(`/panier/add/${courseId}`, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Course added to cart successfully!');
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
 {% endblock %}
 
 {% block stylesheets %}

@@ -76,6 +76,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank(message: 'Veuillez entrer votre photo.', groups: ['RegistrationInstructeur'])]
     private ?string $photo = null;
 
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Panier::class)]
+    private iterable $paniers;
+
     
 
     #[ORM\OneToMany(mappedBy: 'instructeur', targetEntity: Quiz::class)]
@@ -216,7 +220,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    
+    public function getPaniers(): iterable
+    {
+        return $this->paniers;
+    }
+    public function setPaniers(iterable $paniers): self
+    {
+        $this->paniers = $paniers;
+        return $this;
+    }
+
 
     
 
@@ -256,6 +269,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // Effacer les données sensibles temporaires
     }
+
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'participants')]
     private Collection $eventsParticipated;
 
@@ -288,4 +302,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 }

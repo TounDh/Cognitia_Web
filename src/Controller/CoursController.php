@@ -6,6 +6,7 @@ use App\Entity\Cours;
 use App\Repository\CoursRepository;
 use App\Repository\ModulesRepository;
 use App\Repository\DefisRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +25,7 @@ final class CoursController extends AbstractController
     #[Route(name: 'app_cours_index', methods: ['GET'])]
     public function index(CoursRepository $coursRepository): Response
     {
+
         return $this->render('cours/index.html.twig', [
             'cours' => $coursRepository->findAll(),
         ]);

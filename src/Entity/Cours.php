@@ -61,8 +61,21 @@ class Cours
     #[ORM\OneToMany(mappedBy: "cours", targetEntity: Evaluation::class)]
     private Collection $evaluations;
 
+
+
+    #[ORM\ManyToOne(targetEntity: Panier::class, inversedBy: 'cours')]
+    #[ORM\JoinColumn(onDelete: "SET NULL", nullable: true)]
+    private ?Panier $panier = null;
+
+
+ 
+
+
+   
+
     public function __construct()
     {
+
         $this->modules = new ArrayCollection();
         $this->defis = new ArrayCollection();
         $this->quizzes = new ArrayCollection();
@@ -163,7 +176,27 @@ class Cours
         return $this;
     }
 
-    /**
+
+
+    public function getPanier(): ?Panier
+    {
+        return $this->panier;
+    }
+
+    public function setPanier(?Panier $panier): self
+    {
+        $this->panier = $panier;
+
+        return $this;
+    }
+
+
+
+
+
+
+
+/*
      * @return Collection<int, Modules>
      */
     public function getModules(): Collection

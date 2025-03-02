@@ -1,0 +1,244 @@
+{% extends 'base.html.twig' %}
+{% block title %}Courses{% endblock %}
+
+
+{% block body %}
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .cart-container {
+        
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+        }
+        .cart-header {
+          
+            
+             margin: 0 0 1rem;
+            padding-bottom: 1rem;
+            padding-top: .5rem;
+            border-bottom: 1px dotted #e2e2e2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            font-weight: bold;
+            padding-left: 140px;
+        }
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .cart-itemm {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cart-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+        .cart-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+        .cart-item-details {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+
+        }
+
+
+        .cart-item-details h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #444;
+        }
+        .cart-item-details p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .cart-item-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff4757;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .cart-item-actions button:hover {
+            background-color: #ff6b81;
+        }
+        .cart-summary {
+            margin-top: 30px;
+            padding: 1px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            text-align: right;
+        }
+        .cart-summary p {
+            margin: 0;
+            font-size: 1.2rem;
+            color:rgb(0, 0, 0);
+            font-weight: bold;
+        }
+        .cart-summary button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2ed573;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .cart-summary button:hover {
+            background-color: #7bed9f;
+        }
+        .centeredd {
+            height: 12vh;
+        }
+        .centerd {
+            height: 2vh;
+        }
+        .cart-item-actions button.remove-item-btn {
+    font-size: 1.5rem;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background-color:rgb(247, 195, 199);
+    color: white;
+    text-align: center;
+    display: flex;
+    justify-content: center; /* Centrer horizontalement */
+    align-items: center;
+    line-height: 10px;
+    transition: background-color 0.3s;
+}
+
+.cart-item-actions button.remove-item-btn:hover {
+    background-color: #ff4757;
+}
+
+.cart-item-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ccc;
+}
+
+.cart-item-column-title {
+    flex: 1;
+    text-align: center;
+    margin: 0 20px;
+
+.cart-summary-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    border-bottom: 2px solid #ddd;
+    font-weight: bold;
+}
+
+.cart-summary-column {
+    flex: 1;
+    text-align: center;
+}
+
+.right-aligned {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.right-aligned .btn-info {
+    margin-left: auto; /* Pousse le bouton à droite */
+}
+
+}
+    </style>
+
+   <div class="centeredd"
+            <h1></h1>
+        </div>
+
+
+ <div class="cart-container">
+        <div class="cart-header">
+        <h1></h1>
+            <h1>Shopping cart</h1></br>
+
+            <div class="page-tools">
+            </div>
+         
+        </div>
+
+
+
+        
+
+
+
+
+        <div class="centerd"
+            <h1></h1>
+        </div>
+
+
+
+           
+
+                <p>  Vouz n'avez pas encore de panier!</p>
+                
+
+
+        <div class="cart-summary">
+           <div class="right-aligned">
+                <a href="http://127.0.0.1:8000/cours" class="continue-shopping"> continue shopping</a>
+                
+       
+            </div>
+        </div>
+    </div>
+{% endblock %}
