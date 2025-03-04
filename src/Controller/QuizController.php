@@ -4,15 +4,18 @@ namespace App\Controller;
 
 use App\Entity\Quiz;
 use App\Entity\Resultat;
+use App\Entity\Certificat;
 use App\Form\QuizType;
 use App\Repository\QuizRepository;
 use App\Repository\ReponseRepository;
+use App\Repository\CertificatRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use TCPDF;
 
 
 #[Route('/quiz')]
@@ -116,7 +119,7 @@ final class QuizController extends AbstractController
     ): Response {
         // Récupérer l'apprenant (utilisateur authentifié)
         $apprenant = $this->getUser(); // Assurez-vous que l'apprenant est un utilisateur authentifié
-        
+
         if ($request->isMethod('POST')) {
             $totalReponsesCorrectes = 0;
             $totalReponses = 0;
@@ -148,7 +151,18 @@ final class QuizController extends AbstractController
     
             $em->persist($resultat);
             $em->flush();
-    
+
+            if ($score >= 80) {
+                // Créer un nouveau certificat
+                $certificat = new Certificat();
+                $certificat->setApprenant($apprenant);
+                $certificat->setQuiz($quiz);
+                $certificat->setScore($score);
+                $certificat->setDateObtention(new \DateTimeImmutable());
+                $em->persist($certificat);
+                $em->flush();
+            }
+            
             return $this->redirectToRoute('quiz_result', ['id' => $resultat->getId()]);
         }
     
@@ -184,6 +198,117 @@ final class QuizController extends AbstractController
             'tentatives' => $total
         ]);
     }
+
+    #[Route('/certificate/{id}', name: 'app_generate_certificate')]
+    public function generateCertificate(
+        int $id,
+        CertificatRepository $certificatRepository,  
+        EntityManagerInterface $entityManager
+    ): Response {
+        $certificat = $certificatRepository->find($id);
+        
+        if (!$certificat) {
+            throw $this->createNotFoundException('Certificat non trouvé');
+        }
+    
+        $quiz = $certificat->getQuiz();
+        $user = $certificat->getApprenant();
+        $score = $certificat->getScore();
+        $responsable = $quiz->getInstructeur();
+    
+        // Création du PDF
+        $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->SetCreator('E-Learning Platform');
+        $pdf->SetAuthor('Cognitia');
+        $pdf->SetTitle('Certificat de réussite - ' . $quiz->getTitre());
+    
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        $pdf->AddPage();
+
+        // Ajout du filigrane (Avant d'écrire du texte)
+        $logoPath = $this->getParameter('kernel.project_dir') . '/public/cognitia.png';
+        // $pdf->Image($logoPath, 60, 60, 180, 120, 'PNG', '', '', false, 300, '', false, false, 0, false, false, false);
+
+        // Ajout d'une bordure élégante
+        $pdf->SetDrawColor(0, 51, 102);
+        $pdf->SetLineWidth(3);
+        $pdf->Rect(10, 10, $pdf->GetPageWidth()-20, $pdf->GetPageHeight()-20);
+    
+        // Ajout du logo officiel en haut
+        $pdf->Image($logoPath, 20, 20, 40, 40, 'PNG');
+
+        // Ajout du titre
+        $pdf->SetFont('helvetica', 'B', 40);
+        $pdf->SetTextColor(0, 51, 102);
+        $pdf->Ln(10);
+        $pdf->Cell(0, 20, 'Certificat de Réussite', 0, 1, 'C');
+    
+        // Ligne de séparation
+        $pdf->SetDrawColor(0, 51, 102);
+        $pdf->SetLineWidth(1);
+        $pdf->Line(50, 70, 250, 70);
+    
+        // Texte d'introduction
+        $pdf->SetFont('helvetica', '', 18);
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->Ln(15);
+        $pdf->Cell(0, 10, 'Ce certificat est décerné à', 0, 1, 'C');
+    
+        // Nom de l'apprenant avec police stylée
+        $pdf->SetFont('times', 'B', 30);
+        $pdf->SetTextColor(0, 51, 102);
+        $pdf->Ln(5);
+        $pdf->Cell(0, 10, strtoupper($user->getFirstName() . ' ' . $user->getLastName()), 0, 1, 'C');
+    
+        // Description du quiz
+        $pdf->SetFont('helvetica', '', 18);
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->Ln(5);
+        $pdf->Cell(0, 10, 'pour avoir complété avec succès le quiz', 0, 1, 'C');
+    
+        $pdf->SetFont('helvetica', 'B', 22);
+        $pdf->SetTextColor(13, 110, 253);
+        $pdf->Cell(0, 10, '"' . $quiz->getTitre() . '"', 0, 1, 'C');
+    
+        // Score et date
+        $pdf->SetFont('helvetica', '', 18);
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->Ln(5);
+        $pdf->Cell(0, 10, 'avec un score de ' . $score . '%', 0, 1, 'C');
+        $pdf->Ln(5);
+        $pdf->Cell(0, 10, 'Date : ' . (new \DateTime())->format('d/m/Y'), 0, 1, 'C');
+    
+        // Signature et responsable
+        $pdf->Ln(15);
+        $pdf->SetFont('helvetica', 'I', 16);
+        $pdf->Cell(0, 10, '__________________________', 0, 1, 'C');
+        $pdf->Cell(0, 10, 'Signature du responsable', 0, 1, 'C');
+
+        // Nom du responsable sous la signature
+        $pdf->SetFont('helvetica', 'B', 16);
+        $pdf->SetTextColor(0, 51, 102);
+        $pdf->Ln(5);
+        $pdf->Cell(0, 10, strtoupper($responsable->getFirstName() . ' ' . $responsable->getLastName()), 0, 1, 'C');
+    
+        // Génération du nom du fichier
+        $filename = sprintf('certificat_%s_%s.pdf', 
+            preg_replace('/[^A-Za-z0-9]/', '_', $user->getFirstName(). '_' .$user->getLastName()),
+            preg_replace('/[^A-Za-z0-9]/', '_', $quiz->getTitre())
+        );
+    
+        return new Response(
+            $pdf->Output($filename, 'D'),
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $filename)
+            ]
+        );
+    }
+
+
+
 
     /** Fonctionnalité pour l'admin (dashboard) */
 
@@ -279,5 +404,4 @@ final class QuizController extends AbstractController
             'tentatives' => $total
         ]);
     }
-
 }

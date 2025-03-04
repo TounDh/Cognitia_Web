@@ -102,6 +102,7 @@
 									<li><a class="nav-link" href="{{ path('app_instructeur') }}">Instructeur</a></li>
 									{% if is_granted('ROLE_APPRENANT')  or is_granted('ROLE_INSTRUCTEUR') or is_granted('ROLE_ADMIN') %}
 									<li><a href="{{path('app_quiz_index')}}">Liste Quiz</a></li>
+									<li><a href="{{path('app_certificat_index')}}">Liste Certificat</a></li>
 									{% endif %}
 								</ul>
 							</li>

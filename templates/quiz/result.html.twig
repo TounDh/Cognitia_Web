@@ -21,9 +21,20 @@
                         </div>
                         <div class="result-message mb-4">
                             {% if resultat.score >= 80 %}
-                                <div class="alert alert-success">
-                                    <i class="fas fa-trophy me-2"></i>Excellent travail ! Vous avez maîtrisé ce quiz !
-                                </div>
+                                    <div class="certificate-section mt-4 mb-4">
+                                        <div class="certificate-card p-4 bg-light rounded-4 border shadow-sm">
+                                            <div class="text-center">
+                                                <i class="fas fa-certificate text-warning display-1 mb-3"></i>
+                                                <h4 class="text-primary mb-3">Félicitations !</h4>
+                                                <p class="text-muted mb-4">Vous avez obtenu votre certificat de réussite</p>
+                                                <a href="{{ path('app_certificat_index') }}" 
+                                                class="btn btn-warning btn-lg rounded-pill shadow-sm hover-lift">
+                                                    <i class="fas fa-award me-2"></i>
+                                                    liste de mes Certificats
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                             {% elseif resultat.score >= 60 %}
                                 <div class="alert alert-info">
                                     <i class="fas fa-star me-2"></i>Bon travail ! Continuez vos efforts !
@@ -147,6 +158,36 @@
     to {
         opacity: 1;
     }
+}
+
+.certificate-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    transition: all 0.3s ease;
+}
+
+.certificate-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+}
+
+.hover-lift {
+    transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(255, 193, 7, 0.3) !important;
+}
+
+.btn-warning {
+    color: #000;
+    font-weight: 500;
+}
+
+.btn-warning:hover {
+    color: #000;
+    background-color: #ffc720;
 }
 </style>
 {% endblock %}

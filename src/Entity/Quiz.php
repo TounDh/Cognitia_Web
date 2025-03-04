@@ -44,10 +44,14 @@ class Quiz
     #[ORM\JoinColumn(nullable: true)]
     private ?User $apprenant = null;
 
+    #[ORM\OneToMany(mappedBy: 'quiz', targetEntity: Certificat::class, cascade: ['remove'])]
+    private Collection $certificats;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
         $this->resultats = new ArrayCollection();
+        $this->certificats = new ArrayCollection();
     }
 
     public function getId(): ?int { return $this->id; }
@@ -69,5 +73,33 @@ class Quiz
     public function getApprenant(): ?User { return $this->apprenant; }
     public function setApprenant(?User $apprenant): self { $this->apprenant = $apprenant; return $this; }
     public function __toString(): string { return $this->titre; }
+    
+    /**
+     * @return Collection<int, Certificat>
+     */
+    public function getCertificats(): Collection
+    {
+        return $this->certificats;
+    }
+
+    public function addCertificat(Certificat $certificat): self
+    {
+        if (!$this->certificats->contains($certificat)) {
+            $this->certificats[] = $certificat;
+            $certificat->setQuiz($this);
+        }
+        return $this;
+    }
+
+    public function removeCertificat(Certificat $certificat): self
+    {
+        if ($this->certificats->removeElement($certificat)) {
+            if ($certificat->getQuiz() === $this) {
+                $certificat->setQuiz(null);
+            }
+        }
+        return $this;
+    }
+
 }
 
