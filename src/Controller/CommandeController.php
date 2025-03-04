@@ -7,10 +7,14 @@ use App\Entity\Paiement;
 use App\Form\CommandeType;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Stripe\Checkout\Session;
+use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/commande')]
 final class CommandeController extends AbstractController
@@ -88,6 +92,137 @@ final class CommandeController extends AbstractController
         'total' => $total,
         ]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//STRIPE
+//STRIPE
+//STRIPE
+//STRIPE
+    #[Route('/pay/{id}', name: 'pay', methods: ['POST'])]
+    public function checkout(Request $request, Commande $commande): JsonResponse
+    {
+        try {
+            // Set Stripe API key
+            Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+            
+            // Get panier and calculate amount
+            $panier = $commande->getPanier();
+            $sum = 0;
+            foreach ($panier->getCours() as $cours) {
+                $sum += $cours->getPrix();
+            }
+            
+            $tax = $sum * 0.10;
+            $total = $sum + $tax;
+            $amount = (int)round($total * 100);
+            
+            // Create a more basic checkout session without success/cancel URLs
+            $session = Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => 'usd',
+                        'product_data' => [
+                            'name' => 'Course Payment',
+                            'description' => 'Payment for order #' . $commande->getId(),
+                        ],
+                        'unit_amount' => $amount,
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode' => 'payment',
+                // Store the return path as metadata instead of using success/cancel URLs
+                'metadata' => [
+                    'commande_id' => $commande->getId(),
+                ],
+                // Use a single return URL that can handle both success and cancel cases
+                'success_url' => $request->getSchemeAndHttpHost() . $this->generateUrl('payment_success', ['id' => $commande->getId()]), // This is a placeholder
+                'cancel_url' => 'https://example.com/cancel',   // This is a placeholder
+            ]);
+            
+            // Return the checkout URL
+            return new JsonResponse(['url' => $session->url]);
+            
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Error: ' . $e->getMessage()], 500);
+        }
+    }
+    
+    #[Route('/payment/webhook', name: 'stripe_webhook', methods: ['POST'])]
+    public function stripeWebhook(Request $request): Response
+    {
+        // This would be used with a properly configured webhook
+        // We'll skip webhook implementation for now
+        return new Response('', 200);
+    }
+    
+    #[Route('/payment/check/{session_id}', name: 'check_payment')]
+    public function checkPayment(string $session_id): Response
+    {
+        try {
+            Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+            $session = Session::retrieve($session_id);
+            
+            // Based on session status, redirect to success or cancel pages
+            if ($session->payment_status === 'paid') {
+                return $this->redirectToRoute('payment_success');
+            } else {
+                return $this->redirectToRoute('payment_cancel');
+            }
+        } catch (\Exception $e) {
+            return $this->redirectToRoute('payment_cancel');
+        }
+    }
+    
+    #[Route('/payment/success/{id}', name: 'payment_success')]
+    public function paymentSuccess(Commande $commande, EntityManagerInterface $entityManager): Response
+    {
+        $commande->setStatut('paid');
+        $entityManager->persist($commande);
+        $entityManager->flush();
+        
+        // Add flash message to notify user
+        $this->addFlash('success', 'Payment successful! Your order has been confirmed.');
+        
+        // Redirect to commande index page
+        
+        return $this->redirectToRoute('app_commande_show', [
+            'id' => $commande->getId()
+        ]);
+    }
+
+    #[Route('/payment/cancel', name: 'payment_cancel')]
+    public function paymentCancel(): Response
+    {
+        return $this->render('commande/payment_cancel.html.twig');
+    }
+//STRIPE
+//STRIPE
+//STRIPE
+//STRIPE
+
+
 
 
 
