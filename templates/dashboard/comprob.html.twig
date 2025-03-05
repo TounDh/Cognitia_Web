@@ -99,7 +99,15 @@
                                                 <td>{{ total|number_format(0, ',', ' ') }} TND</td>
                                                 <td>{{ commande.dateAchat|date('Y-m-d H:i:s') }}</td>
                                                 <td>{{ commande.Statut }}</td>
-                                                <td></td>
+                                                <td>
+                                                            {% if commande.riskLevel == 'Low Risk' %}
+                                    <span class="badge bg-success">{{ commande.riskLevel }}</span>
+                                {% elseif commande.riskLevel == 'Moderate Risk' %}
+                                    <span class="badge bg-warning">{{ commande.riskLevel }}</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ commande.riskLevel }}</span>
+                                {% endif %}
+                                                </td>
                                             </tr>
                                             {% endif %}
                                         {% else %}
