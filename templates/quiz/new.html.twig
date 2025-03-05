@@ -3,7 +3,13 @@
 {% block title %}Ajouter un Quiz{% endblock %}
 
 {% block body %}
-
+{# Afficher les messages flash #}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
 {% if is_granted('ROLE_INSTRUCTEUR') %}
 
 <div class="container py-5">
@@ -86,4 +92,16 @@
 </style>
 {% endif %}
 
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    fetch('/route-protegee')
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'error') {
+            alert(data.message);
+        }
+    });
+</script>
 {% endblock %}

@@ -45,9 +45,13 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/new', name: 'app_quiz_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_INSTRUCTEUR')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         $quiz = new Quiz();
         $form = $this->createForm(QuizType::class, $quiz);
         $form->handleRequest($request);
@@ -66,18 +70,26 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_quiz_show', methods: ['GET'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function show(Quiz $quiz): Response
     {
+        if (!$this->isGranted('ROLE_INSTRUCTEUR')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('quiz/show.html.twig', [
             'quiz' => $quiz,
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_quiz_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function edit(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_INSTRUCTEUR')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         $form = $this->createForm(QuizType::class, $quiz);
         $form->handleRequest($request);
 
@@ -106,20 +118,28 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/{id}/startSession', name: 'app_quiz_start_session')]
-    #[IsGranted('ROLE_APPRENANT')]
     public function startSession(Quiz $quiz): Response
     {
+        if (!$this->isGranted('ROLE_APPRENANT')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
         return $this->render('quiz/startSession.html.twig', ['quiz' => $quiz]);
     }
 
     #[Route('/{id}/start', name: 'app_quiz_start')]
-    #[IsGranted('ROLE_APPRENANT')]
     public function start(
         Quiz $quiz, 
         Request $request, 
         EntityManagerInterface $em, 
         ReponseRepository $reponseRepository
     ): Response {
+
+        if (!$this->isGranted('ROLE_APPRENANT')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         // Récupérer l'apprenant (utilisateur authentifié)
         $apprenant = $this->getUser(); // Assurez-vous que l'apprenant est un utilisateur authentifié
 
@@ -179,8 +199,11 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/{id}/stats', name: 'app_quiz_stats')]
-    #[IsGranted('ROLE_INSTRUCTEUR')]
     public function stats(Quiz $quiz, EntityManagerInterface $em): Response {
+        if (!$this->isGranted('ROLE_INSTRUCTEUR')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
 
         // Convertir la Collection en tableau
         $resultats = $quiz->getResultats()->toArray();
@@ -194,11 +217,19 @@ final class QuizController extends AbstractController
         // Trouver le meilleur score
         $meilleur = $total > 0 ? max(array_map(fn($r) => $r->getScore(), $resultats)) : 0;
 
+        // Calcul de la répartition des scores
+        $repartition = array_fill(0, 10, 0);
+        foreach ($resultats as $resultat) {
+            $index = min((int)($resultat->getScore() / 10), 9);
+            $repartition[$index]++;
+        }
+
         return $this->render('quiz/stats.html.twig', [
             'quiz' => $quiz,
             'moyenne' => $moyenne,
             'meilleur' => $meilleur,
-            'tentatives' => $total
+            'tentatives' => $total,
+            'repartition' => $repartition
         ]);
     }
 
@@ -316,7 +347,6 @@ final class QuizController extends AbstractController
     /** Fonctionnalité pour l'admin (dashboard) */
 
     #[Route('/dashboard/quiz', name: 'dashboard_quiz')]
-    #[IsGranted('ROLE_ADMIN')]
     public function dashboardQuiz(
         QuizRepository $quizRepository, 
         UserRepository $userRepository,
@@ -324,6 +354,12 @@ final class QuizController extends AbstractController
         Request $request,
         PaginatorInterface $paginator
     ): Response {
+        
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         $page = $request->query->getInt('page', 1);
         $limit = $request->query->getInt('limit', 10);
         $query = $request->query->get('q');
@@ -376,9 +412,13 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/dashboard/newQuiz', name: 'dashboard_quiz_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
     public function dashboardnew(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         $quiz = new Quiz();
         $form = $this->createForm(QuizType::class, $quiz);
         $form->handleRequest($request);
@@ -397,9 +437,13 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/dashboard/{id}/edit', name: 'dashboard_quiz_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
     public function dashboardedit(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         $form = $this->createForm(QuizType::class, $quiz);
         $form->handleRequest($request);
 
@@ -416,9 +460,13 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/dashboard/{id}', name: 'dashboard_quiz_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN')]
     public function dashboarddelete(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$quiz->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($quiz);
             $entityManager->flush();
@@ -428,18 +476,27 @@ final class QuizController extends AbstractController
     }
 
     #[Route('/dashboard/{id}', name: 'dashboard_quiz_show', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
     public function dashboardshow(Quiz $quiz): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('dashboard/quiz/showQuiz.html.twig', [
             'quiz' => $quiz,
         ]);
     }
 
     #[Route('/dashboard/quiz/{id}/stats', name: 'dashboard_quiz_stats')]
-    #[IsGranted('ROLE_ADMIN')]
     public function dashboardstats(Quiz $quiz, EntityManagerInterface $em): Response {
-         // Convertir la Collection en tableau
+        
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
+        // Convertir la Collection en tableau
         $resultats = $quiz->getResultats()->toArray();
 
         // Calculer le total des résultats
@@ -451,11 +508,19 @@ final class QuizController extends AbstractController
         // Trouver le meilleur score
         $meilleur = $total > 0 ? max(array_map(fn($r) => $r->getScore(), $resultats)) : 0;
 
+        // Calculer la répartition des scores
+        $repartition = array_fill(0, 10, 0); // 10 intervalles de 10%
+        foreach ($resultats as $resultat) {
+            $index = min((int)($resultat->getScore() / 10), 9);
+            $repartition[$index]++;
+        }
+
         return $this->render('dashboard/quiz/Quizstats.html.twig', [
             'quiz' => $quiz,
             'moyenne' => $moyenne,
             'meilleur' => $meilleur,
-            'tentatives' => $total
+            'tentatives' => $total,
+            'repartition' => $repartition
         ]);
     }
 }

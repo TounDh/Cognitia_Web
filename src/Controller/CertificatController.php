@@ -38,6 +38,11 @@ final class CertificatController extends AbstractController
     #[Route('/new', name: 'app_certificat_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         $certificat = new Certificat();
         $form = $this->createForm(CertificatType::class, $certificat);
         $form->handleRequest($request);
@@ -58,6 +63,11 @@ final class CertificatController extends AbstractController
     #[Route('/{id}', name: 'app_certificat_show', methods: ['GET'])]
     public function show(Certificat $certificat): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('certificat/show.html.twig', [
             'certificat' => $certificat,
         ]);
@@ -66,6 +76,11 @@ final class CertificatController extends AbstractController
     #[Route('/{id}/edit', name: 'app_certificat_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Certificat $certificat, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         $form = $this->createForm(CertificatType::class, $certificat);
         $form->handleRequest($request);
 
@@ -84,6 +99,11 @@ final class CertificatController extends AbstractController
     #[Route('/{id}', name: 'app_certificat_delete', methods: ['POST'])]
     public function delete(Request $request, Certificat $certificat, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$certificat->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($certificat);
             $entityManager->flush();
@@ -96,9 +116,13 @@ final class CertificatController extends AbstractController
     /** Fonctionnalite pour l'admin */
 
     #[Route('/dashboard/certificat', name: 'dashboard_certificat')]
-    #[IsGranted('ROLE_ADMIN')]
     public function dashboardCertificat(CertificatRepository $certificatRepository, Request $request): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         $page = $request->query->getInt('page', 1);
         $limit = $request->query->getInt('limit', 10);
         $query = $request->query->get('q');
@@ -131,6 +155,11 @@ final class CertificatController extends AbstractController
     #[Route('/dashboard/certificat/{id}', name: 'dashboard_certificat_delete', methods: ['POST'])]
     public function deleteCertificat(Request $request, Certificat $certificat, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+            return $this->redirectToRoute('app_home');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$certificat->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($certificat);
             $entityManager->flush();
