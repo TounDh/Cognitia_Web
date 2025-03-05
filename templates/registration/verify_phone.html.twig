@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérification du numéro de téléphone{% endblock %}
+
+{% block body %}
+    <h1>Vérification du numéro de téléphone</h1>
+    <p>Un code de vérification a été envoyé à votre numéro de téléphone.</p>
+
+    <form action="{{ path('app_validate_verification_code') }}" method="POST">
+        <label for="verification_code">Code de vérification :</label>
+        <input type="text" id="verification_code" name="verification_code" required>
+        <button type="submit">Valider</button>
+    </form>
+{% endblock %}

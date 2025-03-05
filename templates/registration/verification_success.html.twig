@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérification réussie{% endblock %}
+
+{% block body %}
+    <h1>Vérification réussie</h1>
+    <p>Votre numéro de téléphone a été vérifié avec succès.</p>
+    <a href="{{ path('app_login') }}">Se connecter</a>
+{% endblock %}

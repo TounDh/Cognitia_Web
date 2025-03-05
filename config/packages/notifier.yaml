@@ -1,0 +1,6 @@
+# config/packages/notifier.yaml
+framework:
+    notifier:
+        enabled: true
+        texter_transports:
+            twilio: 'twilio://%env(TWILIO_ACCOUNT_SID)%:%env(TWILIO_AUTH_TOKEN)%@default?from=%env(TWILIO_FROM_NUMBER)%'

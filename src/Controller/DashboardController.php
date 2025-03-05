@@ -7,14 +7,38 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\CoursRepository;
+use App\Repository\UserRepository;
+
 
 
 final class DashboardController extends AbstractController
 {
+    
+
     #[Route('/dashboard', name: 'app_dashboard')]
-    public function index(): Response
+    public function index(UserRepository $userRepository): Response
     {
+        // Récupérer les statistiques des utilisateurs
+        $totalUsers = $userRepository->count([]);
+        $totalInstructeurs = $userRepository->countByRole('ROLE_INSTRUCTEUR');
+        $totalApprenants = $userRepository->countByRole('ROLE_APPRENANT');
+        $maxUsers = 100; // Définissez une valeur maximale pour les utilisateurs
+        $totalUsers=$totalUsers-1;
+
+        // Calculer les pourcentages
+        $percentageInstructeurs = ($totalInstructeurs / $totalUsers) * 100;
+        $percentageApprenants = ($totalApprenants / $totalUsers) * 100;
+
+        // Debugging
+    #dump($totalUsers, $totalInstructeurs, $totalApprenants, $percentageInstructeurs, $percentageApprenants);
+        
         return $this->render('dashboard/index.html.twig', [
+            'totalUsers' => $totalUsers,
+            'totalInstructeurs' => $totalInstructeurs,
+            'totalApprenants' => $totalApprenants,
+            'maxUsers' => $maxUsers,
+            'percentageInstructeurs' => $percentageInstructeurs,
+            'percentageApprenants' => $percentageApprenants,
         ]);
     }
 

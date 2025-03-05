@@ -12,16 +12,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\FileType; 
-use App\Form\DataTransformer\StringToFileTransformer;
-
-
-
+use Symfony\Component\Validator\Constraints\File;
 
 class InstructeurRegistrationFormType extends AbstractType
 {
-    
-
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -38,6 +32,14 @@ class InstructeurRegistrationFormType extends AbstractType
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer votre prénom.',
+                    ]),
+                ],
+            ])
+            ->add('username', TextType::class, [
+                'label' => 'username',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer votre username.',
                     ]),
                 ],
             ])
@@ -65,8 +67,18 @@ class InstructeurRegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-           ;
-            
+            ->add('photo', FileType::class, [
+                'label' => 'Photo',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '5M',
+                        'mimeTypes' => ['image/jpeg', 'image/png'],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image au format JPEG ou PNG.',
+                    ]),
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -1,11 +1,3 @@
-controllers:
-    resource: ../src/Controller/
-    type: annotation
-
-kernel:
-    resource: ../src/Kernel.php
-    type: annotation
-
 # config/routes/scheb_2fa.yaml
 2fa_login:
     path: /2fa
@@ -15,6 +7,3 @@ kernel:
 
 2fa_login_check:
     path: /2fa_check
-app_cours:
-    path: /cours
-    controller: App\Controller\CoursController::index

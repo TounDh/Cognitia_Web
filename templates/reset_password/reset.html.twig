@@ -10,10 +10,14 @@
         <div class="col-lg-10 offset-lg-1 text-center">
             <div class="section-top-title wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0">
                 <h1>Reset Your Password</h1>
-            </div>
-        </div>
-    </div>
-</section>    
+                <ul>
+                    <li><a href="{{ path('app_home') }}">Home</a></li>
+                    <li> / Reset Your Password</li>
+                </ul>
+            </div><!-- //.HERO-TEXT -->
+        </div><!--- END COL -->
+    </div><!--- END CONTAINER -->
+</section>
 <!-- END SECTION TOP -->
 
 <!-- START RESET PASSWORD FORM -->
@@ -21,25 +25,34 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-6 offset-lg-3 col-xs-12">
-                <div class="login bg-glass p-4 rounded shadow-sm">
-                    <h4 class="login_register_title text-center mb-4">Reset Your Password</h4>
+                <div class="login">
+                    <h4 class="login_register_title">Reset Your Password</h4>
+                    
                     {% for flash_error in app.flashes('reset_password_error') %}
                         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
                     {% endfor %}
+                    
                     {{ form_start(resetForm) }}
-                        <div class="form-group mb-3">
+                        <div class="form-group">
                             <label for="plainPassword">New Password</label>
-                            {{ form_widget(resetForm.plainPassword, {'attr': {'class': 'form-control', 'placeholder': 'Enter your new password'}}) }}
+                            {{ form_widget(resetForm.plainPassword.first, {'attr': {'class': 'form-control requiredField input-label', 'placeholder': 'Enter your new password'}}) }}
                         </div>
-                        <div class="text-center">
-                            <button class="btn btn-primary btn-block" type="submit">Reset Password</button>
+                        
+                        <div class="form-group">
+                            <label for="plainPassword">Repeat Password</label>
+                            {{ form_widget(resetForm.plainPassword.second, {'attr': {'class': 'form-control requiredField input-label', 'placeholder': 'Repeat your new password'}}) }}
+                        </div>
+                        
+                        <div class="form-group col-lg-12">
+                            <button class="btn_one" type="submit">Reset Password</button>
                         </div>
                     {{ form_end(resetForm) }}
+                    
                     <p class="text-center mt-3">Remembered your password? <a href="{{ path('app_login') }}">Log in here</a>.</p>
                 </div>
-            </div>
-        </div>
-    </div>
+            </div><!--- END COL -->
+        </div><!--- END ROW -->
+    </div><!--- END CONTAINER -->
 </section>
 <!-- END RESET PASSWORD FORM -->
 

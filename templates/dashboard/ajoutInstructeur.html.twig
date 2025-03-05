@@ -11,7 +11,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="header-title">Inscription Instructeur cc</h4>
+                                <h4 class="header-title">Inscription Instructeur </h4>
 
                                 <div class="row">
                                     <div class="col-lg-6">
@@ -19,31 +19,37 @@
                                             <div class="mb-3">
                                                 {{ form_label(instructeurRegistrationForm.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
                                                 {{ form_widget(instructeurRegistrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Entrer votre email'}}) }}
+                                                {{ form_errors(instructeurRegistrationForm.email) }}
                                             </div>
 
                                             <div class="mb-3">
                                                 {{ form_label(instructeurRegistrationForm.firstName, 'Prénom', {'label_attr': {'class': 'form-label'}}) }}
                                                 {{ form_widget(instructeurRegistrationForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'Entrer votre prénom'}}) }}
+                                                {{ form_errors(instructeurRegistrationForm.firstName) }}
                                             </div>
 
                                             <div class="mb-3">
                                                 {{ form_label(instructeurRegistrationForm.lastName, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
                                                 {{ form_widget(instructeurRegistrationForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Entrer votre nom'}}) }}
+                                                {{ form_errors(instructeurRegistrationForm.lastName) }}
                                             </div>
 
                                             <div class="mb-3">
                                                 {{ form_label(instructeurRegistrationForm.phoneNumber, 'Numero Telephone', {'label_attr': {'class': 'form-label'}}) }}
                                                 {{ form_widget(instructeurRegistrationForm.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': ' Numero Telephone'}}) }}
+                                                {{ form_errors(instructeurRegistrationForm.phoneNumber) }}
                                             </div>
 
                                             <div class="mb-3">
                                                 {{ form_label(instructeurRegistrationForm.biographie, 'Biographie', {'label_attr': {'class': 'form-label'}}) }}
                                                 {{ form_widget(instructeurRegistrationForm.biographie, {'attr': {'class': 'form-control', 'placeholder': 'Entrer votre biographie'}}) }}
+                                                {{ form_errors(instructeurRegistrationForm.biographie) }}
                                             </div>
 
                                             <div class="mb-3">
                                                 <label for="instructeurRegistrationForm_photo" class="form-label">Photo</label>
                                                 <input type="file" id="instructeurRegistrationForm_photo" name="instructeurRegistrationForm[photo]" class="form-control" placeholder="Entrer votre photo">
+                                                {# Vous pouvez également ajouter des messages d'erreur pour le champ photo si nécessaire #}
                                             </div>
 
                                             <button type="submit" class="btn btn-primary waves-effect waves-light">Créer le compte</button>
@@ -60,9 +66,4 @@
             <!-- end Content-->
         </div>
     </div>
-
-
-
-
-    
 {% endblock %}

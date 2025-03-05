@@ -6,15 +6,17 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface;
+
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -50,13 +52,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank(message: 'Veuillez entrer votre nom.', groups: ['RegistrationUser', 'RegistrationApprenant', 'RegistrationInstructeur'])]
     private ?string $lastName = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre username.', groups: ['RegistrationUser', 'RegistrationApprenant', 'RegistrationInstructeur'])]
+    private ?string $username = null;
+
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
     #[Assert\NotBlank(message: 'Veuillez entrer votre numéro de téléphone.', groups: ['RegistrationUser', 'RegistrationApprenant', 'RegistrationInstructeur'])]
     private ?string $phoneNumber = null;
 
+        #[ORM\Column(type: 'boolean')]
+    private bool $isPhoneVerified = false;
+
+    
+
     // Champs spécifiques à Apprenant
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    #[Assert\NotBlank(message: 'Veuillez entrer votre niveau.', groups: ['RegistrationApprenant'])]
     private ?string $level = null;
 
     #[ORM\Column(type: 'json', nullable: true)]
@@ -81,12 +91,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'instructeur', targetEntity: Quiz::class)]
     private Collection $quizzes;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class)]
+    private Collection $logs;
+
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->eventsParticipated = new ArrayCollection();
         $this->quizzes = new ArrayCollection();
         $this->roles = ['ROLE_USER']; // Rôle par défaut
+        $this->logs = new ArrayCollection();
+
        
     }
     
@@ -182,6 +198,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(?string $username): self
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+
+
     public function getPhoneNumber(): ?string
     {
         return $this->phoneNumber;
@@ -243,6 +272,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
     
+    public function isPhoneVerified(): bool
+    {
+        return $this->isPhoneVerified;
+    }
+
+    public function setIsPhoneVerified(bool $isPhoneVerified): self
+    {
+        $this->isPhoneVerified = $isPhoneVerified;
+        return $this;
+    }
 
     
 
@@ -288,4 +327,69 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+
+
+    public function getLogs(): Collection
+    {
+        return $this->logs;
+    }
+
+    public function addLog(UserLog $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setUser($this);
+        }
+
+        return $this;
+    }
+
+
+    public function removeLog(UserLog $log): self
+    {
+        if ($this->logs->removeElement($log)) {
+            // Définir le côté propriétaire à null (sauf si déjà changé)
+            if ($log->getUser() === $this) {
+                $log->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+
+    //2FA 
+
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $googleAuthenticatorSecret;
+
+    public function isGoogleAuthenticatorEnabled(): bool
+    {
+        return null !== $this->googleAuthenticatorSecret;
+    }
+
+    public function getGoogleAuthenticatorUsername(): string
+    {
+        return $this->username;
+    }
+
+    public function getGoogleAuthenticatorSecret(): ?string
+    {
+        return $this->googleAuthenticatorSecret;
+    }
+
+    public function setGoogleAuthenticatorSecret(?string $googleAuthenticatorSecret): void
+    {
+        $this->googleAuthenticatorSecret = $googleAuthenticatorSecret;
+    }
+
+
+
+
+
+
+    
 }

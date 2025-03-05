@@ -43,6 +43,16 @@ class RegistrationApprenantFormType extends AbstractType
                     ]),
                 ],
             ])
+            ->add('username', TextType::class, [
+                'label' => 'username',
+                'required' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer votre username.',
+                        'groups' => ['RegistrationApprenant'],
+                    ]),
+                ],
+            ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
                 'required' => false,
@@ -52,7 +62,7 @@ class RegistrationApprenantFormType extends AbstractType
                         'groups' => ['RegistrationApprenant'],
                     ]),
                 ],
-            ])
+            ])       
             ->add('lastName', TextType::class, [
                 'label' => 'Nom',
                 'required' => false,
@@ -73,16 +83,7 @@ class RegistrationApprenantFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('level', TextType::class, [
-                'label' => 'Niveau',
-                'required' => false,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez entrer votre niveau.',
-                        'groups' => ['RegistrationApprenant'],
-                    ]),
-                ],
-            ]);
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
