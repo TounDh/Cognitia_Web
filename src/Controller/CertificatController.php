@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/certificat')]
 final class CertificatController extends AbstractController
@@ -88,5 +90,52 @@ final class CertificatController extends AbstractController
         }
 
         return $this->redirectToRoute('app_certificat_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+
+    /** Fonctionnalite pour l'admin */
+
+    #[Route('/dashboard/certificat', name: 'dashboard_certificat')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function dashboardCertificat(CertificatRepository $certificatRepository, Request $request): Response
+    {
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+        $query = $request->query->get('q');
+        
+        // Créer le query builder avec la recherche si elle existe
+        $queryBuilder = $certificatRepository->createQueryBuilder('c')
+            ->leftJoin('c.quiz', 'q')
+            ->leftJoin('c.apprenant', 'a');
+            
+        if ($query) {
+            $queryBuilder
+                ->where('q.titre LIKE :query')
+                ->orWhere('a.firstName LIKE :query')
+                ->orWhere('a.lastName LIKE :query')
+                ->setParameter('query', '%'.$query.'%');
+        }
+        
+        // Paginer les résultats
+        $paginator = $certificatRepository->paginateQuery($queryBuilder, $page, $limit);
+
+        return $this->render('dashboard/certificat/certificat.html.twig', [
+            'certificats' => $paginator,
+            'currentPage' => $page,
+            'totalPages' => ceil($paginator->count() / $limit),
+            'limit' => $limit,
+            'totalItems' => $paginator->count()
+        ]);
+    }
+
+    #[Route('/dashboard/certificat/{id}', name: 'dashboard_certificat_delete', methods: ['POST'])]
+    public function deleteCertificat(Request $request, Certificat $certificat, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$certificat->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($certificat);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('dashboard_certificat', [], Response::HTTP_SEE_OTHER);
     }
 }

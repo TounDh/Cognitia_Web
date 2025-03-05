@@ -9,6 +9,8 @@ use App\Form\QuizType;
 use App\Repository\QuizRepository;
 use App\Repository\ReponseRepository;
 use App\Repository\CertificatRepository;
+use App\Repository\UserRepository;
+use App\Repository\CoursRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use TCPDF;
+use Knp\Component\Pager\PaginatorInterface;
 
 
 #[Route('/quiz')]
@@ -314,10 +317,61 @@ final class QuizController extends AbstractController
 
     #[Route('/dashboard/quiz', name: 'dashboard_quiz')]
     #[IsGranted('ROLE_ADMIN')]
-    public function dashboardQuiz(QuizRepository $quizRepository): Response
-    {
+    public function dashboardQuiz(
+        QuizRepository $quizRepository, 
+        UserRepository $userRepository,
+        CoursRepository $coursRepository,
+        Request $request,
+        PaginatorInterface $paginator
+    ): Response {
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+        $query = $request->query->get('q');
+        $instructeurId = $request->query->getInt('instructeur');
+        $coursId = $request->query->getInt('cours');
+
+        // Créer le query builder avec la recherche si elle existe
+        $queryBuilder = $quizRepository->createQueryBuilder('q')
+            ->leftJoin('q.cours', 'a')
+            ->leftJoin('q.instructeur', 'i');
+            
+        if ($query) {
+            $queryBuilder
+                ->andWhere('q.titre LIKE :query')
+                ->orWhere('a.titre LIKE :query')
+                ->orWhere('i.firstName LIKE :query')
+                ->orWhere('i.lastName LIKE :query')
+                ->setParameter('query', '%'.$query.'%');
+        }
+
+        // Ajout des filtres
+        if ($instructeurId) {
+            $queryBuilder
+                ->andWhere('i.id = :instructeurId')
+                ->setParameter('instructeurId', $instructeurId);
+        }
+
+        if ($coursId) {
+            $queryBuilder
+                ->andWhere('a.id = :coursId')
+                ->setParameter('coursId', $coursId);
+        }
+
+        // Paginer les résultats
+        $quizzes = $paginator->paginate(
+            $queryBuilder->getQuery(), // La requête à paginer
+            $page,                    // Numéro de page
+            $limit                    // Nombre d'éléments par page
+        );
+
         return $this->render('dashboard/quiz/quiz.html.twig', [
-            'quizzes' => $quizRepository->findAll(),
+            'quizzes' => $quizzes,
+            'currentPage' => $page,
+            'totalPages' => ceil($quizzes->getTotalItemCount() / $limit),
+            'limit' => $limit,
+            'totalItems' => $quizzes->getTotalItemCount(),
+            'instructeurs' => $userRepository->findByRole('ROLE_INSTRUCTEUR'),
+            'coursList' => $coursRepository->findAll()
         ]);
     }
 

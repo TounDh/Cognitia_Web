@@ -19,37 +19,70 @@
                                     <div class="card-body">
                                         <h4 class="mt-0 header-title">Liste Quiz</h4>
 
-                                        <div id="datatable_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
-                                        <div class="row">
-                                        <div class="col-sm-12 col-md-6">
-                                            <div class="dataTables_length" id="datatable_length">
-                                                <label class="form-label">Show 
-                                                    <select name="datatable_length" aria-controls="datatable" class="form-select form-select-sm">
-                                                        <option value="10">10</option>
-                                                        <option value="25">25</option>
-                                                        <option value="50">50</option>
-                                                        <option value="100">100</option>
-                                                    </select> entries
-                                                </label>
+                                        {# Remplacer le formulaire existant par ce code AJAX #}
+                                        <div class="mb-4">
+                                            <div class="row g-3 align-items-end">
+                                                <div class="col-md-4">
+                                                    <label for="search" class="form-label">Rechercher</label>
+                                                    <input type="text" id="searchInput" class="form-control" placeholder="Entrez un mot-clé...">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="instructeur" class="form-label">Instructeur</label>
+                                                    <select id="instructeurSelect" class="form-select">
+                                                        <option value="">Tous les instructeurs</option>
+                                                        {% for instructeur in instructeurs %}
+                                                            <option value="{{ instructeur.id }}">
+                                                                {{ instructeur.firstName }} {{ instructeur.lastName }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="cours" class="form-label">Cours</label>
+                                                    <select id="coursSelect" class="form-select">
+                                                        <option value="">Tous les cours</option>
+                                                        {% for cours in coursList %}
+                                                            <option value="{{ cours.id }}">
+                                                                {{ cours.titre }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2 d-grid gap-2">
+                                                    <button id="resetFilters" class="btn btn-outline-secondary">
+                                                        <i class="fas fa-sync-alt"></i> Réinitialiser
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-12 col-md-6">
-                                            <div id="datatable_filter" class="dataTables_filter">
-                                                <label>Search:
-                                                    <input type="search" class="form-control form-control-sm" placeholder="" aria-controls="datatable">
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                        <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                        <div id="datatable_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                                            <div class="row mb-3">
+                                                <div class="col-sm-12 col-md-6">
+                                                    <div class="dataTables_length" id="datatable_length">
+                                                        <label class="form-label d-flex align-items-center gap-2">
+                                                            Afficher
+                                                            <select name="datatable_length" aria-controls="datatable" class="form-select form-select-sm" onchange="window.location.href = '{{ path('dashboard_quiz') }}?page={{ currentPage }}&limit=' + this.value">
+                                                                <option value="2" {{ limit == 2 ? 'selected' : '' }}>2</option>
+                                                                <option value="5" {{ limit == 5 ? 'selected' : '' }}>5</option>
+                                                                <option value="10" {{ limit == 10 ? 'selected' : '' }}>10</option>
+                                                                <option value="50" {{ limit == 50 ? 'selected' : '' }}>50</option>
+                                                                <option value="100" {{ limit == 100 ? 'selected' : '' }}>100</option>
+                                                            </select>
+                                                            entrées
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        <table id="datatable" class="table table-hover table-striped dt-responsive table-responsive nowrap">
                                             <thead>
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Titre</th>
                                                 <th>Cours</th>
                                                 <th>Instructeur</th>
-                                                <th>Actions</th>
+                                                <th class="text-end">Actions</th>
                                             </tr>
                                             </thead>
     
@@ -61,7 +94,7 @@
                                                 <td>{{ quiz.titre }}</td>
                                                 <td>{{ quiz.cours.titre }}</td>
                                                 <td>{{ quiz.instructeur.email }}</td>
-                                                <td>
+                                                <td class="text-end">
                                                     <a href="{{ path('dashboard_quiz_show', {'id': quiz.id}) }}" class="btn btn-info btn-sm">Voir</a>
                                                     <a href="{{ path('dashboard_quiz_edit', {'id': quiz.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
                                                     <a href="{{ path('dashboard_quiz_stats', {'id': quiz.id}) }}" class="btn btn-success btn-sm">Statistiques</a>
@@ -81,36 +114,15 @@
                                     
 
                                     <div class="col-sm-12 col-md-5">
-                                        <div class="dataTables_info" id="datatable_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div>
+                                        <div class="dataTables_info" id="datatable_info" role="status" aria-live="polite">
+                                            Affichage de {{ (quizzes.currentPageNumber - 1) * quizzes.getItemNumberPerPage + 1 }} 
+                                            à {{ min(quizzes.currentPageNumber * quizzes.getItemNumberPerPage, quizzes.getTotalItemCount) }} 
+                                            sur {{ quizzes.getTotalItemCount }} éléments
+                                        </div>
                                     </div>
                                     <div class="col-sm-12 col-md-7">
                                         <div class="dataTables_paginate paging_simple_numbers" id="datatable_paginate">
-                                            <ul class="pagination">
-                                                <li class="paginate_button page-item previous disabled" id="datatable_previous">
-                                                    <a href="#" aria-controls="datatable" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
-                                                </li>
-                                                <li class="paginate_button page-item active">
-                                                    <a href="#" aria-controls="datatable" data-dt-idx="1" tabindex="0" class="page-link">1</a>
-                                                </li>
-                                                <li class="paginate_button page-item ">
-                                                    <a href="#" aria-controls="datatable" data-dt-idx="2" tabindex="0" class="page-link">2</a>
-                                                </li>
-                                                <li class="paginate_button page-item ">
-                                                    <a href="#" aria-controls="datatable" data-dt-idx="3" tabindex="0" class="page-link">3</a>
-                                                </li>
-                                                <li class="paginate_button page-item ">
-                                                    <a href="#" aria-controls="datatable" data-dt-idx="4" tabindex="0" class="page-link">4</a>
-                                                </li>
-                                                <li class="paginate_button page-item ">
-                                                    <a href="#" aria-controls="datatable" data-dt-idx="5" tabindex="0" class="page-link">5</a>
-                                                </li>
-                                                <li class="paginate_button page-item ">
-                                                    <a href="#" aria-controls="datatable" data-dt-idx="6" tabindex="0" class="page-link">6</a>
-                                                </li>
-                                                <li class="paginate_button page-item next" id="datatable_next">
-                                                    <a href="#" aria-controls="datatable" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
-                                                </li>
-                                            </ul>
+                                            {{ knp_pagination_render(quizzes) }}
                                         </div>
                                     </div>
                                 </div>
@@ -126,4 +138,58 @@
             </div>
 {% endif %}
 
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const instructeurSelect = document.getElementById('instructeurSelect');
+    const coursSelect = document.getElementById('coursSelect');
+    const tableBody = document.querySelector('#datatable tbody');
+    const paginationContainer = document.querySelector('.pagination');
+
+    function fetchQuizzes(page = 1) {
+        const params = new URLSearchParams({
+            q: searchInput.value,
+            instructeur: instructeurSelect.value,
+            cours: coursSelect.value,
+            page: page
+        });
+
+        fetch(`{{ path('dashboard_quiz') }}?${params.toString()}`)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newTableBody = doc.querySelector('#datatable tbody');
+                const newPagination = doc.querySelector('.pagination');
+                tableBody.innerHTML = newTableBody.innerHTML;
+                paginationContainer.innerHTML = newPagination ? newPagination.innerHTML : '';
+            });
+    }
+
+    // Ajouter les écouteurs d'événements
+    searchInput.addEventListener('input', () => fetchQuizzes(1));
+    instructeurSelect.addEventListener('change', () => fetchQuizzes(1));
+    coursSelect.addEventListener('change', () => fetchQuizzes(1));
+
+    // Gérer les clics sur la pagination
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('page-link')) {
+            e.preventDefault();
+            const page = e.target.getAttribute('data-page');
+            fetchQuizzes(page);
+        }
+    });
+
+    // Réinitialiser les filtres
+    document.getElementById('resetFilters').addEventListener('click', function() {
+        searchInput.value = '';
+        instructeurSelect.value = '';
+        coursSelect.value = '';
+        fetchQuizzes(1);
+    });
+});
+</script>
 {% endblock %}
