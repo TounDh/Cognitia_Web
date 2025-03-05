@@ -27,8 +27,10 @@ class Panier
     private ?User $user = null;
 
 
-    #[ORM\OneToMany(mappedBy: 'panier', targetEntity: Cours::class)]
+    #[ORM\ManyToMany(targetEntity: Cours::class, inversedBy: 'paniers')]
+    #[ORM\JoinTable(name: 'panier_cours')]
     private Collection $cours;
+
 
     #[ORM\OneToOne(mappedBy: 'panier', targetEntity: Commande::class)]
     private ?Commande $commande = null;
@@ -81,17 +83,15 @@ class Panier
         return $this;
     }
 
-    public function getCours(): iterable
-    {
+    /**
+     * @return Collection<int, Cours>
+     */
+     public function getCours(): Collection
+     {
         return $this->cours;
     }
 
-    public function setCours(iterable $cours): self
-    {
-        $this->cours = $cours;
-
-        return $this;
-    }
+    
 
     public function getCommande(): ?Commande
     {
@@ -123,13 +123,20 @@ class Panier
 
 
     
-public function addCour(Cours $cours): self
-{
-    if (!$this->cours->contains($cours)) {
-        $this->cours[] = $cours;
-        $cours->setPanier($this); 
+ public function addCour(Cours $cour): self
+    {
+        if (!$this->cours->contains($cour)) {
+            $this->cours[] = $cour;
+            $cour->addPanier($this); // Appeler addPanier sur l'entité Cours
+        }
+        return $this;
     }
 
-    return $this;
-}
+    public function removeCour(Cours $cour): self
+    {
+        if ($this->cours->removeElement($cour)) {
+            $cour->removePanier($this); // Appeler removePanier sur l'entité Cours
+        }
+        return $this;
+    }
 }

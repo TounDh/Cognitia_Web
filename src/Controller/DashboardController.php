@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\CommandeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -62,11 +63,24 @@ final class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/commande', name: 'app_commande')]
-    public function commande(): Response
+    public function commande(CommandeRepository $commandeRepository): Response
     {
+        $commandes = $commandeRepository->findAll();
         return $this->render('dashboard/commande.html.twig', [
+                'commandes' => $commandes,
         ]);
     }
+
+    #[Route('/dashboard/risque', name: 'app_comprob')]
+    public function risque(CommandeRepository $commandeRepository): Response
+    {
+        $commandes = $commandeRepository->findAll();
+        return $this->render('dashboard/comprob.html.twig', [
+                'commandes' => $commandes,
+        ]);
+    }
+
+
 
     #[Route('/dashboard/quiz', name: 'app_quiz')]
     public function quiz(): Response

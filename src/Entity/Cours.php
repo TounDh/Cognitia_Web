@@ -63,9 +63,8 @@ class Cours
 
 
 
-    #[ORM\ManyToOne(targetEntity: Panier::class, inversedBy: 'cours')]
-    #[ORM\JoinColumn(onDelete: "SET NULL", nullable: true)]
-    private ?Panier $panier = null;
+    #[ORM\ManyToMany(targetEntity: Panier::class, mappedBy: 'cours')]
+    private Collection $paniers;
 
 
  
@@ -178,17 +177,45 @@ class Cours
 
 
 
-    public function getPanier(): ?Panier
+
+
+
+
+
+
+
+
+
+ /**
+     * @return Collection<int, Panier>
+     */
+    public function getPaniers(): Collection
     {
-        return $this->panier;
+        return $this->paniers;
     }
 
-    public function setPanier(?Panier $panier): self
+    public function addPanier(Panier $panier): self
     {
-        $this->panier = $panier;
-
+        if (!$this->paniers->contains($panier)) {
+            $this->paniers[] = $panier;
+            $panier->addCour($this); // Appeler addCour sur l'entité Panier
+        }
         return $this;
     }
+
+    public function removePanier(Panier $panier): self
+    {
+        if ($this->paniers->removeElement($panier)) {
+            $panier->removeCour($this); // Appeler removeCour sur l'entité Panier
+        }
+        return $this;
+    }
+
+
+
+
+
+
 
 
 

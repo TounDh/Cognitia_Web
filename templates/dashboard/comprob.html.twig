@@ -1,4 +1,3 @@
-
 {% extends 'baseDashboard.html.twig' %}
 
 {% block title %}Gestion Factures{% endblock %}
@@ -11,16 +10,29 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
+
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h4 class="mt-0 header-title">Liste des factures</h4>
-                                <a href="" class="btn btn-warning">
-                                    <i class="fas "></i> consulter archive
-                                </a>
+                                <h4 class="mt-0 header-title">Liste des factures risquées</h4>
+
+
                             </div>
+                            
+
                             <div id="datatable_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
-                                <div class="row mb-3">
-                                    <div class="col-sm-12 col-md-6">
+                                <div class="row mb-3 align-items-center">
+                                    
+                                    
+                                    <div class="col-sm-12 col-md-6 text-start">
+                                    
                                         <div class="dataTables_length" id="datatable_length">
+                                        <label class="form-label">Show 
+                                                <select name="datatable_length" aria-controls="datatable" class="form-select form-select-sm">
+                                                    <option value="10">10</option>
+                                                    <option value="25">25</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select> entries
+                                            </label>
                                             <label class="form-label">Show 
                                                 <select name="datatable_length" aria-controls="datatable" class="form-select form-select-sm">
                                                     <option value="10">10</option>
@@ -43,21 +55,22 @@
                                 <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
                                     <thead>
                                         <tr>
-                                            <th>Num° facture</th>
+                                            <th>ID facture</th>
                                             <th>Client</th>
                                             <th>Cours choisis</th>
                                             <th>Montant</th>
-                                            <th>Statut</th>
                                             <th>Date Validation</th>
-                                            <th>Action</th>
-                                            
+                                            <th>Statut</th>
+                                            <th>Risque</th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
 
                                         {% for commande in commandes %}
-                                        {% set sum = 0 %}
+                                        {% if commande.statut == 'unpaid' %}
+
+            {% set sum = 0 %}
             {% for cours in commande.panier.cours %}
                 {% set sum = sum + cours.prix %}
             {% endfor %}
@@ -72,6 +85,7 @@
                         Client non identifié
                     {% endif %}
                                                 </td>
+
                                                 <td>                    {% if commande.panier %}
                         {% for cours in commande.panier.cours %}
                             {{ cours.titre }}{% if not loop.last %}, {% endif %}
@@ -83,20 +97,22 @@
                     {% endif %}
                                                 </td>
                                                 <td>{{ total|number_format(0, ',', ' ') }} TND</td>
-                                                <td>{{ commande.statut }}</td>
                                                 <td>{{ commande.dateAchat|date('Y-m-d H:i:s') }}</td>
-                                                <td>
-                                                <a href="" class="btn btn-outline-warning">
-                                                    Archiver
-                                                </a> 
-                                                </td>
+                                                <td>{{ commande.Statut }}</td>
+                                                <td></td>
                                             </tr>
+                                            {% endif %}
                                         {% else %}
                                             <tr>
                                                 <td colspan="7" class="text-center">Aucune facture trouvée!</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
+
+
+
+
+
                                 </table>
                             </div>
                             <div class="row">

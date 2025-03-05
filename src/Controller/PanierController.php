@@ -98,7 +98,7 @@ final class PanierController extends AbstractController
             throw $this->createNotFoundException('Course not found');
         }
     
-        $panier = $entityManager->getRepository(Panier::class)->findOneBy(['user' => $user]);
+        $panier = $entityManager->getRepository(Panier::class)->findOneBy(['user' => $user,'statut' => 'in progress..']);
     
         if (!$panier) {
             $panier = new Panier();
@@ -238,28 +238,54 @@ public function checkout(Panier $panier, EntityManagerInterface $entityManager, 
 #[Route('/panier/remove-cours/{coursId}', name: 'app_panier_remove_cours', methods: ['POST'])]
 public function removeCoursFromPanier(int $coursId, EntityManagerInterface $entityManager, Security $security): Response
 {
+    // Récupérer l'utilisateur connecté
     $user = $security->getUser();
 
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
     if (!$user) {
         return $this->redirectToRoute('app_login');
     }
 
+    // Récupérer le cours à supprimer
     $cours = $entityManager->getRepository(Cours::class)->find($coursId);
 
+    // Vérifier si le cours existe
     if (!$cours) {
         throw $this->createNotFoundException('Course not found');
     }
 
+    // Récupérer le panier de l'utilisateur
     $panier = $entityManager->getRepository(Panier::class)->findOneBy(['user' => $user]);
 
+    // Vérifier si le panier existe
     if ($panier) {
-        $cours->setPanier(null); 
-        
+        // Supprimer le cours du panier
+        $panier->removeCour($cours);
+
+        // Enregistrer les modifications en base de données
         $entityManager->flush();
     }
 
+    // Rediriger vers la page du panier
     return $this->redirectToRoute('app_panier_show', ['id' => $panier->getId()]);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

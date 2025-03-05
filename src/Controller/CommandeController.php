@@ -6,6 +6,7 @@ use App\Entity\Commande;
 use App\Entity\Paiement;
 use App\Form\CommandeType;
 use App\Repository\CommandeRepository;
+use App\Repository\PanierRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -311,19 +312,32 @@ final class CommandeController extends AbstractController
     #[Route('/{id}/delete', name: 'app_commande_delete', methods: ['GET'])]
 public function delete(Commande $commande, EntityManagerInterface $entityManager): Response
 {
+    // Set the command status to "canceled"
+    $commande->setStatut('canceled');
+
+    // Get the associated panier
     $panier = $commande->getPanier();
 
     if ($panier) {
+        
         $panier->setStatut('in progress..');
-        $entityManager->persist($panier); 
+        // Get the courses from the panier
+        $cours = $panier->getCours();
+        // Persist changes to panier
+        $entityManager->persist($panier);
     }
 
-
-    $entityManager->remove($commande);
+    // Persist changes to commande
+    $entityManager->persist($commande);
     $entityManager->flush();
 
-    return $this->redirectToRoute('app_panier_show', ['id' => $panier->getId()]);
-}
 
+
+    // Redirect to a suitable route
+    return $this->render('panier/index.html.twig', [
+        'panier' => $panier,
+        'cours' => $cours ?? []
+    ]);
+}
 
 }
