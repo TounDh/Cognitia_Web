@@ -340,4 +340,7 @@ public function delete(Commande $commande, EntityManagerInterface $entityManager
     ]);
 }
 
+
+
+
 }

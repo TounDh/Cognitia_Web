@@ -73,14 +73,66 @@ final class DashboardController extends AbstractController
 
 
 
+
+
+
+
+
+
+
+
+
+
     #[Route('/dashboard/commande', name: 'app_commande')]
     public function commande(CommandeRepository $commandeRepository): Response
     {
-        $commandes = $commandeRepository->findAll();
+        $commandes = $commandeRepository->findBy(['archived' => false]);
         return $this->render('dashboard/commande.html.twig', [
                 'commandes' => $commandes,
         ]);
     }
+
+
+    #[Route('/commande/archive/{id}', name: 'commande_archive', methods: ['POST'])]
+    public function archive(Commande $commande, EntityManagerInterface $entityManager): Response
+    {
+        $commande->setArchived(true);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La facture a été archivée avec succès.');
+
+        return $this->redirectToRoute('app_commande');
+    }
+
+    #[Route('/dashboard/archivage', name: 'app_archive')]
+    public function archivage(CommandeRepository $commandeRepository): Response
+    {
+        $commandes = $commandeRepository->findBy(['archived' => true]);
+        return $this->render('dashboard/archive.html.twig', [
+                'commandes' => $commandes,
+        ]);
+    }
+
+    #[Route('/commande/darchive/{id}', name: 'app_darchive', methods: ['POST'])]
+    public function darchive(Commande $commande, EntityManagerInterface $entityManager): Response
+    {
+        $commande->setArchived(false);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La facture a été désarchivée avec succès.');
+
+        return $this->redirectToRoute('app_archive');
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -98,13 +150,6 @@ final class DashboardController extends AbstractController
         $this->entityManager = $entityManager;
         $this->commandeRepository = $commandeRepository;
     }
-
-
-
-
-
-
-
 
 
 
@@ -300,6 +345,26 @@ final class DashboardController extends AbstractController
 
         return (int)$cancellations;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

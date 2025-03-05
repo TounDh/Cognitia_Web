@@ -1,4 +1,3 @@
-
 {% extends 'baseDashboard.html.twig' %}
 
 {% block title %}Gestion Factures{% endblock %}
@@ -12,9 +11,9 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h4 class="mt-0 header-title">Liste des factures</h4>
-                                <a href="{{ path('app_archive') }}" class="btn btn-outline-secondary">
-                                    <i class="fas "></i> consulter archive
+                                <h4 class="mt-0 header-title">Factures archivées</h4>
+                                <a href="{{ path('app_commande')}}" class="btn btn-outline-secondary">
+                                    <i class="fas "></i> <- Retour 
                                 </a>
                             </div>
                             <div id="datatable_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
@@ -86,8 +85,8 @@
                                                 <td>{{ commande.statut }}</td>
                                                 <td>{{ commande.dateAchat|date('Y-m-d H:i:s') }}</td>
                                                 <td>
-    <form action="{{ path('commande_archive', {'id': commande.id}) }}" method="post" style="display: inline;">
-        <button type="submit" class="btn btn-secondary">Archiver</button>
+    <form action="{{ path('app_darchive', {'id': commande.id}) }}" method="post" style="display: inline;">
+        <button type="submit" class="btn btn-outline-secondary">Désarchiver</button>
     </form>
 </td>
 
