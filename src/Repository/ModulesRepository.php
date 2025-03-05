@@ -15,6 +15,16 @@ class ModulesRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Modules::class);
     }
+    public function save(Modules $entity, bool $flush = false): void
+    {
+        $this->_em->persist($entity); // Persist the entity
+
+        if ($flush) {
+            $this->_em->flush(); // If flush is true, save the entity to the database
+        }
+    }
+
+
 
     //    /**
     //     * @return Modules[] Returns an array of Modules objects

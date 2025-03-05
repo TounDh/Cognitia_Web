@@ -1,10 +1,8 @@
-
-
 {% block body %}
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-top: 100px;">
     <div class="card p-4 shadow-lg" style="width: 50rem; border-radius: 15px;">
         <h2 class="text-center mb-4">{{ button_label|default('Save Module') }}</h2>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <table class="table table-borderless">
                 <tbody>
                     <tr>
@@ -22,6 +20,10 @@
                     <tr>
                         <td>{{ form_label(form.cours) }}</td>
                         <td>{{ form_widget(form.cours, {'attr': {'class': 'form-control'}}) }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form_label(form.pdfFile) }}</td>
+                        <td>{{ form_widget(form.pdfFile, {'attr': {'class': 'form-control'}}) }}</td>
                     </tr>
                 </tbody>
             </table>

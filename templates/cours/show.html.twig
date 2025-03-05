@@ -20,6 +20,16 @@
     <div class="row">
         <!-- Main Course Content -->
         <div class="col-lg-8">
+            <!-- Progress Bar -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4>Course Progress</h4>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress|round(2) }}%</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Course Image and Basic Info -->
             <div class="card shadow-sm mb-4">
                 {% if cours.image %}
@@ -40,91 +50,111 @@
                 </div>
             </div>
 
-     <!-- Course Modules -->
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h3 class="mb-0">Course Modules</h3>
-        {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
-            <a href="{{ path('app_modules_new', {'cours': cours.id}) }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Add Module
-            </a>
-        {% endif %}
-    </div>
-    <div class="card-body">
-        <div class="accordion" id="moduleAccordion">
-            {% for module in cours.modules %}
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#module{{ module.id }}">
-                            {{ module.titre }}
-                        </button>
-                    </h2>
-                    <div id="module{{ module.id }}" class="accordion-collapse collapse" data-bs-parent="#moduleAccordion">
-                        <div class="accordion-body">
-                            <p>{{ module.contenu }}</p>
-                            <small class="text-muted"><i class="fas fa-clock"></i> {{ module.duree }} minutes</small>
-                            {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
-                                <div class="mt-3">
-                                    <a href="{{ path('app_modules_edit', {'id': module.id}) }}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <form method="post" action="{{ path('app_modules_delete', {'id': module.id}) }}" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this module?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ module.id) }}">
-                                        <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
-                                    </form>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
+            <!-- Course Modules -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Course Modules</h3>
+                    {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+                        <a href="{{ path('app_modules_new', {'cours': cours.id}) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Add Module
+                        </a>
+                    {% endif %}
                 </div>
-            {% else %}
-                <p class="text-muted">No modules available for this course.</p>
-            {% endfor %}
-        </div>
-    </div>
-</div>
+                <div class="card-body">
+                    <div class="accordion" id="moduleAccordion">
+                        {% for module in cours.modules %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#module{{ module.id }}">
+                                        {{ module.titre }}
+                                    </button>
+                                </h2>
+                                <div id="module{{ module.id }}" class="accordion-collapse collapse" data-bs-parent="#moduleAccordion">
+                                    <div class="accordion-body">
+                                        <p>{{ module.contenu }}</p>
+                                        <small class="text-muted"><i class="fas fa-clock"></i> {{ module.duree }} minutes</small>
 
-<!-- Course Challenges -->
-<div class="card shadow-sm">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h3 class="mb-0">Course Challenges</h3>
-        {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
-            <a href="{{ path('app_defis_new', {'cours': cours.id}) }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Add Challenge
-            </a>
-        {% endif %}
+                                        <!-- Display PDF File -->
+                   <!-- Display PDF File -->
+{% if module.pdfPath %}
+    <div class="mt-3">
+        <p class="mb-1">PDF File:</p>
+        <a href="{{ asset('uploads/modules_pdfs/' ~ module.pdfPath) }}" 
+           target="_blank" 
+           class="btn btn-outline-primary btn-sm"
+           onclick="trackProgress({{ module.id }}, this)">
+            <i class="fas fa-file-pdf"></i> {{ module.pdfPath }}
+        </a>
+        <!-- Checkmark icon (hidden by default) -->
+        <span id="checkmark-{{ module.id }}" class="ms-2 text-success" style="display: none;">
+            <i class="fas fa-check"></i>
+        </span>
     </div>
-    <div class="card-body">
-        {% for defi in cours.defis %}
-            <div class="mb-3 p-3 border rounded">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <h4>{{ defi.titre }}</h4>
-                        <p>{{ defi.description }}</p>
-                        <div class="d-flex align-items-center">
-                            <span class="badge bg-info me-2">Points: {{ defi.pointsRecompense }}</span>
-                        </div>
-                    </div>
-                    <div class="ms-3">
-                        {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
-                            <a href="{{ path('app_defis_edit', {'id': defi.id}) }}" class="btn btn-warning btn-sm mb-2 d-block">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <form method="post" action="{{ path('app_defis_delete', {'id': defi.id}) }}" onsubmit="return confirm('Are you sure you want to delete this challenge?');">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ defi.id) }}">
-                                <button class="btn btn-danger btn-sm d-block w-100">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </form>
-                        {% endif %}
+{% endif %}
+
+                                        <!-- Edit and Delete Buttons -->
+                                        {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+                                            <div class="mt-3">
+                                                <a href="{{ path('app_modules_edit', {'id': module.id}) }}" class="btn btn-warning btn-sm">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <form method="post" action="{{ path('app_modules_delete', {'id': module.id}) }}" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this module?');">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ module.id) }}">
+                                                    <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                                                </form>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No modules available for this course.</p>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-        {% else %}
-            <p class="text-muted">No challenges available for this course.</p>
-        {% endfor %}
-    </div>
-</div>
+
+            <!-- Course Challenges -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Course Challenges</h3>
+                    {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+                        <a href="{{ path('app_defis_new', {'cours': cours.id}) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Add Challenge
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% for defi in cours.defis %}
+                        <div class="mb-3 p-3 border rounded">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h4>{{ defi.titre }}</h4>
+                                    <p>{{ defi.description }}</p>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-info me-2">Points: {{ defi.pointsRecompense }}</span>
+                                    </div>
+                                </div>
+                                <div class="ms-3">
+                                    {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+                                        <a href="{{ path('app_defis_edit', {'id': defi.id}) }}" class="btn btn-warning btn-sm mb-2 d-block">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <form method="post" action="{{ path('app_defis_delete', {'id': defi.id}) }}" onsubmit="return confirm('Are you sure you want to delete this challenge?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ defi.id) }}">
+                                            <button class="btn btn-danger btn-sm d-block w-100">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No challenges available for this course.</p>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
 
         <!-- Sidebar -->
@@ -203,12 +233,44 @@
                     </div>
                 </div>
             {% endif %}
-          
         </div>
     </div>
 </div>
 
 <a href="{{ path('app_cours_index') }}" class="btn btn-secondary">Back to list</a>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+function trackProgress(moduleId, linkElement) {
+    fetch('/track-progress/' + moduleId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    }).then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              // Show the checkmark next to the PDF link
+              const checkmark = document.getElementById(`checkmark-${moduleId}`);
+              if (checkmark) {
+                  checkmark.style.display = 'inline';
+              }
+
+              // Optionally, update the progress bar dynamically
+              const progressBar = document.querySelector('.progress-bar');
+              if (progressBar) {
+                  const currentProgress = parseFloat(progressBar.style.width);
+                  const newProgress = currentProgress + (100 / {{ cours.modules|length }});
+                  progressBar.style.width = `${newProgress}%`;
+                  progressBar.setAttribute('aria-valuenow', newProgress);
+                  progressBar.textContent = `${newProgress.toFixed(2)}%`;
+              }
+          }
+      });
+}
+</script>
 {% endblock %}
 
 {% block stylesheets %}
@@ -230,28 +292,23 @@
     .breadcrumb {
         background: transparent;
     }
-        .btn-sm {
+    .btn-sm {
         padding: 0.25rem 0.5rem;
         font-size: 0.875rem;
     }
-    
     .accordion-body .btn {
         margin-right: 0.5rem;
     }
-    
     form {
         display: inline-block;
     }
-    
     .accordion-body {
         position: relative;
     }
-    
     .accordion-body .mt-3 {
         border-top: 1px solid #dee2e6;
         padding-top: 1rem;
     }
-    
     .btn i {
         margin-right: 0.25rem;
     }

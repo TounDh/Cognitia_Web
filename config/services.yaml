@@ -7,6 +7,8 @@ parameters:
     uploads_directory: '%kernel.project_dir%/public/uploads'
     cours_images_directory: '%kernel.project_dir%/public/uploads/cours'
     upload_directory: '%kernel.project_dir%/public/uploads/photos'
+    modules_pdfs_directory: '%kernel.project_dir%/public/uploads/modules_pdfs'
+
 services:
      # Register the form type as a service
     App\Form\InstructeurRegistrationFormType:

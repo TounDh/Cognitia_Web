@@ -3,10 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Cours;
+use App\Entity\UserProgress;
 use App\Repository\CoursRepository;
 use App\Repository\ModulesRepository;
 use App\Repository\DefisRepository;
-use Symfony\Bundle\SecurityBundle\Security;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +17,6 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/cours')]
 final class CoursController extends AbstractController
@@ -25,7 +25,6 @@ final class CoursController extends AbstractController
     #[Route(name: 'app_cours_index', methods: ['GET'])]
     public function index(CoursRepository $coursRepository): Response
     {
-
         return $this->render('cours/index.html.twig', [
             'cours' => $coursRepository->findAll(),
         ]);
@@ -77,7 +76,8 @@ final class CoursController extends AbstractController
         int $id, 
         CoursRepository $coursRepository, 
         ModulesRepository $moduleRepository, 
-        DefisRepository $defiRepository
+        DefisRepository $defiRepository,
+        EntityManagerInterface $entityManager // Add EntityManager
     ): Response
     {
         $cour = $coursRepository->find($id);
@@ -88,12 +88,38 @@ final class CoursController extends AbstractController
 
         // Fetch modules and challenges for the course
         $modules = $cour->getModules();
-        $defis = $cour->getDefis(); 
+        $defis = $cour->getDefis();
+
+        // Calculate progress
+        $progress = 0;
+        $user = $this->getUser();
+
+        if ($user) {
+            $totalModules = $modules->count();
+            $completedModules = 0;
+
+            foreach ($modules as $module) {
+                // Query UserProgress directly using EntityManager
+                $userProgress = $entityManager->getRepository(UserProgress::class)->findOneBy([
+                    'user' => $user,
+                    'module' => $module,
+                ]);
+
+                if ($userProgress && $userProgress->isOpened()) {
+                    $completedModules++;
+                }
+            }
+
+            if ($totalModules > 0) {
+                $progress = ($completedModules / $totalModules) * 100;
+            }
+        }
 
         return $this->render('cours/show.html.twig', [
             'cours' => $cour,
             'modules' => $modules, // Pass modules to the template
             'defis' => $defis,     // Pass defis to the template
+            'progress' => $progress, // Pass progress to the template
         ]);
     }
 
