@@ -8,12 +8,15 @@ use App\Form\CommandeType;
 use App\Repository\CommandeRepository;
 use App\Repository\PanierRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Snappy\Pdf;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -246,6 +249,107 @@ final class CommandeController extends AbstractController
 
 
 
+//bundle
+//bundle
+private $pdfGenerator;
+public function __construct(Pdf $pdfGenerator)
+    {
+        $this->pdfGenerator = $pdfGenerator;
+    }
+#[Route('/export-pdf/{id}', name: 'commande_export_pdf')]
+public function exportPdf(Commande $commande): Response
+{
+    $panier = $commande->getPanier();
+    $user = $panier ? $panier->getUser() : null;
+    $cours = $panier ? $panier->getCours() : []; 
+
+    $sum = array_reduce($commande->getPanier()->getCours()->toArray(), function ($carry, $cours) {
+        return $carry + $cours->getPrix();
+    }, 0);
+    
+    $tax = $sum * 0.10; 
+    $total = $sum + $tax;
+    
+    // Vérifiez si la commande est payée
+    if ($commande->getStatut() !== 'paid') {
+        throw $this->createNotFoundException('La commande n\'est pas payée.');
+    }
+
+    // Générez le HTML pour le PDF
+    $html = $this->renderView('commande/export_pdf.html.twig', [
+        'commande' => $commande,
+        'panier' => $panier,
+        'user' => $user,
+        'cours' => $cours,
+        'subtotal' => $sum,
+        'tax' => $tax,
+        'total' => $total,
+    ]);
+
+    // Ajoutez ces options pour résoudre les problèmes de "about:blank"
+    $this->pdfGenerator->setOption('disable-javascript', true);
+    $this->pdfGenerator->setOption('enable-local-file-access', true);
+    $this->pdfGenerator->setOption('load-error-handling', 'ignore');
+    $this->pdfGenerator->setOption('no-outline', true);
+    $this->pdfGenerator->setOption('disable-external-links', true);
+    $this->pdfGenerator->setOption('disable-internal-links', true);
+    
+    // Créez un fichier temporaire pour le PDF
+    $filename = sys_get_temp_dir() . '/commande_' . $commande->getId() . '.pdf';
+    
+    // Générez le PDF et sauvegardez-le dans un fichier
+    $this->pdfGenerator->generateFromHtml($html, $filename);
+    
+    // Créez une réponse basée sur le fichier
+    $response = new BinaryFileResponse($filename);
+    $response->headers->set('Content-Type', 'application/pdf');
+    $response->setContentDisposition(
+        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+        'commande_' . $commande->getId() . '.pdf'
+    );
+    
+    // Cette option supprime le fichier temporaire après l'envoi
+    $response->deleteFileAfterSend(true);
+    
+    return $response;
+}
+
+
+
+
+
+
+
+
+
+//bundle
+//bundle
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     //paiement creation
@@ -313,7 +417,7 @@ final class CommandeController extends AbstractController
 public function delete(Commande $commande, EntityManagerInterface $entityManager): Response
 {
     // Set the command status to "canceled"
-    $commande->setStatut('canceled');
+    $commande->setStatut('cancelled');
 
     // Get the associated panier
     $panier = $commande->getPanier();

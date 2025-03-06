@@ -10,6 +10,7 @@
         "doctrine/doctrine-bundle": "^2.6",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.12",
+        "knplabs/knp-snappy-bundle": "^1.10",
         "scheb/2fa": "*",
         "scheb/2fa-bundle": "*",
         "scheb/2fa-email": "*",

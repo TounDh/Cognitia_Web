@@ -125,6 +125,24 @@ final class DashboardController extends AbstractController
     }
 
 
+    
+
+
+
+    #[Route('/commande/eliminer/{id}', name: 'commande_eliminer', methods: ['POST'])]
+    public function eliminer(Commande $commande, EntityManagerInterface $entityManager): Response
+    {
+        $commande->setEliminated(true);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La facture a été éliminée avec succès.');
+
+        return $this->redirectToRoute('app_comprob');
+    }
+
+    
+
+    
 
 
 
@@ -139,6 +157,42 @@ final class DashboardController extends AbstractController
 
 
 
+
+
+
+
+
+
+
+
+
+    /**
+ * Calcule le nombre total de lignes pour chaque niveau de risque.
+ *
+ * @param array $commandes La liste des commandes avec leurs niveaux de risque.
+ * @return array Un tableau associatif contenant le nombre de lignes par niveau de risque.
+ */
+private function countRiskLevels(array $commandes): array
+{
+    $riskCounts = [
+        'Low Risk' => 0,
+        'Moderate Risk' => 0,
+        'High Risk' => 0,
+    ];
+
+    foreach ($commandes as $commande) {
+        $riskLevel = $commande->riskLevel;
+
+        if (isset($riskCounts[$riskLevel])) {
+            $riskCounts[$riskLevel]++;
+        }
+    }
+
+    return $riskCounts;
+}
+
+/////////////////////
+//Calcul Risque
 
     private $entityManager;
     private $commandeRepository;
@@ -157,7 +211,7 @@ final class DashboardController extends AbstractController
     #[Route('/dashboard/risque', name: 'app_comprob')]
     public function risque(CommandeRepository $commandeRepository): Response
     {
-        $commandes = $this->commandeRepository->findBy(['statut' => 'unpaid']);
+        $commandes = $this->commandeRepository->findBy(['statut' => 'unpaid', 'eliminated' => false]);
         
         // Predict risk for each command
         $riskedCommandes = [];
@@ -219,6 +273,15 @@ final class DashboardController extends AbstractController
             $riskOrder = ['High Risk' => 3, 'Moderate Risk' => 2, 'Low Risk' => 1];
             return ($riskOrder[$b->riskLevel] ?? 0) - ($riskOrder[$a->riskLevel] ?? 0);
         });
+
+
+        // Compter les lignes par niveau de risque
+    $riskCounts = $this->countRiskLevels($riskedCommandes);
+
+    return $this->render('dashboard/comprob.html.twig', [
+        'commandes' => $riskedCommandes,
+        'riskCounts' => $riskCounts, // Passer les compteurs de risque au template
+    ]);
 
         return $this->render('dashboard/comprob.html.twig', [
             'commandes' => $riskedCommandes
@@ -346,7 +409,7 @@ final class DashboardController extends AbstractController
         return (int)$cancellations;
     }
 
-
+///////////////////////////////////////////////////////////////
 
 
 

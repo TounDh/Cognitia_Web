@@ -13,7 +13,7 @@
 
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h4 class="mt-0 header-title">Liste des factures risquées</h4>
-
+ 
 
                             </div>
                             
@@ -22,34 +22,8 @@
                                 <div class="row mb-3 align-items-center">
                                     
                                     
-                                    <div class="col-sm-12 col-md-6 text-start">
+                            
                                     
-                                        <div class="dataTables_length" id="datatable_length">
-                                        <label class="form-label">Show 
-                                                <select name="datatable_length" aria-controls="datatable" class="form-select form-select-sm">
-                                                    <option value="10">10</option>
-                                                    <option value="25">25</option>
-                                                    <option value="50">50</option>
-                                                    <option value="100">100</option>
-                                                </select> entries
-                                            </label>
-                                            <label class="form-label">Show 
-                                                <select name="datatable_length" aria-controls="datatable" class="form-select form-select-sm">
-                                                    <option value="10">10</option>
-                                                    <option value="25">25</option>
-                                                    <option value="50">50</option>
-                                                    <option value="100">100</option>
-                                                </select> entries
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-6">
-                                        <div id="datatable_filter" class="dataTables_filter">
-                                            <label>Search:
-                                                <input type="search" class="form-control form-control-sm" placeholder="" aria-controls="datatable">
-                                            </label>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
@@ -62,6 +36,7 @@
                                             <th>Date Validation</th>
                                             <th>Statut</th>
                                             <th>Risque</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
 
@@ -108,6 +83,17 @@
                                     <span class="badge bg-danger">{{ commande.riskLevel }}</span>
                                 {% endif %}
                                                 </td>
+
+
+
+    <td>      
+    <form action="{{ path('commande_eliminer', {'id': commande.id}) }}" method="post" style="display: inline;">
+        <button type="submit" class="btn btn-secondary">Eliminer</button>
+    </form>
+      </td>
+
+
+
                                             </tr>
                                             {% endif %}
                                         {% else %}
@@ -126,26 +112,31 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-5">
                                     <div class="dataTables_info" id="datatable_info" role="status" aria-live="polite">
-                                        Showing {{ commandes|length }} entries
+                                         {{ commandes|length }} entrées affichées
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-7">
-                                    <div class="dataTables_paginate paging_simple_numbers" id="datatable_paginate">
-                                        <ul class="pagination">
-                                            <li class="paginate_button page-item previous disabled">
-                                                <a href="#" class="page-link">Previous</a>
-                                            </li>
-                                            <li class="paginate_button page-item active">
-                                                <a href="#" class="page-link">1</a>
-                                            </li>
-                                            <li class="paginate_button page-item next disabled">
-                                                <a href="#" class="page-link">Next</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                                                                
+                                <div class="col-sm-12 col-md-6 recapitulatif offset-md-10">
+                                <p>Récapitulatif:</p>
+    <ul class="list-unstyled">
+        <li><span class="risk-circle bg-success"></span>
+        Faible Risque: {{ riskCounts['Low Risk'] }}</li>
+        <li><span class="risk-circle bg-warning"></span>
+        Risque Modéré: {{ riskCounts['Moderate Risk'] }}</li>
+        <li><span class="risk-circle bg-danger"></span>
+        Haut Risque: {{ riskCounts['High Risk'] }}</li>
+    </ul>
+    
+</div>
+
+<!-- Tableau des commandes -->
+<table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+    <!-- ... Votre tableau existant ... -->
+</table>
+                                
                             </div>
 
+                             
                             
                         </div>
                     </div>
@@ -165,5 +156,17 @@
     .badge {
         padding: 0.5em 1em;
     }
+
+    .risk-circle {
+    display: inline-block;
+    width: 10px; /* Taille du cercle */
+    height: 10px;
+    border-radius: 50%; /* Rend l'élément circulaire */
+    margin-right: 8px; /* Espacement entre le cercle et le texte */
+}
+    
+.recapitulatif {
+    right: 50px; /* Ajuste la valeur selon ton besoin */
+}
 </style>
 {% endblock %}
