@@ -361,8 +361,6 @@ final class QuizController extends AbstractController
     }
 
 
-
-
     /** Fonctionnalité pour l'admin (dashboard) */
 
     #[Route('/dashboard/quiz', name: 'dashboard_quiz')]
