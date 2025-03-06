@@ -26,6 +26,13 @@ class Commande
     #[ORM\OneToOne(mappedBy: 'commande', targetEntity: Paiement::class)]
     private ?Paiement $paiement = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private $archived = false;
+
+    #[ORM\Column(type: 'boolean')]
+    private $eliminated = false;
+
+
     public function __construct()
     {
         $this->dateAchat = new \DateTime();  // Par défaut, la date d'achat est la date actuelle
@@ -89,4 +96,30 @@ class Commande
 
         return $this;
     }
+
+    public function isArchived(): bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(bool $archived): self
+    {
+        $this->archived = $archived;
+
+        return $this;
+    }
+
+
+    public function isEliminated(): bool
+    {
+        return $this->eliminated;
+    }
+
+    public function setEliminated(bool $eliminated): self
+    {
+        $this->eliminated = $eliminated;
+
+        return $this;
+    }
+   
 }

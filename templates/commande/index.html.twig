@@ -10,7 +10,7 @@
             color: #728299 !important;
         }
         .badge {
-            background-color: rgba(191, 204, 6, 0.92) !important;
+            background-color: rgba(191, 204, 6, 0.92) ;
         }
         .page-header {
             margin: 0 0 1rem;
@@ -141,15 +141,15 @@
 
             <div class="page-tools">
                 <div class="action-buttons">
-                    <a class="btn bg-white btn-light mx-1px text-95" href="#" data-title="PDF">
-                        <i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2"></i>
-                        Export
-                    </a>
+ 
 
-                    <a class="btn bg-white btn-light mx-1px text-95" href="#" data-title="Print">
-                        <i class="mr-1 fa fa-print text-primary-m1 text-120 w-2"></i>
-                        Print
-                    </a>
+                            {% if commande.statut == 'paid' %}
+            <a class="btn bg-white btn-light mx-1px text-95" href="{{ path('commande_export_pdf', {'id': commande.id}) }}" data-title="PDF">
+                <i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2"></i>
+                Export
+            </a>
+        {% endif %}
+
 
 <a href="{{ path('app_commande_delete', {'id': commande.id}) }}" 
    class="btn bg-white btn-light mx-1px text-95"
@@ -201,7 +201,7 @@
 
                                 <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Issue Date:</span> {{ commande.dateAchat|date('Y-m-d') }} </div>
 
-                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Status:</span> <span class="badge badge-warning badge-pill px-25">{{ commande.statut }}</span></div>
+                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Status:</span> <span class="badge badge-primary px-25">{{ commande.statut }}</span>  </div>
                             </div>
                         </div>
                         <!-- /.col -->
@@ -252,7 +252,7 @@
                     SubTotal
                 </div>
                 <div class="col-5">
-                    <span class="text-110 text-secondary-d1">{{ subtotal }} TND</span>
+                    <span class="text-110 text-secondary-d1">{{ subtotal }} $</span>
                 </div>
             </div>
 
@@ -261,7 +261,7 @@
                     Tax (10%)
                 </div>
                 <div class="col-5">
-                    <span class="text-110 text-secondary-d1">{{ tax }} TND</span>
+                    <span class="text-110 text-secondary-d1">{{ tax }} $</span>
                 </div>
             </div>
 
@@ -271,7 +271,7 @@
                 </div>
 
                 <div class="col-5">
-                    <span class="text-150 text-success-d3 opacity-2">{{ total }}TND</span>
+                    <span class="text-150 text-success-d3 opacity-2">{{ total }}$</span>
                 </div>
             </div>
         </div>
@@ -284,12 +284,11 @@
 
 
         
-
-            <form action="{{ path('app_paiement_create', {'id': commande.id}) }}" method="POST" style="display:inline;">
-        <button type="submit" class="btn btn-info btn-bold px-4 float-right mt-3 mt-lg-0">
-            Pay Now
-        </button>
-    </form>
+<form id="payment-form" onsubmit="return false;">
+    <button id="pay-button" class="btn btn-info btn-bold px-4 float-right mt-3 mt-lg-0">
+        Pay Now
+    </button>
+</form>
 
 
 
@@ -299,4 +298,59 @@
         </div>
     
 </div>
+<script>
+document.getElementById("pay-button").addEventListener("click", function(event) {
+    // Prevent default behavior
+    event.preventDefault();
+    
+    // Disable button and show loading state
+    const button = this;
+    button.disabled = true;
+    button.innerHTML = 'Processing...';
+    
+    // Clear any previous error messages
+    const errorDisplay = document.getElementById('payment-error') || document.createElement('div');
+    errorDisplay.style.display = 'none';
+    
+    // Make the POST request
+    fetch("{{ path('pay', {'id': commande.id}) }}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.url) {
+            // Store the commande ID in localStorage before redirecting
+            localStorage.setItem('current_commande_id', {{ commande.id }});
+            
+            // Redirect to Stripe checkout
+            window.location.href = data.url;
+        } else if (data.error) {
+            throw new Error(data.error);
+        } else {
+            throw new Error('Unknown error occurred');
+        }
+    })
+    .catch(error => {
+        // Display error and re-enable button
+        console.error('Payment error:', error);
+        
+        if (!errorDisplay.id) {
+            errorDisplay.id = 'payment-error';
+            errorDisplay.className = 'alert alert-danger mt-3';
+            button.parentNode.insertBefore(errorDisplay, button.nextSibling);
+        }
+        
+        errorDisplay.textContent = 'Payment error: ' + error.message;
+        errorDisplay.style.display = 'block';
+        
+        button.disabled = false;
+        button.innerHTML = 'Pay Now';
+    });
+});
+</script>
 {% endblock %}
+

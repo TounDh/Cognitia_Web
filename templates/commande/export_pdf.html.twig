@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .centered {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="centered">
+        <h1>Reçu Facture: #{{ commande.id }}</h1>
+    </div>
+
+    <div>
+        <p><strong>De :</strong> {{ user.firstName }} {{ user.lastName }}</p>
+        <p><strong>Email :</strong> {{ user.email }}</p>
+        <p><strong>Téléphone :</strong> {{ user.phoneNumber }}</p>
+    </div>
+
+    <hr>
+
+    <div>
+        <p><strong>Date du paiement :</strong> {{ commande.dateAchat|date('Y-m-d') }}</p>
+        <p><strong>Statut :</strong> {{ commande.statut }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Prix</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cours in cours %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ cours.titre }}</td>
+                    <td>{{ cours.description }}</td>
+                    <td>{{ cours.prix }} €</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+
+    <div>
+        <p><strong>Sous-total :</strong> {{ subtotal }} €</p>
+        <p><strong>Taxe (10%) :</strong> {{ tax }} €</p>
+        <p><strong>Total :</strong> {{ total }} €</p>
+    </div>
+</body>
+</html>

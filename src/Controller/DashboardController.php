@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Commande;
+use App\Repository\CommandeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -10,6 +12,9 @@ use App\Repository\CoursRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 final class DashboardController extends AbstractController
 {
@@ -63,12 +68,381 @@ final class DashboardController extends AbstractController
         ]);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     #[Route('/dashboard/commande', name: 'app_commande')]
-    public function commande(): Response
+    public function commande(CommandeRepository $commandeRepository): Response
     {
+        $commandes = $commandeRepository->findBy(['archived' => false]);
         return $this->render('dashboard/commande.html.twig', [
+                'commandes' => $commandes,
         ]);
     }
+
+
+    #[Route('/commande/archive/{id}', name: 'commande_archive', methods: ['POST'])]
+    public function archive(Commande $commande, EntityManagerInterface $entityManager): Response
+    {
+        $commande->setArchived(true);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La facture a été archivée avec succès.');
+
+        return $this->redirectToRoute('app_commande');
+    }
+
+    #[Route('/dashboard/archivage', name: 'app_archive')]
+    public function archivage(CommandeRepository $commandeRepository): Response
+    {
+        $commandes = $commandeRepository->findBy(['archived' => true]);
+        return $this->render('dashboard/archive.html.twig', [
+                'commandes' => $commandes,
+        ]);
+    }
+
+    #[Route('/commande/darchive/{id}', name: 'app_darchive', methods: ['POST'])]
+    public function darchive(Commande $commande, EntityManagerInterface $entityManager): Response
+    {
+        $commande->setArchived(false);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La facture a été désarchivée avec succès.');
+
+        return $this->redirectToRoute('app_archive');
+    }
+
+
+    
+
+
+
+    #[Route('/commande/eliminer/{id}', name: 'commande_eliminer', methods: ['POST'])]
+    public function eliminer(Commande $commande, EntityManagerInterface $entityManager): Response
+    {
+        $commande->setEliminated(true);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La facture a été éliminée avec succès.');
+
+        return $this->redirectToRoute('app_comprob');
+    }
+
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+ * Calcule le nombre total de lignes pour chaque niveau de risque.
+ *
+ * @param array $commandes La liste des commandes avec leurs niveaux de risque.
+ * @return array Un tableau associatif contenant le nombre de lignes par niveau de risque.
+ */
+private function countRiskLevels(array $commandes): array
+{
+    $riskCounts = [
+        'Low Risk' => 0,
+        'Moderate Risk' => 0,
+        'High Risk' => 0,
+    ];
+
+    foreach ($commandes as $commande) {
+        $riskLevel = $commande->riskLevel;
+
+        if (isset($riskCounts[$riskLevel])) {
+            $riskCounts[$riskLevel]++;
+        }
+    }
+
+    return $riskCounts;
+}
+
+/////////////////////
+//Calcul Risque
+
+    private $entityManager;
+    private $commandeRepository;
+
+    public function __construct(
+        EntityManagerInterface $entityManager, 
+        CommandeRepository $commandeRepository
+    ) {
+        $this->entityManager = $entityManager;
+        $this->commandeRepository = $commandeRepository;
+    }
+
+
+
+
+    #[Route('/dashboard/risque', name: 'app_comprob')]
+    public function risque(CommandeRepository $commandeRepository): Response
+    {
+        $commandes = $this->commandeRepository->findBy(['statut' => 'unpaid', 'eliminated' => false]);
+        
+        // Predict risk for each command
+        $riskedCommandes = [];
+        foreach ($commandes as $commande) {
+            // Prepare input data for risk prediction
+            $inputData = [
+                'Historique_Retards' => $this->calculateHistoriqueRetards($commande),
+                'Montant_Total' => $this->calculateMontantTotal($commande),
+                'Nombre_Annulations' => $this->calculateNombreAnnulations($commande)
+            ];
+
+            // Convert input to JSON
+            $inputJson = json_encode($inputData);
+
+            // Construct the Python command
+            $pythonScript = $this->getParameter('kernel.project_dir') . '/assets/models/predict_risk.py';
+            
+            // Create the process
+            $process = new Process([
+                'python',
+                $pythonScript,
+                $inputJson
+            ]);
+
+            try {
+                // Run the process
+                $process->mustRun();
+            
+                // Get the output and trim any whitespace
+                $rawOutput = trim($process->getOutput());
+                
+                // Decode the JSON output
+                $result = json_decode($rawOutput, true);
+                
+                // Debug logging
+                if ($result === null) {
+                    // Log JSON decoding error
+                    dump('JSON Decode Error: ' . json_last_error_msg());
+                    dump('Raw Output: ' . $rawOutput);
+                    $commande->riskLevel = 'Unable to determine risk';
+                } else {
+                    // Set risk level from decoded JSON
+                    $commande->riskLevel = $result['risk_level'] ?? 'Unable to determine risk';
+                    $commande->riskProbabilities = $result['probabilities'] ?? [];
+                }
+            } catch (ProcessFailedException $exception) {
+                // Log the full exception
+                dump($exception->getMessage());
+                
+                $commande->riskLevel = 'Risk assessment failed';
+                $commande->riskProbabilities = [];
+            }
+
+            $riskedCommandes[] = $commande;
+        }
+
+        // Sort commandes by risk level (optional)
+        usort($riskedCommandes, function($a, $b) {
+            $riskOrder = ['High Risk' => 3, 'Moderate Risk' => 2, 'Low Risk' => 1];
+            return ($riskOrder[$b->riskLevel] ?? 0) - ($riskOrder[$a->riskLevel] ?? 0);
+        });
+
+
+        // Compter les lignes par niveau de risque
+    $riskCounts = $this->countRiskLevels($riskedCommandes);
+
+    return $this->render('dashboard/comprob.html.twig', [
+        'commandes' => $riskedCommandes,
+        'riskCounts' => $riskCounts, // Passer les compteurs de risque au template
+    ]);
+
+        return $this->render('dashboard/comprob.html.twig', [
+            'commandes' => $riskedCommandes
+        ]);
+    }
+
+    #[Route('/detailed-analysis', name: 'app_risk_detailed_analysis')]
+    public function detailedRiskAnalysis(): Response
+    {
+        // Fetch all commands for a more comprehensive analysis
+        $allCommandes = $this->commandeRepository->findAll();
+        
+        // Aggregate risk statistics
+        $riskStats = [
+            'total_commands' => count($allCommandes),
+            'risk_breakdown' => [
+                'low_risk' => 0,
+                'moderate_risk' => 0,
+                'high_risk' => 0
+            ],
+            'total_risk_amount' => 0
+        ];
+
+        foreach ($allCommandes as $commande) {
+            // Predict risk for each command
+            $inputData = [
+                'Historique_Retards' => $this->calculateHistoriqueRetards($commande),
+                'Montant_Total' => $this->calculateMontantTotal($commande),
+                'Nombre_Annulations' => $this->calculateNombreAnnulations($commande)
+            ];
+
+            $inputJson = json_encode($inputData);
+            $pythonScript = $this->getParameter('kernel.project_dir') . '/assets/models/predict_risk.py';
+            
+            $process = new Process([
+                'python',
+                $pythonScript,
+                $inputJson
+            ]);
+
+            try {
+                $process->mustRun();
+                $output = $process->getOutput();
+                $result = json_decode($output, true);
+                $riskLevel = $result['risk_level'] ?? 'Unable to determine risk';
+            } catch (ProcessFailedException $exception) {
+                $riskLevel = 'Risk assessment failed';
+            }
+
+            // Update risk statistics
+            switch ($riskLevel) {
+                case 'Low Risk':
+                    $riskStats['risk_breakdown']['low_risk']++;
+                    break;
+                case 'Moderate Risk':
+                    $riskStats['risk_breakdown']['moderate_risk']++;
+                    break;
+                case 'High Risk':
+                    $riskStats['risk_breakdown']['high_risk']++;
+                    $riskStats['total_risk_amount'] += $this->calculateMontantTotal($commande);
+                    break;
+            }
+        }
+
+        return $this->render('dashboard/commande.html.twig', [
+            'risk_stats' => $riskStats
+        ]);
+    }
+
+    // Helper methods for risk calculation
+    private function calculateHistoriqueRetards($commande): int
+{
+    // Get the user - choose one of these approaches based on your entity structure
+    $user = $commande->getPanier()->getUser(); // Direct user association
+    
+
+    if (!$user) {
+        return 0; // Return 0 if no user is found
+    }
+    
+    $latePayments = $this->entityManager
+        ->getRepository(Commande::class)
+        ->createQueryBuilder('c')
+        ->select('COUNT(c.id)')
+        ->innerJoin('c.panier', 'p')  // Explicitly join the panier
+        ->innerJoin('p.user', 'u')    // Join the user through panier
+        ->where('u = :user')// Or 'c.panier.user = :user' depending on your association
+        ->andWhere('c.statut = :unpaid')
+        ->andWhere('c.dateAchat < :sixMonthsAgo')
+        ->setParameter('user', $user)
+        ->setParameter('unpaid', 'unpaid')
+        ->setParameter('sixMonthsAgo', new \DateTime('-6 months'))
+        ->getQuery()
+        ->getSingleScalarResult();
+
+    return (int)$latePayments;
+}
+
+    private function calculateMontantTotal($commande): float
+    {
+        $totalAmount = 0;
+        foreach ($commande->getPanier()->getCours() as $cours) {
+            $totalAmount += $cours->getPrix();
+        }
+        return $totalAmount;
+    }
+
+    private function calculateNombreAnnulations($commande): int
+    {
+        $user = $commande->getPanier()->getUser();
+        
+        $cancellations = $this->entityManager
+            ->getRepository(\App\Entity\Commande::class)
+            ->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->innerJoin('c.panier', 'p')  // Explicitly join the panier
+            ->innerJoin('p.user', 'u')    // Join the user through panier
+            ->where('u = :user')
+            ->andWhere('c.statut = :cancelled')
+            ->setParameter('user', $user)
+            ->setParameter('cancelled', 'cancelled')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int)$cancellations;
+    }
+
+///////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     #[Route('/dashboard/quiz', name: 'app_quiz')]
     public function quiz(): Response
