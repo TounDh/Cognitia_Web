@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\CoursRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 
 final class DashboardController extends AbstractController
@@ -35,20 +37,20 @@ final class DashboardController extends AbstractController
 
     #[Route('/dashboard/cours', name: 'app_coursManage')]
     #[IsGranted('ROLE_ADMIN')]
-    public function cours(CoursRepository $coursRepository): Response
+    public function cours(CoursRepository $coursRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        $courses = $coursRepository->findAll();
-        
+        // Query for courses
+        $query = $coursRepository->createQueryBuilder('c')->orderBy('c.datePublication', 'DESC')->getQuery();
+    
+        // Paginate results
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1), // Get the page number from URL
+            10 // Number of courses per page
+        );
+    
         return $this->render('dashboard/cours.html.twig', [
-            'courses' => $courses,
-        ]);
-    }
-
-
-    #[Route('/dashboard/module', name: 'app_module')]
-    public function module(): Response
-    {
-        return $this->render('dashboard/module.html.twig', [
+            'pagination' => $pagination,
         ]);
     }
 

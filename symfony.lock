@@ -80,6 +80,9 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.12"
     },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v6.6.1"
+    },
     "laminas/laminas-code": {
         "version": "4.5.2"
     },
@@ -321,6 +324,19 @@
     },
     "symfony/string": {
         "version": "v6.0.9"
+    },
+    "symfony/translation": {
+        "version": "6.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.3",
+            "ref": "e28e27f53663cc34f0be2837aba18e3a1bef8e7b"
+        },
+        "files": [
+            "./config/packages/translation.yaml",
+            "./translations/.gitignore"
+        ]
     },
     "symfony/translation-contracts": {
         "version": "v3.0.1"

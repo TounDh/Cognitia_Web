@@ -137,22 +137,32 @@ class ModulesController extends AbstractController
 
     #[Route('/{id}', name: 'app_modules_delete', methods: ['POST'])]
     #[IsGranted('ROLE_INSTRUCTEUR')]
-    public function delete(Request $request, Modules $module, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Modules $module, EntityManagerInterface $entityManager, UserProgressRepository $userProgressRepository): Response
     {
         if ($this->isCsrfTokenValid('delete' . $module->getId(), $request->request->get('_token'))) {
+            
+            // Remove related UserProgress records first
+            $userProgresses = $userProgressRepository->findBy(['module' => $module]);
+            foreach ($userProgresses as $progress) {
+                $entityManager->remove($progress);
+            }
+    
+            // Remove the PDF file if it exists
             if ($module->getPdfPath()) {
                 $filePath = $this->getParameter('modules_pdfs_directory') . '/' . $module->getPdfPath();
                 if (file_exists($filePath)) {
                     unlink($filePath);
                 }
             }
-
+    
+            // Remove the module
             $entityManager->remove($module);
             $entityManager->flush();
-
+    
             $this->addFlash('success', 'Module deleted successfully.');
         }
-
+    
         return $this->redirectToRoute('app_modules_index');
     }
+    
 }
