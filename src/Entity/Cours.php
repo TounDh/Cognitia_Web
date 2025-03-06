@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Quiz;
 
 #[ORM\Entity(repositoryClass: CoursRepository::class)]
 #[Vich\Uploadable]
@@ -54,18 +55,17 @@ class Cours
     #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Defis::class, orphanRemoval: true)]
     private Collection $defis;
 
-    // Add new Quiz relationship
-    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Quiz::class, orphanRemoval: true)]
-    private Collection $quizzes;
 
     #[ORM\OneToMany(mappedBy: "cours", targetEntity: Evaluation::class)]
     private Collection $evaluations;
+
+    #[ORM\OneToOne(targetEntity: Quiz::class, mappedBy: "cours", cascade: ["persist", "remove"])]
+    private $quiz;
 
     public function __construct()
     {
         $this->modules = new ArrayCollection();
         $this->defis = new ArrayCollection();
-        $this->quizzes = new ArrayCollection();
         $this->datePublication = new \DateTime();
         $this->evaluations = new ArrayCollection();
     }
@@ -217,32 +217,6 @@ class Cours
         return $this;
     }
 
-    /**
-     * @return Collection<int, Quiz>
-     */
-    public function getQuizzes(): Collection
-    {
-        return $this->quizzes;
-    }
-
-    public function addQuiz(Quiz $quiz): self
-    {
-        if (!$this->quizzes->contains($quiz)) {
-            $this->quizzes->add($quiz);
-            $quiz->setCours($this);
-        }
-        return $this;
-    }
-
-    public function removeQuiz(Quiz $quiz): self
-    {
-        if ($this->quizzes->removeElement($quiz)) {
-            if ($quiz->getCours() === $this) {
-                $quiz->setCours(null);
-            }
-        }
-        return $this;
-    }
 
     /**
      * @return Collection<int, Evaluation>
@@ -268,6 +242,28 @@ class Cours
                 $evaluation->setCours(null);
             }
         }
+        return $this;
+    }
+
+    public function getQuiz(): ?Quiz
+    {
+        return $this->quiz;
+    }
+
+    public function setQuiz(?Quiz $quiz): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($quiz === null && $this->quiz !== null) {
+            $this->quiz->setCours($this);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($quiz !== null && $quiz->getCours() !== $this) {
+            $quiz->setCours($this);
+        }
+
+        $this->quiz = $quiz;
+
         return $this;
     }
 }

@@ -178,8 +178,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const doc = parser.parseFromString(html, 'text/html');
                 const newTableBody = doc.querySelector('#datatable tbody');
                 const newPagination = doc.querySelector('.pagination');
-                tableBody.innerHTML = newTableBody.innerHTML;
-                paginationContainer.innerHTML = newPagination ? newPagination.innerHTML : '';
+                
+                if (newTableBody) {
+                    tableBody.innerHTML = newTableBody.innerHTML;
+                }
+                
+                if (paginationContainer && newPagination) {
+                    paginationContainer.innerHTML = newPagination.innerHTML;
+                } else if (paginationContainer) {
+                    paginationContainer.innerHTML = ''; // Clear pagination if no new pagination exists
+                }
             })
             .catch(error => {
                 alert(error.message);

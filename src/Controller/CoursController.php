@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\QuizRepository;
 
 #[Route('/cours')]
 final class CoursController extends AbstractController
@@ -75,7 +76,8 @@ final class CoursController extends AbstractController
         int $id, 
         CoursRepository $coursRepository, 
         ModulesRepository $moduleRepository, 
-        DefisRepository $defiRepository
+        DefisRepository $defiRepository,
+        QuizRepository $quizRepository
     ): Response
     {
         $cour = $coursRepository->find($id);
@@ -88,10 +90,14 @@ final class CoursController extends AbstractController
         $modules = $cour->getModules();
         $defis = $cour->getDefis(); 
 
+        // Récupérer le quiz associé au cours
+        $quiz = $quizRepository->findOneBy(['cours' => $cour]);
+
         return $this->render('cours/show.html.twig', [
             'cours' => $cour,
             'modules' => $modules, // Pass modules to the template
             'defis' => $defis,     // Pass defis to the template
+            'quiz' => $quiz
         ]);
     }
 

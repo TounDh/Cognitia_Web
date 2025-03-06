@@ -53,8 +53,8 @@
             </div>
 
             <div class="text-center mt-4">
-                <a href="{{ path('app_quiz_index') }}" class="btn btn-outline-primary rounded-pill">
-                    <i class="fas fa-arrow-left me-2"></i>Retour à la liste des quiz
+                <a href="{{ path('app_quiz_show', {'id': quiz.id}) }}" class="btn btn-outline-primary rounded-pill">
+                    <i class="fas fa-arrow-left me-2"></i>Retour au quiz
                 </a>
             </div>
         </div>

@@ -78,4 +78,25 @@ final class ResultatController extends AbstractController
 
         return $this->redirectToRoute('app_resultat_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    /** Fonctionnalité pour l'admin (dashboard) */
+
+    #[Route('/dashboard/resultat', name: 'dashboard_resultat_index', methods: ['GET'])]
+    public function dashboardResultat(ResultatRepository $resultatRepository): Response
+    {
+        return $this->render('dashboard/resultat/resultat.html.twig', [
+            'resultats' => $resultatRepository->findAll(),
+        ]);
+    }
+
+    #[Route('/dashboard/resultat/{id}', name: 'dashboard_resultat_delete', methods: ['POST'])]
+    public function dashboardDelete(Request $request, Resultat $resultat, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$resultat->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($resultat);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('dashboard_resultat_index', [], Response::HTTP_SEE_OTHER);
+    }
 }

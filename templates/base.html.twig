@@ -97,15 +97,19 @@
                         <ul>
                             <li><a class="nav-link" href="{{ path('app_home') }}">Accueil </a></li>
                             <li><a class="nav-link" href="{{ path('app_cours') }}">Courses</a></li>
-							<li><a class="nav-link">Instructeur <span class="ti-angle-down"></span></a>
+							<li>
+								{% if is_granted('ROLE_INSTRUCTEUR') %}
+								<a class="nav-link">Instructeur <span class="ti-angle-down"></span></a>
 								<ul>
-									<li><a class="nav-link" href="{{ path('app_instructeur') }}">Instructeur</a></li>
-									{% if is_granted('ROLE_APPRENANT')  or is_granted('ROLE_INSTRUCTEUR') or is_granted('ROLE_ADMIN') %}
-									<li><a href="{{path('app_quiz_index')}}">Liste Quiz</a></li>
-									<li><a href="{{path('app_certificat_index')}}">Liste Certificat</a></li>
-									{% endif %}
+									<li><a class="nav-link" href="{{ path('app_instructeur') }}">Instructeurs</a></li>
+									<li><a href="{{path('app_quiz_index')}}">Mes Quiz</a></li>
 								</ul>
-							</li>
+								{% elseif is_granted('ROLE_APPRENANT') %}
+								<a class="nav-link">Certificats <span class="ti-angle-down"></span></a>
+								<ul>									
+									<li><a href="{{path('app_certificat_index')}}">Mes Certificats</a></li>
+								</ul>
+								{% endif %}
                             <li><a class="nav-link" href="{{ path('app_about') }}">About Us</a></li>
                             <li><a class="nav-link" href="{{ path('app_contact') }}">Contact</a></li>
                             <li><a class="nav-link" href="{{ path('app_event') }}">Event</a></li>

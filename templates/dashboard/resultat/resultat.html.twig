@@ -1,0 +1,70 @@
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %} Resultats Management!{% endblock %}
+
+{% block body %}
+
+{% if is_granted('ROLE_ADMIN') %}
+
+
+
+                <div class="content-page">
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="mt-0 header-title">Liste Resultats</h4>
+
+                                        <div id="datatable_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                                        <div class="row">
+                                        
+                                    </div>
+
+                                        <table id="datatable" class="table table-hover table-striped dt-responsive table-responsive nowrap">
+                                            <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Score</th>
+                                                <th>Apprenant</th>
+                                                <th>Quiz</th>
+                                                <th class="text-center">Actions</th>
+                                            </tr>
+                                            </thead>
+    
+    
+                                            <tbody>
+                                            {% for resultat in resultats %}
+                                                <tr>
+                                                    <td>{{ resultat.id }}</td>
+                                                    <td>{{ resultat.score }}</td>
+                                                    <td>{{ resultat.apprenant.firstName }} {{ resultat.apprenant.lastName }}</td>
+                                                    <td>{{ resultat.quiz.titre }}</td>
+                                                    <td class="text-center">{{ include('dashboard/resultat/_delete_form.html.twig') }}</td>
+                                                </tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="5" class="text-center">Aucun resultat disponible</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                                </div>
+                               
+                            </div>
+                        </div> <!-- end row -->
+                    </div>
+                </div>
+            </div>
+
+{% endif %}
+
+{% endblock %}

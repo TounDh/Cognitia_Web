@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use TCPDF;
 use Knp\Component\Pager\PaginatorInterface;
+use App\Entity\Cours;
 
 
 #[Route('/quiz')]
@@ -44,15 +45,24 @@ final class QuizController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_quiz_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new/{id}', name: 'app_quiz_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, Cours $cours): Response
     {
         if (!$this->isGranted('ROLE_INSTRUCTEUR')) {
             $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
             return $this->redirectToRoute('app_home');
         }
 
+        // Vérifier si le cours a déjà un quiz
+        if ($cours->getQuiz() !== null) {
+            $this->addFlash('error', 'Ce cours a déjà un quiz associé.');
+            return $this->redirectToRoute('app_cours_show', ['id' => $cours->getId()]);
+        }
+
         $quiz = new Quiz();
+        $quiz->setCours($cours);
+        $quiz->setInstructeur($this->getUser());
+
         $form = $this->createForm(QuizType::class, $quiz);
         $form->handleRequest($request);
 
@@ -60,18 +70,26 @@ final class QuizController extends AbstractController
             $entityManager->persist($quiz);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_quiz_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Quiz créé avec succès!');
+            return $this->redirectToRoute('app_cours_show', ['id' => $cours->getId()]);
         }
 
         return $this->render('quiz/new.html.twig', [
             'quiz' => $quiz,
             'form' => $form,
+            'cours' => $cours
         ]);
     }
 
     #[Route('/{id}', name: 'app_quiz_show', methods: ['GET'])]
-    public function show(Quiz $quiz): Response
+    public function show(int $id, QuizRepository $quizRepository): Response
     {
+        $quiz = $quizRepository->find($id);
+        
+        if (!$quiz) {
+            throw $this->createNotFoundException('Quiz non trouvé');
+        }
+
         if (!$this->isGranted('ROLE_INSTRUCTEUR')) {
             $this->addFlash('error', 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
             return $this->redirectToRoute('app_home');
@@ -96,7 +114,8 @@ final class QuizController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_quiz_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Quiz modifié avec succès!');
+            return $this->redirectToRoute('app_quiz_show', ['id' => $quiz->getId()]);
         }
 
         return $this->render('quiz/edit.html.twig', [
