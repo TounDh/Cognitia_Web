@@ -1,7 +1,7 @@
 {
     "type": "project",
     "license": "proprietary",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
@@ -10,6 +10,8 @@
         "doctrine/doctrine-bundle": "^2.6",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.12",
+        "endroid/qr-code": "4.0",
+        "guzzlehttp/guzzle": "^7.9",
         "scheb/2fa": "*",
         "scheb/2fa-bundle": "*",
         "scheb/2fa-email": "*",
@@ -21,6 +23,7 @@
         "symfony/flex": "^2",
         "symfony/form": "6.4.*",
         "symfony/framework-bundle": "6.4.*",
+        "symfony/http-client": "6.4.*",
         "symfony/mailer": "6.4.*",
         "symfony/maker-bundle": "^1.50",
         "symfony/proxy-manager-bridge": "6.4.*",
