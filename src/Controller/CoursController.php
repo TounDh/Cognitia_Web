@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use App\Repository\QuizRepository;
 
 #[Route('/cours')]
 final class CoursController extends AbstractController
@@ -84,11 +85,13 @@ final class CoursController extends AbstractController
     // Show route: Display details for a specific course with modules and challenges
     #[Route('/{id}', name: 'app_cours_show', methods: ['GET'])]
     public function show(
-        int $id,
-        CoursRepository $coursRepository,
-        ModulesRepository $moduleRepository,
-        DefisRepository $defiRepository
-    ): Response {
+        int $id, 
+        CoursRepository $coursRepository, 
+        ModulesRepository $moduleRepository, 
+        DefisRepository $defiRepository,
+        QuizRepository $quizRepository
+    ): Response
+    {
         $cour = $coursRepository->find($id);
 
         if (!$cour) {
@@ -102,11 +105,15 @@ final class CoursController extends AbstractController
         // Calculate progress
         $progress = $this->calculateProgress($cour);
 
+        // Récupérer le quiz associé au cours
+        $quiz = $quizRepository->findOneBy(['cours' => $cour]);
+
         return $this->render('cours/show.html.twig', [
             'cours' => $cour,
             'modules' => $modules,
             'defis' => $defis,
             'progress' => $progress,
+            'quiz' => $quiz
         ]);
     }
 

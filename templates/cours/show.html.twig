@@ -161,6 +161,68 @@
                     {% endfor %}
                 </div>
             </div>
+
+
+{% if cours.quiz %} 
+    <div class="mt-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h3 class="card-title mb-4">Testez vos connaissances</h3>
+                <div class="d-flex justify-content-center align-items-center mb-3">
+                    <div class="me-4">
+                        <i class="fas fa-question-circle fa-3x text-primary"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0">{{ cours.quiz.questions|length }} Questions</h4>
+                        <small class="text-muted">Pour valider vos compétences</small>
+                    </div>
+                </div>
+                {% if is_granted('ROLE_APPRENANT') %}
+                    <a href="{{ path('app_quiz_start_session', {'id': cours.quiz.id}) }}" 
+                       class="btn btn-primary btn-lg rounded-pill px-5 position-relative"
+                       style="background: linear-gradient(45deg, #0d6efd, #0b5ed7);
+                              border: none;
+                              box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                              transition: all 0.3s ease;">
+                        <i class="fas fa-play-circle me-2"></i>Commencer le quiz
+                    </a>
+                {% else %}
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Vous devez être connecté en tant qu'apprenant pour passer le quiz
+                    </div>
+                {% endif %}
+                
+                {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+                    <div class="mt-4">
+                        <a href="{{ path('app_quiz_show', {'id': cours.quiz.id}) }}" class="btn btn-info btn-sm me-2">
+                            <i class="fas fa-eye me-1"></i> Consulter le quiz
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="mt-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h3 class="card-title mb-4">Quiz du cours</h3>
+                {% if is_granted('ROLE_INSTRUCTEUR') and app.user == cours.instructeur %}
+                    <a href="{{ path('app_quiz_new', {'id': cours.id}) }}" class="btn btn-success btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i>Créer un quiz
+                    </a>
+                    <p class="text-muted mt-2">Ajoutez un quiz pour tester les connaissances de vos apprenants</p>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Aucun quiz n'est disponible pour ce cour pour le moment
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}
         </div>
 
         <!-- Sidebar -->

@@ -85,14 +85,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'instructeur', targetEntity: Quiz::class)]
     private Collection $quizzes;
 
+    #[ORM\OneToMany(mappedBy: 'apprenant', targetEntity: Certificat::class, cascade: ['remove'])]
+    private Collection $certificats;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->eventsParticipated = new ArrayCollection();
         $this->quizzes = new ArrayCollection();
         $this->roles = ['ROLE_USER']; // Rôle par défaut
-       
+        $this->certificats = new ArrayCollection();
     }
+
+    /**
+     * @return Collection<int, Certificat>
+     */
+    public function getCertificats(): Collection
+    {
+        return $this->certificats;
+    }
+
+    public function addCertificat(Certificat $certificat): self
+    {
+        if (!$this->certificats->contains($certificat)) {
+            $this->certificats[] = $certificat;
+            $certificat->setApprenant($this);
+        }
+        return $this;
+    }
+
+    public function removeCertificat(Certificat $certificat): self
+    {
+        if ($this->certificats->removeElement($certificat)) {
+            if ($certificat->getApprenant() === $this) {
+                $certificat->setApprenant(null);
+            }
+        }
+        return $this;
+    }
+
     
 
     // Getters et Setters pour les champs communs

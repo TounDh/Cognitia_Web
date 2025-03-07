@@ -1,45 +1,139 @@
-{% extends 'Quizbase.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}{{ quiz.titre }} - Quiz{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h2 class="text-center">{{ quiz.titre }}</h2>
-    
-    <p>Temps restant : <span id="timer"></span></p>
-    <form id="quiz-form" method="POST">
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12" style="margin-top: 80px;">
+            <h1 class="text-primary fw-bold text-center mb-4">{{ quiz.titre }}</h1>
+        </div>
+    </div>
 
-    <form method="POST">
-        {% for question in quiz.questions %}
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">{{ question.contenu }}</h5>
-                    {% for reponse in question.reponses %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="question_{{ question.id }}[]" value="{{ reponse.id }}" id="reponse_{{ reponse.id }}">
-                            <label class="form-check-label" for="reponse_{{ reponse.id }}">
-                                {{ reponse.contenu }}
-                            </label>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-4 mb-4">
+                <div class="card-header bg-primary bg-gradient text-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clock me-2"></i>Temps restant
+                        </h5>
+                        <div class="timer-badge bg-white text-primary px-3 py-1 rounded-pill" id="timer">
+                            --:--
                         </div>
-                    {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form id="quiz-form" method="POST">
+                        {% for question in quiz.questions %}
+                            <div class="question-card mb-4">
+                                <div class="question-header mb-3">
+                                    <h5 class="fw-bold text-primary">
+                                        <i class="fas fa-question-circle me-2"></i>Question {{ loop.index }}
+                                    </h5>
+                                    <p class="question-text mb-3">{{ question.contenu }}</p>
+                                </div>
+                                
+                                <div class="answers-container">
+                                    {% for reponse in question.reponses %}
+                                        <div class="answer-option mb-3">
+                                            <div class="form-check custom-option">
+                                                <input class="form-check-input" 
+                                                       type="checkbox" 
+                                                       name="question_{{ question.id }}[]" 
+                                                       value="{{ reponse.id }}" 
+                                                       id="reponse_{{ reponse.id }}">
+                                                <label class="form-check-label w-100 py-2 px-3 rounded-3" 
+                                                       for="reponse_{{ reponse.id }}">
+                                                    {{ reponse.contenu }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% if not loop.last %}
+                                <hr class="my-4">
+                            {% endif %}
+                        {% endfor %}
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">
+                                <i class="fas fa-paper-plane me-2"></i>Valider le Quiz
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
-        {% endfor %}
-
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success">Valider le Quiz</button>
         </div>
-    </form>
+    </div>
 </div>
+
+<style>
+.timer-badge {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.question-card {
+    background-color: #f8f9fa;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.question-card:hover {
+    background-color: #fff;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+}
+
+.question-text {
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.custom-option .form-check-input {
+    display: none;
+}
+
+.custom-option .form-check-label {
+    background-color: #fff;
+    border: 2px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.custom-option .form-check-label:hover {
+    border-color: #0d6efd;
+    background-color: #f8f9ff;
+}
+
+.custom-option .form-check-input:checked + .form-check-label {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+.btn-primary {
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(13, 110, 253, 0.15);
+}
+</style>
 
 <script>
     let timeLeft = {{ quiz.tempsMax ?? 10 }}; // Temps max en secondes (défaut : 60s)
     let timerDisplay = document.getElementById('timer');
 
     function updateTimer() {
-        let minutes = Math.floor(timeLeft / 10);
-        let seconds = timeLeft % 10;
-        timerDisplay.innerText = `${minutes}:${seconds < 5 ? '0' : ''}${seconds}`;
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
         
         if (timeLeft > 0) {
             timeLeft--;
@@ -51,5 +145,4 @@
 
     window.onload = updateTimer;
 </script>
-
 {% endblock %}

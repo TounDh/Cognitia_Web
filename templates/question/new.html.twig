@@ -4,26 +4,69 @@
 
 {% block body %}
 {% if is_granted('ROLE_INSTRUCTEUR') %}
-
-<div class="container mt-5" style="padding: 150px;">
-    <h1 class="text-center">Ajouter une Question pour le Quiz : "{{ quiz.titre }}"</h1>
-    <div class="card p-4 shadow">
-        {{ form_start(form) }}
-        <div class="mb-3">
-            {{ form_label(form.contenu, 'Contenu de la Question') }}
-            {{ form_widget(form.contenu, {'attr': {'class': 'form-control'}}) }}
-            {{form_errors(form.contenu)}}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12" style="margin-top: 80px;">
+            <h1 class="text-primary fw-bold text-center mb-4">Ajouter une Question</h1>
+            <p class="text-center text-muted">Pour le Quiz : "{{ quiz.titre }}"</p>
         </div>
-        <div class="mb-3">
-            {{ form_label(form.quiz, 'Quiz associé') }}
-            {{ form_widget(form.quiz, {'attr': {'class': 'form-control'}}) }}
-        </div>
-        <button type="submit" class="btn btn-success">Enregistrer</button>
-        {{ form_end(form) }}
     </div>
-    <a href="{{ path('app_question_index', {'quiz_id': quiz.id}) }}" class="btn btn-primary mt-3">Retour à la liste</a>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm hover-shadow transition-all">
+                <div class="card-header bg-primary bg-opacity-10">
+                    <h5 class="card-title mb-0 text-primary">Nouvelle Question</h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-4">
+                            {{ form_label(form.contenu, 'Contenu de la Question', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.contenu, {'attr': {
+                                'class': 'form-control form-control-lg',
+                                'placeholder': 'Entrez le contenu de la question'
+                            }}) }}
+                            {{ form_errors(form.contenu, {'attr': {'class': 'text-danger'}}) }}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form_label(form.quiz, 'Quiz associé', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.quiz, {'attr': {'class': 'form-select'}}) }}
+                            {{ form_errors(form.quiz, {'attr': {'class': 'text-danger'}}) }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Enregistrer
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ path('app_question_index', {'quiz_id': quiz.id}) }}" class="btn btn-outline-primary rounded-pill">
+                    <i class="fas fa-arrow-left me-2"></i>Retour à la liste des questions
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
-{% endif %}
+<style>
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
 
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+</style>
+{% endif %}
 {% endblock %}

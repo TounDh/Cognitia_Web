@@ -40,6 +40,7 @@ class QuizType extends AbstractType
                 'class' => Cours::class,
                 'choice_label' => 'titre',
                 'placeholder' => 'Sélectionner un cours',
+                'disabled' => true,
                 'required' => false
             ])
             ->add('instructeur', EntityType::class, [

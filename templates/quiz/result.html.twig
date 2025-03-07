@@ -3,13 +3,191 @@
 {% block title %}Résultat du Quiz{% endblock %}
 
 {% block body %}
-    <div class="container mt-5" style="padding: 150px;">
-
-        <h2 class="text-center">Résultat du Quiz</h2>
-        <p class="text-center">Score obtenu : <strong>{{ resultat.score }}%</strong></p>
-        
-        <div class="text-center mt-4">
-            <a href="{{ path('app_quiz_index') }}" class="btn btn-primary">Retour aux quiz</a>
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12" style="margin-top: 80px;">
+            <h1 class="text-primary fw-bold text-center mb-4">Résultats du Quiz</h1>
         </div>
     </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <div class="score-circle mb-4">
+                            <div class="score-number">{{ resultat.score }}%</div>
+                            <div class="score-label">Score Final</div>
+                        </div>
+                        <div class="result-message mb-4">
+                            {% if resultat.score >= 80 %}
+                                    <div class="certificate-section mt-4 mb-4">
+                                        <div class="certificate-card p-4 bg-light rounded-4 border shadow-sm">
+                                            <div class="text-center">
+                                                <i class="fas fa-certificate text-warning display-1 mb-3"></i>
+                                                <h4 class="text-primary mb-3">Félicitations !</h4>
+                                                <p class="text-muted mb-4">Vous avez obtenu votre certificat de réussite</p>
+                                                <a href="{{ path('app_certificat_index') }}" 
+                                                class="btn btn-warning btn-lg rounded-pill shadow-sm hover-lift">
+                                                    <i class="fas fa-award me-2"></i>
+                                                    liste de mes Certificats
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                            {% elseif resultat.score >= 60 %}
+                                <div class="alert alert-info">
+                                    <i class="fas fa-star me-2"></i>Bon travail ! Continuez vos efforts !
+                                </div>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-book me-2"></i>Continuez à pratiquer pour améliorer vos résultats.
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-grid gap-3">
+                            <a href="{{ path('app_cours_index') }}" class="btn btn-outline-primary rounded-pill">
+                                <i class="fas fa-list me-2"></i>Retour au cours
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.score-circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    box-shadow: 0 0.5rem 1rem rgba(13, 110, 253, 0.15);
+    animation: scaleIn 0.5s ease-out;
+}
+
+.score-number {
+    font-size: 3.5rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 1rem;
+    min-width: 120px;
+    animation: slideUp 0.5s ease-out;
+}
+
+.stat-item i {
+    font-size: 2rem;
+    display: block;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.result-message {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.alert {
+    border: none;
+    border-radius: 1rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.certificate-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    transition: all 0.3s ease;
+}
+
+.certificate-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+}
+
+.hover-lift {
+    transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(255, 193, 7, 0.3) !important;
+}
+
+.btn-warning {
+    color: #000;
+    font-weight: 500;
+}
+
+.btn-warning:hover {
+    color: #000;
+    background-color: #ffc720;
+}
+</style>
 {% endblock %}

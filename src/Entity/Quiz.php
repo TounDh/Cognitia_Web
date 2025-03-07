@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Cours;
 
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
 class Quiz
@@ -30,10 +31,10 @@ class Quiz
     #[ORM\OneToMany(mappedBy: 'quiz', targetEntity: Resultat::class, cascade: ['remove'])]
     private Collection $resultats;
 
-    #[ORM\ManyToOne(targetEntity: Cours::class, inversedBy: 'quizzes')]
+    #[ORM\OneToOne(inversedBy: "quiz", targetEntity: Cours::class)]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank(message: "Le quiz doit être associé à un cours")]
-    private ?Cours $cours = null;
+    private $cours;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
@@ -44,10 +45,14 @@ class Quiz
     #[ORM\JoinColumn(nullable: true)]
     private ?User $apprenant = null;
 
+    #[ORM\OneToMany(mappedBy: 'quiz', targetEntity: Certificat::class, cascade: ['remove'])]
+    private Collection $certificats;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
         $this->resultats = new ArrayCollection();
+        $this->certificats = new ArrayCollection();
     }
 
     public function getId(): ?int { return $this->id; }
@@ -63,11 +68,48 @@ class Quiz
     public function getResultats(): Collection { return $this->resultats; }
 
     public function getCours(): ?Cours { return $this->cours; }
-    public function setCours(?Cours $cours): self { $this->cours = $cours; return $this; }
+    public function setCours(Cours $cours): self
+    {
+        if ($cours->getQuiz() !== null && $cours->getQuiz() !== $this) {
+            throw new \Exception('Un cours ne peut avoir qu\'un seul quiz');
+        }
+
+        $this->cours = $cours;
+
+        return $this;
+    }
     public function getInstructeur(): ?User { return $this->instructeur; }
     public function setInstructeur(?User $instructeur): self { $this->instructeur = $instructeur; return $this; }
     public function getApprenant(): ?User { return $this->apprenant; }
     public function setApprenant(?User $apprenant): self { $this->apprenant = $apprenant; return $this; }
     public function __toString(): string { return $this->titre; }
+    
+    /**
+     * @return Collection<int, Certificat>
+     */
+    public function getCertificats(): Collection
+    {
+        return $this->certificats;
+    }
+
+    public function addCertificat(Certificat $certificat): self
+    {
+        if (!$this->certificats->contains($certificat)) {
+            $this->certificats[] = $certificat;
+            $certificat->setQuiz($this);
+        }
+        return $this;
+    }
+
+    public function removeCertificat(Certificat $certificat): self
+    {
+        if ($this->certificats->removeElement($certificat)) {
+            if ($certificat->getQuiz() === $this) {
+                $certificat->setQuiz(null);
+            }
+        }
+        return $this;
+    }
+
 }
 

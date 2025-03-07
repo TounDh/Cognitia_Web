@@ -49,3 +49,9 @@ services:
         class: App\EventListener\AdminAccessListener
         tags:
             - { name: kernel.event_listener, event: kernel.request }
+    App\Security\AccessDeniedHandler:  
+        arguments:
+            $router: '@router'
+            $flashBag: '@session.flashbag'
+        tags: ['security.access_denied_handler']
+            

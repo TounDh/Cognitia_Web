@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1"> 
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
             <link rel="stylesheet" href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}">		
             <!-- Google Font -->
@@ -55,7 +56,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
 					<div class="single-top-contact">							
 						<i class="fa fa-envelope"></i>
-							<h4>COGNITIA.INFO@COGNITIA.com</h4>	
+						<h4><a href="https://wphtml.com/cdn-cgi/l/email-protection#eb8e938a869b878eab8c868a8287c5888486"><span class="cf_email" data-cfemail="305548515d405c55705d51595c1e535f5d">[email&#160;protected]</span></a></h4>	
 					</div>
 				</div><!--- END COL -->	
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -96,14 +97,19 @@
                         <ul>
                             <li><a class="nav-link" href="{{ path('app_home') }}">Accueil </a></li>
                             <li><a class="nav-link" href="{{ path('app_cours') }}">Courses</a></li>
-							<li><a class="nav-link">Instructeur <span class="ti-angle-down"></span></a>
+							<li>
+								{% if is_granted('ROLE_INSTRUCTEUR') %}
+								<a class="nav-link">Instructeur <span class="ti-angle-down"></span></a>
 								<ul>
-									<li><a class="nav-link" href="{{ path('app_instructeur') }}">Instructeur</a></li>
-									{% if is_granted('ROLE_APPRENANT')  or is_granted('ROLE_INSTRUCTEUR') or is_granted('ROLE_ADMIN') %}
-									<li><a href="{{path('app_quiz_index')}}">Liste Quiz</a></li>
-									{% endif %}
+									<li><a class="nav-link" href="{{ path('app_instructeur') }}">Instructeurs</a></li>
+									<li><a href="{{path('app_quiz_index')}}">Mes Quiz</a></li>
 								</ul>
-							</li>
+								{% elseif is_granted('ROLE_APPRENANT') %}
+								<a class="nav-link">Certificats <span class="ti-angle-down"></span></a>
+								<ul>									
+									<li><a href="{{path('app_certificat_index')}}">Mes Certificats</a></li>
+								</ul>
+								{% endif %}
                             <li><a class="nav-link" href="{{ path('app_about') }}">About Us</a></li>
                             <li><a class="nav-link" href="{{ path('app_contact') }}">Contact</a></li>
                             <li><a class="nav-link" href="{{ path('app_event') }}">Event</a></li>
@@ -123,8 +129,6 @@
 
                 <div class="call_to_action">
                     {% if app.user %}
-						<!-- Si l'utilisateur est connecté, afficher le bouton "Modifier le profil" -->
-						<a class="btn_two" href="{{ path('app_user_edit', {'id': app.user.id}) }}">Modifier le profil</a>
                         <!-- Si l'utilisateur est connecté, afficher le bouton "Logout" -->
                         <a class="btn_two" href="{{ path('app_logout') }}">Logout</a>
                     {% else %}
