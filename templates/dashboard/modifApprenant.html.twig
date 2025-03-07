@@ -33,14 +33,16 @@
                                         </div>
 
                                         <div class="mb-3">
+                                            {{ form_label(form.username, 'username', {'label_attr': {'class': 'form-label'}}) }}
+                                            {{ form_widget(form.username, {'attr': {'class': 'form-control', 'placeholder': apprenant.username}}) }}
+                                        </div>
+
+                                        <div class="mb-3">
                                             {{ form_label(form.phoneNumber, 'Numéro Téléphone', {'label_attr': {'class': 'form-label'}}) }}
                                             {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': apprenant.phoneNumber}}) }}
                                         </div>
 
-                                        <div class="mb-3">
-                                            {{ form_label(form.level, 'Niveau', {'label_attr': {'class': 'form-label'}}) }}
-                                            {{ form_widget(form.level, {'attr': {'class': 'form-control', 'placeholder': apprenant.level}}) }}
-                                        </div>
+                                       
                                         
                                         <div class="mb-3">
                                             {{ form_label(form.plainPassword, 'Mot de passe', {'label_attr': {'class': 'form-label'}}) }}

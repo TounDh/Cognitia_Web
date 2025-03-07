@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Form\RegistrationApprenantFormType;
 use App\Form\InstructeurRegistrationFormType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-
+use App\Service\UserLogger;
 
 
 #[Route('/user')]
@@ -22,11 +22,15 @@ class UserController extends AbstractController
 
     private UserPasswordHasherInterface $passwordHasher;
     private EntityManagerInterface $entityManager;
+    private UserLogger $userLogger;
 
-    public function __construct(UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager)
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager,UserLogger $userLogger)
     {
         $this->passwordHasher = $passwordHasher;
         $this->entityManager = $entityManager;
+        $this->userLogger = $userLogger;
+
     }
 
     
@@ -69,7 +73,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, UserLogger $userLogger): Response
 {
     // Vérifier que l'utilisateur connecté est bien celui qui modifie son profil
     if ($this->getUser() !== $user) {
@@ -78,6 +82,16 @@ public function edit(Request $request, User $user, EntityManagerInterface $entit
 
     // Vérifier si la 2FA est activée pour cet utilisateur
     $is2FAEnabled = $user->getGoogleAuthenticatorSecret() !== null;
+
+    // Stocker les données de l'utilisateur avant la soumission du formulaire
+    $originalData = [
+        'firstname' => $user->getFirstname(),
+        'lastname' => $user->getLastname(),
+        'email' => $user->getEmail(),
+        'username' => $user->getUsername(),
+
+        // Ajoutez ici d'autres champs que vous souhaitez suivre
+    ];
 
     // Choisir le formulaire en fonction du rôle de l'utilisateur
     if (in_array('ROLE_INSTRUCTEUR', $user->getRoles())) {
@@ -99,6 +113,23 @@ public function edit(Request $request, User $user, EntityManagerInterface $entit
             }
         }
 
+        // Comparer les données avant et après la soumission
+        $modifiedFields = [];
+        foreach ($originalData as $field => $originalValue) {
+            $newValue = $user->{'get' . ucfirst($field)}(); // Appelle la méthode getter dynamiquement
+            if ($newValue !== $originalValue) {
+                $modifiedFields[$field] = $newValue;
+            }
+        }
+
+        // Enregistrer la modification du profil dans les logs
+        $userLogger->log(
+            $user, // L'utilisateur qui a modifié son profil
+            'profile_updated', // Action : mise à jour du profil
+            sprintf('IP: %s', $request->getClientIp()), // Détails : adresse IP de l'utilisateur
+            $modifiedFields // Champs modifiés
+        );
+
         $entityManager->flush();
 
         // Rediriger vers la page de profil ou une autre page
@@ -111,6 +142,8 @@ public function edit(Request $request, User $user, EntityManagerInterface $entit
         'is2FAEnabled' => $is2FAEnabled, // Passer la variable au template
     ]);
 }
+
+
 
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response

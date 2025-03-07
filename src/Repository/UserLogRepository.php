@@ -14,5 +14,14 @@ class UserLogRepository extends ServiceEntityRepository
         parent::__construct($registry, UserLog::class);
     }
 
-    // Ajoutez ici des méthodes personnalisées pour interagir avec la base de données
+    public function findAllUsers(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->select('DISTINCT u.id, u.email') // Sélectionner l'ID et l'email de l'utilisateur
+            ->leftJoin('l.user', 'u') // Jointure avec l'entité User
+            ->orderBy('u.email', 'ASC') // Trier par email
+            ->getQuery()
+            ->getResult();
+    }
+
 }

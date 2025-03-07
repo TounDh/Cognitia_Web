@@ -32,11 +32,7 @@
                             {{ form_errors(registrationForm.email) }}
                         </div>
 
-                        <div class="form-group">
-                            {{ form_label(registrationForm.plainPassword, 'Mot de passe', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control requiredField input-label', 'placeholder': 'Mot de passe'}}) }}
-                            {{ form_errors(registrationForm.plainPassword) }}
-                        </div>
+                        
 
                         <div class="form-group">
                             {{ form_label(registrationForm.username, 'UserName', {'label_attr': {'class': 'form-label'}}) }}
@@ -62,7 +58,11 @@
                             {{ form_errors(registrationForm.phoneNumber) }}
                         </div>
 
-                       
+                       <div class="form-group">
+                            {{ form_label(registrationForm.plainPassword, 'Mot de passe', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control requiredField input-label', 'placeholder': 'Mot de passe'}}) }}
+                            {{ form_errors(registrationForm.plainPassword) }}
+                        </div>
 
                         <div class="form-group col-lg-12">
                             <button type="submit" class="btn_one">S'inscrire</button>

@@ -2,7 +2,7 @@
 
 {% extends 'baseDashboard.html.twig' %}
 
-{% block title %}User Logs{% endblock %}
+{% block title %}User Tracability{% endblock %}
 
 {% block body %}
     <div class="content-page">
@@ -12,36 +12,136 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="mt-0 header-title">Historique des logs</h4>
+                                <h4 class="mt-0 header-title">Traçabilité des Utilisateurs</h4>
 
-                                <table id="datatable" class="table table-bordered dt-responsive nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Utilisateur</th>
-                                            <th>Rôle</th>
-                                            <th>Action</th>
-                                            <th>Date</th>
-                                            <th>Détails</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for log in logs %}
+                                {# Formulaire de filtrage #}
+                                
+
+                                <div id="datatable_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="dataTables_length" id="datatable_length">
+                                                <label class="form-label">Show 
+                                                    <select id="select-entries" name="datatable_length" aria-controls="datatable" class="form-select form-select-sm">
+                                                        <option value="10">10</option>
+                                                        <option value="25">25</option>
+                                                        <option value="50">50</option>
+                                                        <option value="100">100</option>
+                                                    </select> entries
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <form method="get" action="{{ path('app_user_logs') }}" class="mb-4">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="email-filter" class="form-label">Rechercher par email :</label>
+                                                    <input type="text" id="email-filter" name="email" class="form-control" 
+                                                        value="{{ app.request.query.get('email') }}" placeholder="Entrez un email">
+                                                </div>
+                                                <div class="col-md-4 d-flex align-items-end">
+                                                    <button type="submit" class="btn btn-primary">Rechercher</button>
+                                                    <a href="{{ path('app_user_logs') }}" class="btn btn-secondary ms-2">Réinitialiser</a>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                    </div>
+
+                                    <table id="datatable" class="table table-bordered dt-responsive nowrap">
+                                        <thead>
                                             <tr>
-                                                <td>{{ log.id }}</td>
-                                                <td>{{ log.user.email }}</td>
-                                                <td>{{ log.user.roles|join(', ') }}</td> {# Afficher les rôles #}
-                                                <td>{{ log.action }}</td>
-                                                <td>{{ log.createdAt|date('d/m/Y H:i') }}</td>
-                                                <td>{{ log.details }}</td> {# Afficher les détails (IP, appareil, etc.) #}
+                                                <th>Email</th>
+                                                <th>UserName</th>
+                                                <th>Rôle</th>
+                                                <th>Action</th>
+                                                <th>Date</th>
+                                                <th>Détails</th>
+                                                <th>Champs Modifiés</th>
                                             </tr>
-                                        {% else %}
-                                            <tr>
-                                                <td colspan="6">Aucun log trouvé</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {% for log in logs %}
+                                                <tr>
+                                                    <td>{{ log.user.email }}</td>
+                                                    <td>{{ log.user.username }}</td>
+                                                    <td>{{ log.user.roles|join(', ') }}</td>
+                                                    <td>{{ log.action }}</td>
+                                                    <td>{{ log.createdAt|date('d/m/Y H:i') }}</td>
+                                                    <td>{{ log.details }}</td>
+                                                    <td>
+                                                        {% if log.modifiedFields %}
+                                                            <ul>
+                                                                {% for field, value in log.modifiedFields %}
+                                                                    <li>{{ field }}: {{ value }}</li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        {% else %}
+                                                            Aucun champ modifié
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="7">Aucun log trouvé</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-5">
+                                            <div class="dataTables_info" id="datatable_info" role="status" aria-live="polite">
+                                                Showing {{ logs.getCurrentPageNumber * logs.getItemNumberPerPage - logs.getItemNumberPerPage + 1 }} 
+                                                to {{ min(logs.getCurrentPageNumber * logs.getItemNumberPerPage, logs.getTotalItemCount) }} 
+                                                of {{ logs.getTotalItemCount }} entries
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-7">
+                                            <div class="dataTables_paginate paging_simple_numbers" id="datatable_paginate">
+                                                <ul class="pagination">
+                                                    {# Bouton "Previous" #}
+                                                    <li class="paginate_button page-item previous {{ logs.currentPageNumber == 1 ? 'disabled' }}">
+                                                        <a href="{{ logs.currentPageNumber == 1 ? '#' : path(app.request.attributes.get('_route'), app.request.query.all|merge({ page: logs.currentPageNumber - 1 })) }}" 
+                                                           class="page-link" aria-controls="datatable" data-dt-idx="0" tabindex="0">
+                                                            Previous
+                                                        </a>
+                                                    </li>
+
+                                                    {# Afficher les pages 1 à 4 #}
+                                                    {% for page in 1..min(4, logs.pageCount) %}
+                                                        <li class="paginate_button page-item {{ logs.currentPageNumber == page ? 'active' }}">
+                                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({ page: page })) }}" 
+                                                               class="page-link" aria-controls="datatable" data-dt-idx="{{ page }}" tabindex="0">
+                                                                {{ page }}
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+
+                                                    {# Afficher la dernière page si elle n'est pas déjà incluse #}
+                                                    {% if logs.pageCount > 4 %}
+                                                        <li class="paginate_button page-item disabled">
+                                                            <span class="page-link">...</span>
+                                                        </li>
+                                                        <li class="paginate_button page-item {{ logs.currentPageNumber == logs.pageCount ? 'active' }}">
+                                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({ page: logs.pageCount })) }}" 
+                                                               class="page-link" aria-controls="datatable" data-dt-idx="{{ logs.pageCount }}" tabindex="0">
+                                                                {{ logs.pageCount }}
+                                                            </a>
+                                                        </li>
+                                                    {% endif %}
+
+                                                    {# Bouton "Next" #}
+                                                    <li class="paginate_button page-item next {{ logs.currentPageNumber == logs.pageCount ? 'disabled' }}">
+                                                        <a href="{{ logs.currentPageNumber == logs.pageCount ? '#' : path(app.request.attributes.get('_route'), app.request.query.all|merge({ page: logs.currentPageNumber + 1 })) }}" 
+                                                           class="page-link" aria-controls="datatable" data-dt-idx="{{ logs.pageCount + 1 }}" tabindex="0">
+                                                            Next
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -49,4 +149,53 @@
             </div>
         </div>
     </div>
+
+<style>
+/* Ajoutez ceci dans votre fichier CSS */
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+}
+
+.pagination .page-item .page-link {
+    margin: 0 5px;
+    border-radius: 4px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+</style>
+
+{% block javascripts %}
+    {{ parent() }} {# Inclure les scripts du parent (baseDashboard.html.twig) #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sélectionner l'élément <select>
+            const selectEntries = document.getElementById('select-entries');
+
+            // Écouter l'événement 'change'
+            selectEntries.addEventListener('change', function () {
+                // Récupérer la valeur sélectionnée
+                const selectedValue = this.value;
+
+                // Récupérer l'URL actuelle
+                const currentUrl = new URL(window.location.href);
+
+                // Ajouter ou mettre à jour le paramètre 'limit' dans l'URL
+                currentUrl.searchParams.set('limit', selectedValue);
+
+                // Rediriger vers la nouvelle URL
+                window.location.href = currentUrl.toString();
+            });
+
+            // Pré-sélectionner la valeur actuelle dans le <select>
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentLimit = urlParams.get('limit') || 10; // Valeur par défaut : 10
+            selectEntries.value = currentLimit;
+        });
+    </script>
+{% endblock %}
+
 {% endblock %}

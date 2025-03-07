@@ -33,6 +33,8 @@ security:
                 check_path: 2fa_login_check  # The route name you have used in the routes.yaml
                 default_target_path: app_cours
 
+        
+                    
                 # where to redirect after logout
                 # target: app_any_route
 

@@ -28,6 +28,9 @@ class UserLog
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $details = null;
 
+    #[ORM\Column(type:"json", nullable:true)]
+    private $modifiedFields;
+
     // Getters et Setters
     public function getId(): ?int
     {
@@ -77,6 +80,25 @@ class UserLog
     public function setDetails(?string $details): self
     {
         $this->details = $details;
+        return $this;
+    }
+
+
+    public function getDecodedDetails(): array
+    {
+        return json_decode($this->details, true) ?? [];
+    }
+
+
+    public function getModifiedFields(): ?array
+    {
+        return $this->modifiedFields;
+    }
+
+    public function setModifiedFields(?array $modifiedFields): self
+    {
+        $this->modifiedFields = $modifiedFields;
+
         return $this;
     }
 }
