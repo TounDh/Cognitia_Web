@@ -55,7 +55,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
 					<div class="single-top-contact">							
 						<i class="fa fa-envelope"></i>
-						<h4><a href="https://wphtml.com/cdn-cgi/l/email-protection#eb8e938a869b878eab8c868a8287c5888486"><span class="cf_email" data-cfemail="305548515d405c55705d51595c1e535f5d">[email&#160;protected]</span></a></h4>	
+							<h4>COGNITIA.INFO@COGNITIA.com</h4>	
 					</div>
 				</div><!--- END COL -->	
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -115,16 +115,16 @@
 
             <div class="col-lg-4 col-md-3 col-sm-8 m-none">
                 <div class="home_lc">
-
-
                     <a href="#" class="hlc">
                         <i class="ti-shopping-cart-full"></i>
-                        <span class="gactive">nn</span>
-                    </a> 
+                        <span class="gactive">2</span>
+                    </a>
                 </div>
 
                 <div class="call_to_action">
                     {% if app.user %}
+						<!-- Si l'utilisateur est connecté, afficher le bouton "Modifier le profil" -->
+						<a class="btn_two" href="{{ path('app_user_edit', {'id': app.user.id}) }}">Modifier le profil</a>
                         <!-- Si l'utilisateur est connecté, afficher le bouton "Logout" -->
                         <a class="btn_two" href="{{ path('app_logout') }}">Logout</a>
                     {% else %}

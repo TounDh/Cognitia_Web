@@ -1,13 +1,11 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+# config/services.yaml
 parameters:
     uploads_directory: '%kernel.project_dir%/public/uploads'
     cours_images_directory: '%kernel.project_dir%/public/uploads/cours'
     upload_directory: '%kernel.project_dir%/public/uploads/photos'
     modules_pdfs_directory: '%kernel.project_dir%/public/uploads/modules_pdfs'
+    discord_bot_token: '%env(DISCORD_BOT_TOKEN)%'
+    discord_guild_id: '%env(DISCORD_GUILD_ID)%'
 
 services:
      # Register the form type as a service
@@ -19,8 +17,9 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
+
+
+    # Makes classes in src/ available to be used as services
     App\:
         resource: '../src/'
         exclude:
@@ -28,14 +27,25 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # DiscordService
+    App\Service\DiscordService:
+        arguments:
+            $botToken: '%discord_bot_token%'
+            $guildId: '%discord_guild_id%'
+
+    # ProfanityFilterService
+    App\Service\ProfanityFilterService:
+        autowire: true
+        autoconfigure: true
+
+
+    # Event Listeners
     App\EventListener\LoginListener:
         class: App\EventListener\LoginListener
         tags:
             - { name: kernel.event_listener, event: security.interactive_login }
+
     App\EventListener\AdminAccessListener:
         class: App\EventListener\AdminAccessListener
         tags:
-            - { name: kernel.event_listener, event: kernel.request }    
-            
+            - { name: kernel.event_listener, event: kernel.request }

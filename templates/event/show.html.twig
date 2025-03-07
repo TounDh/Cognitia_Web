@@ -7,12 +7,7 @@
     <h1 class="mb-4">{{ event.titre }}</h1>
 
     {% if event.image %}
-        <div class="mb-4">
-            <img src="{{ asset('uploads/' ~ event.image) }}" 
-                 alt="Image de l'événement" 
-                 class="img-fluid rounded"
-                 style="max-height: 400px; width: auto;">
-        </div>
+        <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="Image de l'événement" class="img-fluid">
     {% else %}
         <p>Aucune image disponible pour cet événement.</p>
     {% endif %}
@@ -46,7 +41,6 @@
 
     <h3>Commentaires</h3>
 
-    {# Display existing comments #}
     <div class="mb-3">
         {% for commentaire in event.commentaires %}
             <div class="card p-3 mb-2">
@@ -57,18 +51,8 @@
         {% else %}
             <p>Aucun commentaire pour cet événement.</p>
         {% endfor %}
-   
+    </div>
 
-<h2>Instructeurs</h2>
-<ul>
-    {% for participant in event.participants %}
-        {% if 'ROLE_INSTRUCTEUR' in participant.roles %}
-            <li>{{ participant.firstName }} {{ participant.lastName }}</li>
-        {% endif %}
-    {% endfor %}
-</ul>
-
-    {# Display the comment form #}
     <h4>Ajouter un commentaire</h4>
     {{ form_start(commentaireForm) }}
         <div class="mb-3">
@@ -87,5 +71,13 @@
     {{ form_end(commentaireForm) }}
 
     <a href="{{ path('app_event_index') }}" class="btn btn-secondary mt-3">Retour à la liste des événements</a>
+    {% if inviteLink %}
+            <div class="mt-4">
+                <h4>Join the Study Group:</h4>
+                <a href="{{ inviteLink }}" target="_blank" class="btn btn-primary">Join Discord</a>
+            </div>
+        {% else %}
+            <p>Failed to create an event channel on Discord.</p>
+        {% endif %}
 </div>
 {% endblock %}
