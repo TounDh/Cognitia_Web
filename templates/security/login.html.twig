@@ -29,7 +29,7 @@
                     <h4 class="login_register_title">Already a member? Sign in:</h4>
                     
                     {% if error %}
-                        <div class="alert alert-danger" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        <div class="alert al    ert-danger" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                     {% endif %}
                     
                     {% if app.user %}

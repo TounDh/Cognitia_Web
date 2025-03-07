@@ -71,5 +71,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
-    // Vous pouvez conserver ou supprimer les méthodes findByExampleField et findOneBySomeField si vous ne les utilisez pas.
+
+
+
+
+    public function countByRole(string $role): int
+    {
+        return $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.roles LIKE :role') // Recherche le rôle dans le tableau JSON
+            ->setParameter('role', '%"' . $role . '"%') // Recherche le rôle encadré par des guillemets
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

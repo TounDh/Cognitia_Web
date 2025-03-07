@@ -10,10 +10,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Form\RegistrationApprenantFormType;
+use App\Form\InstructeurRegistrationFormType;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+
 
 #[Route('/user')]
 class UserController extends AbstractController
 {
+
+    private UserPasswordHasherInterface $passwordHasher;
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager)
+    {
+        $this->passwordHasher = $passwordHasher;
+        $this->entityManager = $entityManager;
+    }
+
+    
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
@@ -53,23 +69,48 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+{
+    // Vérifier que l'utilisateur connecté est bien celui qui modifie son profil
+    if ($this->getUser() !== $user) {
+        throw $this->createAccessDeniedException('Vous ne pouvez pas modifier ce profil.');
+    }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Do not handle authCode here either
-            $entityManager->flush();
+    // Vérifier si la 2FA est activée pour cet utilisateur
+    $is2FAEnabled = $user->getGoogleAuthenticatorSecret() !== null;
 
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+    // Choisir le formulaire en fonction du rôle de l'utilisateur
+    if (in_array('ROLE_INSTRUCTEUR', $user->getRoles())) {
+        $form = $this->createForm(InstructeurRegistrationFormType::class, $user);
+    } else {
+        $form = $this->createForm(RegistrationApprenantFormType::class, $user);
+    }
+
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Si l'utilisateur est un apprenant et a fourni un nouveau mot de passe
+        if (in_array('ROLE_APPRENANT', $user->getRoles()) && $form->has('plainPassword')) {
+            $plainPassword = $form->get('plainPassword')->getData();
+            if ($plainPassword) {
+                // Hasher le nouveau mot de passe
+                $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+                $user->setPassword($hashedPassword);
+            }
         }
 
-        return $this->renderForm('user/edit.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
+        $entityManager->flush();
+
+        // Rediriger vers la page de profil ou une autre page
+        return $this->redirectToRoute('app_cours', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
     }
+
+    return $this->renderForm('user/edit.html.twig', [
+        'user' => $user,
+        'form' => $form,
+        'is2FAEnabled' => $is2FAEnabled, // Passer la variable au template
+    ]);
+}
 
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response

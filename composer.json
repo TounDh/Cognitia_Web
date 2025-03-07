@@ -15,9 +15,11 @@
         "mpdf/mpdf": "*",
         "knplabs/knp-snappy-bundle": "^1.10",
         "guzzlehttp/guzzle": "^7.9",
+        "endroid/qr-code": "^5.0",
         "scheb/2fa": "*",
         "scheb/2fa-bundle": "*",
         "scheb/2fa-email": "*",
+        "scheb/2fa-google-authenticator": "*",
         "sensio/framework-extra-bundle": "^6.2",
         "stripe/stripe-php": "7.0",
         "symfony/asset": "6.4.*",
@@ -30,11 +32,12 @@
         "symfony/http-client": "6.4.*",
         "symfony/mailer": "6.4.*",
         "symfony/maker-bundle": "^1.50",
-        "symfony/mime": "6.4.*",
+        "symfony/notifier": "6.4.*",
         "symfony/proxy-manager-bridge": "6.4.*",
         "symfony/runtime": "^6.4.14",
         "symfony/security-bundle": "6.4.*",
         "symfony/twig-bundle": "6.4.*",
+        "symfony/twilio-notifier": "6.4.*",
         "symfony/validator": "6.4.*",
         "symfony/yaml": "6.4.*",
         "symfonycasts/reset-password-bundle": "^1.13",
@@ -42,7 +45,8 @@
         "tecnickcom/tcpdf": "^6.8",
         "twbs/bootstrap": "*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "twilio/sdk": "^8.3"
     },
     "config": {
         "allow-plugins": {

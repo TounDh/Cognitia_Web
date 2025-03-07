@@ -1,0 +1,52 @@
+{# templates/user_log/index.html.twig #}
+
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %}User Logs{% endblock %}
+
+{% block body %}
+    <div class="content-page">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mt-0 header-title">Historique des logs</h4>
+
+                                <table id="datatable" class="table table-bordered dt-responsive nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Utilisateur</th>
+                                            <th>Rôle</th>
+                                            <th>Action</th>
+                                            <th>Date</th>
+                                            <th>Détails</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for log in logs %}
+                                            <tr>
+                                                <td>{{ log.id }}</td>
+                                                <td>{{ log.user.email }}</td>
+                                                <td>{{ log.user.roles|join(', ') }}</td> {# Afficher les rôles #}
+                                                <td>{{ log.action }}</td>
+                                                <td>{{ log.createdAt|date('d/m/Y H:i') }}</td>
+                                                <td>{{ log.details }}</td> {# Afficher les détails (IP, appareil, etc.) #}
+                                            </tr>
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="6">Aucun log trouvé</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
