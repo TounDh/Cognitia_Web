@@ -84,4 +84,41 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function countApprenantsByMonth(string $role = 'ROLE_APPRENANT'): array
+    {
+        $users = $this->createQueryBuilder('u')
+            ->select('u.createdAt')
+            ->where('u.roles LIKE :role')
+            ->setParameter('role', '%"' . $role . '"%')
+            ->getQuery()
+            ->getResult();
+    
+        $monthlyCounts = [];
+    
+        foreach ($users as $user) {
+            $mois = $user['createdAt']->format('m'); // Extrait le mois
+            if (!isset($monthlyCounts[$mois])) {
+                $monthlyCounts[$mois] = 0;
+            }
+            $monthlyCounts[$mois]++;
+        }
+    
+        // Reformater pour Twig
+        $formattedData = [];
+        foreach ($monthlyCounts as $mois => $total) {
+            $formattedData[] = [
+                'mois' => (int) $mois, // Convertir en entier
+                'total' => $total
+            ];
+        }
+    
+        return $formattedData;
+    }
+    
+
+
+
+
+
 }

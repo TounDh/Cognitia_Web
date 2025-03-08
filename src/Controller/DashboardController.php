@@ -36,6 +36,11 @@ final class DashboardController extends AbstractController
         $percentageInstructeurs = ($totalInstructeurs / $totalUsers) * 100;
         $percentageApprenants = ($totalApprenants / $totalUsers) * 100;
 
+        // Récupérer les étudiants inscrits par mois
+        $inscriptionsParMois = $userRepository->countApprenantsByMonth();
+
+
+
         // Debugging
     #dump($totalUsers, $totalInstructeurs, $totalApprenants, $percentageInstructeurs, $percentageApprenants);
         
@@ -46,6 +51,8 @@ final class DashboardController extends AbstractController
             'maxUsers' => $maxUsers,
             'percentageInstructeurs' => $percentageInstructeurs,
             'percentageApprenants' => $percentageApprenants,
+            'inscriptionsParMois' => $inscriptionsParMois,
+
         ]);
     }
 

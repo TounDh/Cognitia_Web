@@ -3,12 +3,49 @@
 {% block title %}Vérification du numéro de téléphone{% endblock %}
 
 {% block body %}
-    <h1>Vérification du numéro de téléphone</h1>
-    <p>Un code de vérification a été envoyé à votre numéro de téléphone.</p>
 
-    <form action="{{ path('app_validate_verification_code') }}" method="POST">
-        <label for="verification_code">Code de vérification :</label>
-        <input type="text" id="verification_code" name="verification_code" required>
-        <button type="submit">Valider</button>
-    </form>
+<!-- START SECTION TOP -->
+<section class="section-top">
+    <div class="container">
+        <div class="col-lg-10 offset-lg-1 text-center">
+            <div class="section-top-title wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0">
+                <h1>Vérification du numéro de téléphone</h1>
+                <ul>
+                    <li><a href="{{ path('app_home') }}">Home</a></li>
+                    <li> / Vérification du numéro de téléphone</li>
+                </ul>
+            </div><!-- //.HERO-TEXT -->
+        </div><!--- END COL -->
+    </div><!--- END CONTAINER -->
+</section>
+<!-- END SECTION TOP -->
+
+<!-- START VERIFICATION -->
+<section class="login_register section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3 col-xs-12">
+                <div class="login">
+                    <h4 class="login_register_title">Vérification du numéro de téléphone</h4>
+                    
+                    <p>Un code de vérification a été envoyé à votre numéro de téléphone.</p>
+                    
+                    <form action="{{ path('app_validate_verification_code') }}" method="POST">
+                        <div class="form-group">
+                            <label for="verification_code">Code de vérification :</label>
+                            <input type="text" id="verification_code" name="verification_code" class="form-control requiredField input-label" required>
+                        </div>
+                        
+                        <div class="form-group col-lg-12">
+                            <button class="btn_one" type="submit">Valider</button>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div><!--- END COL -->
+        </div><!--- END ROW -->
+    </div><!--- END CONTAINER -->
+</section>
+<!-- END VERIFICATION -->
+
 {% endblock %}
